@@ -1,0 +1,1892 @@
+(U1) %*% t(U1)
+U1 <- as.matrix(U[5,], nrow = 1, ncol = 2)
+(U1) %*% t(U1)
+A <- matrix(rnorm(100), nrow = 10)
+dim(A)
+A[lower.tri(A)] <- t(A)[lower.tri(A)]
+isSymmetric(A)
+U <- eigen(A)$u
+U
+eigen(A)
+U <- eigen(A)$vectors
+U
+crossprod(U)
+tcrossprod(U)
+D <- diag(1:10)
+D
+U %*% D %*% t(U)
+1/(1:5)
+rep(1/(1:5), 5)
+matrix(rep(1/(1:5), 5), nrow = 5)
+dat <- read.table("~/Documents/Work/github/Courses/MA 884/HW1/data/breast-cancer-wisconsin.txt")
+head(dat)
+dat <- read.csv("~/Documents/Work/github/Courses/MA 884/HW1/data/breast-cancer-wisconsin.txt")
+dat
+head(x)
+head(dat)
+dim(dat)
+str(dat)
+dat <- read.csv("~/Documents/Work/github/Courses/MA 884/HW1/data/breast-cancer-wisconsin.txt")
+head(dat)
+dim(dat)
+dat <- read.csv("~/Documents/Work/github/Courses/MA 884/HW1/data/breast-cancer-wisconsin.txt")
+head(dat)
+dim(dat)
+Y <- dat[,2]
+x <- dat[,3:]
+x <- dat[,3:32]
+X <- dat[,3:32]
+colnames(X) = 1"29
+colnames(X) = 1:29
+head(X)
+colnames(X) = 1:30
+head(X)
+str(X)
+table(Y)
+.5
+.5^2
+.5^2 > .25^2
+#-----------------------------------------#
+##
+#       Simulation to Understand#
+#       the ASE difference between#
+#       (Atil - Phat) + (Phat - Ptil)#
+##
+#-----------------------------------------#
+#
+#-----------------------------------------#
+##
+#    Simulation Functions#
+##
+#-----------------------------------------#
+#
+#sampling functions#
+getP <- function(X) tcrossprod(X)#
+sampBern <- function(p) rbinom(1,1,p) #
+sampP <- function(P){#
+  A <- apply(P, c(1,2), sampBern)#
+  A[lower.tri(A)] <- t(A)[lower.tri(A)]#
+  diag(A) <- 0#
+  A#
+} #
+#
+#estimating functions#
+make_omni <- function(A,B,C){#
+  n <- nrow(A)#
+  M <- matrix(NA, nrow = 3*n, ncol = 3*n)#
+  M[1:n,1:n] <- A #
+  M[(n+1):(2*n),(n+1):(2*n)] <- B#
+  M[(2*n+1):(3*n),(2*n+1):(3*n)] <- C#
+  M[(n+1):(2*n),1:n] <- M[1:n,(n+1):(2*n)] <- 1/2 * (A + B)#
+  M[(2*n+1):(3*n),1:n] <- M[1:n,(2*n+1):(3*n)] <- 1/2 * (A + C)#
+  M[(2*n+1):(3*n),(n+1):(2*n)] <- M[(n+1):(2*n),(2*n+1):(3*n)] <- 1/2 * (B + C)#
+  M#
+}#
+norm2 <- function(u){#
+  sqrt(sum(u^2))#
+} #
+normalize.cols<- function(A){#
+  norm.vec <- function(u) u/norm2(u) #define vector normalization func.#
+  if(ncol(A) == 1) return(norm.vec(A[,1]))#
+  apply(A, 2, norm.vec) # vectorize #
+} #
+ase <- function(A,d){#
+  E <- eigen(A)#
+  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))#
+  S <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)#
+  U %*% S#
+}#
+#
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .2), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+pi <- .5#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- pi * tcrossprod(x1) + (1 - pi)*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+install.packages("MCMCpack")#
+library(MCMCpack)#
+#
+#Define three different C matrices#
+C1 <- diag(c(.75, .5))#
+C2 <- diag(c(.5, .75))#
+C3 <- diag(c(1, 0))#
+#
+#simulation 100 runs of the same network model for each network size#
+simulate <- function(net_size = seq(100, 500, by = 100), mc_runs = 100){#
+  df <- matrix(NA, ncol = 9, nrow = 3*sum(net_size)*mc_runs)#
+  for(i in 1:length(net_size)){#
+    #sample with replacement from L#
+    ind <- sample(1:2, net_size[i], replace = TRUE, prob = c(pi, 1 - pi))#
+    #set up latent positions and right singular vectors#
+    X <- L[ind,]#
+    V <- svd(X)$v#
+    D <- diag(sign(diag(V)))#
+    theta.here <- asin((V%*%D)[1,2])#
+    #set up P matrices#
+    P1 <- tcrossprod(X %*% C1, X); P1hat <- tcrossprod(X %*% V %*% C1, X %*% V)#
+    P2 <- tcrossprod(X %*% C2, X); P2hat <- tcrossprod(X %*% V %*% C2, X %*% V)#
+    P3 <- tcrossprod(X %*% C3, X); P3hat <- tcrossprod(X %*% V %*% C3, X %*% V)#
+    #set up embedding matrices#
+    Ptil <- make_omni(P1, P2, P3)#
+    Phat <- make_omni(P1hat, P2hat, P3hat)#
+    #embedd #
+    Z_til <- ase(Ptil, 2)#
+    Zhat_til <- ase(Phat, 2)#
+    #align with X #
+    Z <- procrustes(Z_til, rbind(X %*% sqrt(C1),X %*% sqrt(C2),X %*% sqrt(C3)))$X.new#
+    Zhat <- procrustes(Zhat_til, rbind(X %*% sqrt(C1),X %*% sqrt(C2),X %*% sqrt(C3)))$X.new#
+    for(j in 1:mc_runs){#
+      #sample A matrices#
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      A3 <- sampP(P3)#
+      #set up embedding matrix#
+      Atil <- make_omni(A1, A2, A3)#
+      #embedd #
+      Lhat_til <- ase(Atil, 2)#
+      #align with X #
+      Lhat <- procrustes(Lhat_til, rbind(X %*% sqrt(C1),X %*% sqrt(C2),X %*% sqrt(C3)))$X.new#
+      #store #
+      start <- ifelse(i == 1, #
+                      ifelse(j == 1, 1, 3*net_size[i]*(j-1)+1),#
+                      3*(cumsum(net_size)[i-1])*mc_runs + 3*net_size[i]*(j-1)+1)#
+      stop <- start + 3*net_size[i] - 1#
+      df[start:stop,] <- cbind(rep(net_size[i],3*net_size[i]), #network size#
+                               c(rep(1, net_size[i]),rep(2, net_size[i]),rep(3, net_size[i])), #which graph#
+                               rep(ind, 3), #community assignment#
+                               rep(theta.here, 3 * net_size[i]), #theta#
+                               rep(j, 3*length(ind)), #MC run id #
+                               sqrt(net_size[i])*(Lhat[,1] - Zhat[,1]), #Bias#
+                               sqrt(net_size[i])*(Lhat[,2] - Zhat[,2]),#
+                               sqrt(net_size[i])*(Zhat[,1] - Z[,1]), #Centers#
+                               sqrt(net_size[i])*(Zhat[,2] - Z[,2])#
+      )#
+    }#
+  }#
+  return(df)#
+}#
+#
+#replicate simulate 50 times#
+mc_runs <- 50 #number of runs within the model#
+mc_runs2 <- 100 #Different models to consdier#
+net_size <- 300 #network sizes#
+#
+#set up storage data frame#
+main.df <- matrix(NA, nrow = 3*sum(net_size)*mc_runs*mc_runs2, ncol = 10)#
+start <- 1 #
+stop <- 3*sum(net_size)*mc_runs#
+#
+set.seed(1985)#
+for(k in 1:mc_runs2){#
+  main.df[start:stop,] <- cbind(simulate(net_size, mc_runs), rep(k, 3*sum(net_size)*mc_runs))#
+  print(k)#
+  start <- stop + 1#
+  stop <- (k+1) * 3*sum(net_size)*mc_runs#
+}#
+#
+#----------------------------------------#
+##
+#         Data cleaning#
+##
+#----------------------------------------#
+#
+#raw dataframe#
+plotting_df <- data.frame(Network.Size = main.df[,1], #
+                          Graph = main.df[,2],#
+                          Community = as.factor(main.df[,3]),#
+                          Theta = main.df[,4],#
+                          MC_Replicant1 = main.df[,5],#
+                          Dim1 = as.numeric(main.df[,6]), #
+                          Dim2 = as.numeric(main.df[,7]),#
+                          Dim3 = as.numeric(main.df[,8]),#
+                          Dim4 = as.numeric(main.df[,9]),#
+                          MC_Replicant2 = main.df[,10]#
+)#
+#
+write.csv(plotting_df, "plotting_df.csv")#
+#
+#collapse across MC Replicant1#
+df1 <- plotting_df %>% #
+  group_by(Network.Size, Graph, Community, MC_Replicant2) %>%#
+  summarize(Dim1 = mean(Dim1), #
+            Dim2 = mean(Dim2),#
+            Dim3 = mean(Dim3), #
+            Dim4 = mean(Dim4),#
+            Theta = mean(Theta))#
+#
+df1.1 <- df1[,c(1:6,9)]; colnames(df1.1) <- c("Network.Size","Graph","Community","MC_Replicant2","Dim1","Dim2","Theta")#
+df1.2 <- df1[,c(1:4,7:9)];colnames(df1.2) <- c("Network.Size","Graph","Community","MC_Replicant2","Dim1","Dim2","Theta")#
+#
+df2 <- rbind(df1.1, df1.2)#
+df2$Type <- as.factor(c(rep("Atil-Phat", nrow(df1.1)),rep("Phat-Ptil", nrow(df1.2))))#
+df2$id <- rep(1:nrow(df1.1),2)#
+#
+p1 <- ggplot(df2, aes(Dim1, Dim2, col =Type))+#
+  geom_point(alpha = .5) +#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "Raw Estimates")#
+p2 <- ggplot(df2, aes(Theta, Dim1, col = as.factor(Type),#
+       group = id))+#
+  geom_point(alpha = .5) + #
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "X-axis")#
+p3 <- ggplot(df2, aes(Theta, Dim2, col = as.factor(Type),#
+                     group = id))+#
+  geom_point(alpha = .5) + #
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "Y-axis")#
+p4 <- ggplot(df1, aes(Theta, Dim1 + Dim3))+#
+  geom_point(alpha = .5) + #
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "X-axis Difference")#
+#
+p5 <- ggplot(df1, aes(Theta, Dim2 + Dim4))+#
+  geom_point(alpha = .5) + #
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "Y-axis Difference")#
+#
+#save figures#
+ggsave("Raw-Estimates.pdf",p1,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")#
+#
+ggsave("Theta-X.pdf",p2,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")#
+#
+ggsave("Theta-Y.pdf",p3,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")#
+#
+ggsave("Theta-Diff-X.pdf",p4,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")#
+#
+ggsave("Theta-Diff-Y.pdf",p5,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")
+library(dplry)
+library(dplyr)
+library(ggplot2)
+df1 <- plotting_df %>% #
+  group_by(Network.Size, Graph, Community, MC_Replicant2) %>%#
+  summarize(Dim1 = mean(Dim1), #
+            Dim2 = mean(Dim2),#
+            Dim3 = mean(Dim3), #
+            Dim4 = mean(Dim4),#
+            Theta = mean(Theta))
+df1.1 <- df1[,c(1:6,9)]; colnames(df1.1) <- c("Network.Size","Graph","Community","MC_Replicant2","Dim1","Dim2","Theta")#
+df1.2 <- df1[,c(1:4,7:9)];colnames(df1.2) <- c("Network.Size","Graph","Community","MC_Replicant2","Dim1","Dim2","Theta")#
+#
+df2 <- rbind(df1.1, df1.2)#
+df2$Type <- as.factor(c(rep("Atil-Phat", nrow(df1.1)),rep("Phat-Ptil", nrow(df1.2))))#
+df2$id <- rep(1:nrow(df1.1),2)#
+#
+p1 <- ggplot(df2, aes(Dim1, Dim2, col =Type))+#
+  geom_point(alpha = .5) +#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "Raw Estimates")#
+p2 <- ggplot(df2, aes(Theta, Dim1, col = as.factor(Type),#
+       group = id))+#
+  geom_point(alpha = .5) + #
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "X-axis")#
+p3 <- ggplot(df2, aes(Theta, Dim2, col = as.factor(Type),#
+                     group = id))+#
+  geom_point(alpha = .5) + #
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "Y-axis")#
+p4 <- ggplot(df1, aes(Theta, Dim1 + Dim3))+#
+  geom_point(alpha = .5) + #
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "X-axis Difference")#
+#
+p5 <- ggplot(df1, aes(Theta, Dim2 + Dim4))+#
+  geom_point(alpha = .5) + #
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  labs(title = "Y-axis Difference")#
+#
+#save figures#
+ggsave("Raw-Estimates.pdf",p1,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")#
+#
+ggsave("Theta-X.pdf",p2,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")#
+#
+ggsave("Theta-Y.pdf",p3,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")#
+#
+ggsave("Theta-Diff-X.pdf",p4,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")#
+#
+ggsave("Theta-Diff-Y.pdf",p5,#
+       height = 6,#
+       width = 6,#
+       path = "~/Desktop/Phat-Sims/figures")
+p1
+p2
+p3
+p4
+p5
+p1
+?mediat
+library(mediat)
+library(mediate)
+library(Mediate)
+library(mediation)
+?mediate
+library(expm )
+J <- matrix(c(0,1,-1,0), nrow = 2)
+J
+J %^% 2
+J %^% 3
+J %^% 4
+curve(arcsin(sqrt(log(x)/x)), from = 1, to = 1--)
+curve(arcsin(sqrt(log(x)/x)), from = 1, to = 100)
+curve(asin(sqrt(log(x)/x)), from = 1, to = 100)
+curve(sqrt(log(x)/x), from = 1, to = 100)
+curve(log(x)*sqrt(1/x), from = 1, to = 100, add = TRUE)
+seq(0, 2, by = .1)
+length(seq(0, 2, by = .1))
+(99/100)^{203} * (1/ ( 1- 99/100))
+curve(1/sqrt(x), from x = .01, to x = 100)
+curve(1/sqrt(x), from = .01, to  = 100)
+library(ggplot2)#
+library(MASS)#
+#
+# Generate gamma rvs#
+#
+x <- rgamma(100000, shape = 241, rate = 21/2)#
+#
+den <- density(x)#
+#
+dat <- data.frame(x = den$x, y = den$y)#
+#
+# Plot density as points#
+#
+ggplot(data = dat, aes(x = x, y = y)) + #
+  geom_point(size = 3)
+head(dat)
+quantiles(x, probs = c(.025, .975))
+quantile(x, probs = c(.025, .975))
+library(igraph)
+#sampling functions#
+getP <- function(X) tcrossprod(X)#
+sampBern <- function(p) rbinom(1,1,p) #
+sampP <- function(P){#
+  A <- apply(P, c(1,2), sampBern)#
+  A[lower.tri(A)] <- t(A)[lower.tri(A)]#
+  diag(A) <- 0#
+  A#
+} #
+#
+#estimating functions#
+H <- function(g,m){#
+  ones <- rep(1, m)#
+  e <- diag(m)[,g]#
+  .5 * (tcrossprod(ones,e) + tcrossprod(e,ones))#
+}#
+H1 <- function(x){#
+  ones <- rep(1, length(x))#
+  .5 * (tcrossprod(ones,x) + tcrossprod(x,ones))#
+}#
+make_omni <- function(A,B,C){#
+  kronecker(H(1,2), A) + kronecker(H(2,2), B)#
+}#
+norm2 <- function(u){#
+  sqrt(sum(u^2))#
+} #
+normalize.cols<- function(A){#
+  norm.vec <- function(u) u/norm2(u) #define vector normalization func.#
+  if(ncol(A) == 1) return(norm.vec(A[,1]))#
+  apply(A, 2, norm.vec) # vectorize #
+} #
+ase <- function(A,d){#
+  E <- eigen(A)#
+  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))#
+  S <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)#
+  U %*% S#
+}#
+#
+#clustering functions#
+get_mc <- function(x, true){#
+  n <- length(x)#
+  mc1 <- sum(abs(x - samp))#
+  mc2 <- sum(abs(ifelse(x == 1, 2, 1) - samp))#
+  return(min(c(mc1/n, mc2/n)))#
+}#
+#
+#mahalanobis distances#
+get_mahalanobis <- function(X, Y){#
+  #get sample sizes#
+  nx <- nrow(X)#
+  ny <- nrow(Y)#
+  #get covariances#
+  CX <- cov(X)#
+  CY <- cov(Y)#
+  #pool covariances#
+  C <- ((nx - 1)*CX + (ny - 1)*CY)/(nx + ny -2)#
+  #get column means#
+  xbar <- colMeans(X)#
+  ybar <- colMeans(Y)#
+  #return distance#
+  return(mahalanobis(xbar - ybar, center = FALSE, C, inverted = TRUE))#
+  #return average distance#
+  #return(norm2(xbar - ybar))#
+  #return average Mah distance#
+  #return(0.5 *(mahalanobis(xbar - ybar, center = FALSE, CX, inverted = TRUE) + mahalanobis(xbar - ybar, center = FALSE, CY, inverted = TRUE)))#
+  #take cholesky decomposition#
+  #Rx <- chol(CX)#
+  #Ry <- chol(CY)#
+  #standarize variances#
+  #xstan <- backsolve(Rx, xbar)#
+  #ystan <- backsolve(Ry, ybar)#
+  #get return distance#
+  #norm2(xstan - ystan)#
+}
+#set up blocks
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+pi <- .5#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- pi * tcrossprod(x1) + (1 - pi)*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, -t + 1))#
+}#
+#
+#-----------------------------------------#
+##
+#    Set up Bias matrices #
+##
+#-----------------------------------------#
+#
+S <- function(C){#
+  #bias matrices#
+  v1 <- c(1, C[1,1])#
+  v2 <- c(1, C[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- diag(c(a1[1], a2[1]))#
+  S2 <- diag(c(a1[2], a2[2]))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Set up Community #
+#     Detection Simulation#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- c(25, 50, 75, 100, 150, 200) #network sizes #
+net_size <- round(10^(seq(log(25, base = 10), log(1000, base = 10), length.out = 5))) #network sizes #
+#
+t <- seq(0, 1, length.out = 11)[-11]#
+mc_runs <- 20 #number of iterations
+net_size <- 500
+here <- 1
+df_list <- list()
+set.seed(1985)
+t
+t <- c(0, .3, .6, .9)
+set.seed(1985)
+for(i in 1:length(net_size)){
+i <-
+1
+j <- 1
+k <- 1
+samp <- sample(1:2, net_size[i], replace = TRUE)
+X <- L[samp, ]
+X
+plot(X)
+tmp <- S(C(t[j]))
+S1 <- tmp[[1]]
+S2 <- tmp[[2]]
+P1 <- tcrossprod(X)
+P2 <- tcrossprod(X %*% C(t[j]), X)
+A1 <- sampP(P1)
+A2 <- sampP(P2)
+X_hat <- ase(A1, 2)
+Y_hat <- ase(A2, 2)
+Y_hat <- ase(A2, 2); plot(Y_hat)
+Y_hat <- ase(A2, 2); plot(Y_hat, col = samp)
+t <- seq(0, 1, length.out = 11)[-11]
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2); plot(Y_hat, col = samp)
+j <- 2
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2); plot(Y_hat, col = samp)
+j <- 3
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2); plot(Y_hat, col = samp)
+j <- 4
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2); plot(Y_hat, col = samp)
+j <- 5
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2); plot(Y_hat, col = samp)
+j <- 6
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2); plot(Y_hat, col = samp)
+get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+samp
+Y_hat <- ase(A2, 2)#
+      plot(Y_hat, col = samp);get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+j <- 1
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2)#
+      plot(Y_hat, col = samp);get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+j <- 2
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2)#
+      plot(Y_hat, col = samp);get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+plot(Y_hat, col = samp)
+?cov
+get_mahalanobis <- function(X, Y){
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2)#
+      plot(Y_hat, col = samp);get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+}
+get_mahalanobis <- function(X, Y){#
+  #get sample sizes#
+  nx <- nrow(X)#
+  ny <- nrow(Y)#
+  #get covariances#
+  CX <- cov(X)#
+  CY <- cov(Y)#
+  CX <- cov(t(X))#
+  CY <- cov(t(Y))#
+  #pool covariances#
+  C <- ((nx - 1)*CX + (ny - 1)*CY)/(nx + ny -2)#
+  #get column means#
+  xbar <- colMeans(X)#
+  ybar <- colMeans(Y)#
+  #return distance#
+  return(mahalanobis(xbar - ybar, center = FALSE, C, inverted = TRUE))#
+  #return average distance#
+  #return(norm2(xbar - ybar))#
+  #return average Mah distance#
+  #return(0.5 *(mahalanobis(xbar - ybar, center = FALSE, CX, inverted = TRUE) + mahalanobis(xbar - ybar, center = FALSE, CY, inverted = TRUE)))#
+  #take cholesky decomposition#
+  #Rx <- chol(CX)#
+  #Ry <- chol(CY)#
+  #standarize variances#
+  #xstan <- backsolve(Rx, xbar)#
+  #ystan <- backsolve(Ry, ybar)#
+  #get return distance#
+  #norm2(xstan - ystan)#
+}
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2)#
+      plot(Y_hat, col = samp);get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+get_mahalanobis <- function(X, Y){#
+  #get sample sizes#
+  nx <- nrow(X)#
+  ny <- nrow(Y)#
+  #get covariances#
+  CX <- cov(X)#
+  CY <- cov(Y)#
+  #pool covariances#
+  C <- ((nx - 1)*CX + (ny - 1)*CY)/(nx + ny -2)#
+  #get column means#
+  xbar <- colMeans(X)#
+  ybar <- colMeans(Y)#
+  #return distance#
+  return(mahalanobis(xbar - ybar, center = FALSE, C, inverted = TRUE))#
+  #return average distance#
+  #return(norm2(xbar - ybar))#
+  #return average Mah distance#
+  #return(0.5 *(mahalanobis(xbar - ybar, center = FALSE, CX, inverted = TRUE) + mahalanobis(xbar - ybar, center = FALSE, CY, inverted = TRUE)))#
+  #take cholesky decomposition#
+  #Rx <- chol(CX)#
+  #Ry <- chol(CY)#
+  #standarize variances#
+  #xstan <- backsolve(Rx, xbar)#
+  #ystan <- backsolve(Ry, ybar)#
+  #get return distance#
+  #norm2(xstan - ystan)#
+}
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2)#
+      plot(Y_hat, col = samp);get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+?chol
+plot_normalize <- function(X, Y){
+#plot projected points#
+plot_normalize <- function(X, Y){#
+  #get sample sizes#
+  nx <- nrow(X)#
+  ny <- nrow(Y)#
+  #get covariances#
+  CX <- cov(X)#
+  CY <- cov(Y)#
+  #pool covariances#
+  C <- ((nx - 1)*CX + (ny - 1)*CY)/(nx + ny -2)#
+  #get matrix square root#
+  proj <- chol(solve(C))#
+  #return the projected plots#
+  return(plot(rbind(proj %*% X, proj %*% Y)))#
+  #return distance#
+  return(plot(proj))#
+}
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2)#
+      plot_normalize(Y_hat, col = samp);get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2)#
+      plot_normalize(Y_hat);get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+#set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2)#
+      plot_normalize(X_hat, Y_hat);get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])
+plotdf <- read.csv("plotdf.csv", header = TRUE)[,-1]
+plotdf <- read.csv("~/Desktop/paper_figures/classification_simulation/data/plotdf.csv", header = TRUE)[,-1]
+head(plotdf)
+library(ggplot2)
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point()+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  #geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+  #                ymax=MC_Rate + mc_se),#
+  #            alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+library(dplyr)
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point()+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  #geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+  #                ymax=MC_Rate + mc_se),#
+  #            alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point()+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  #geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+  #                ymax=MC_Rate + mc_se),#
+  #            alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()#
+#comments: #
+##
+#       1. Network size increases, MC rate decreases#
+#       2. Omnibar and Abar looks like theyre clustered (probably can prove this)#
+#       3. Omni2 reflects changes in A2 but this lets increased performance of Omni1#
+#       4. Cases where Omni is better than Omnibar and Abar but Omnibar and Abar#
+#           seem to be the most reliable#
+#
+ggsave(filename = "mc_rate_by_net_size.pdf", #
+       width = 6, height =4, #
+       units = "in", #
+       path = "~/Desktop/paper_figures/classification_simulation/figures/")
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  #geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+  #                ymax=MC_Rate + mc_se),#
+  #            alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()#
+#comments: #
+##
+#       1. Network size increases, MC rate decreases#
+#       2. Omnibar and Abar looks like theyre clustered (probably can prove this)#
+#       3. Omni2 reflects changes in A2 but this lets increased performance of Omni1#
+#       4. Cases where Omni is better than Omnibar and Abar but Omnibar and Abar#
+#           seem to be the most reliable
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  #geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+  #                ymax=MC_Rate + mc_se),#
+  #            alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()#
+#comments: #
+##
+#       1. Network size increases, MC rate decreases#
+#       2. Omnibar and Abar looks like theyre clustered (probably can prove this)#
+#       3. Omni2 reflects changes in A2 but this lets increased performance of Omni1#
+#       4. Cases where Omni is better than Omnibar and Abar but Omnibar and Abar#
+#           seem to be the most reliable#
+#
+ggsave(filename = "mc_rate_by_net_size.pdf", #
+       width = 6, height =4, #
+       units = "in", #
+       path = "~/Desktop/paper_figures/classification_simulation/figures/")
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point()+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=Dist - dist_se,#
+                  ymax=Dist + dist_se),#
+              alpha=0.2, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=Dist - dist_se,#
+                  ymax=Dist + dist_se),#
+              alpha=0.2, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=Dist - dist_se,#
+                  ymax=Dist + dist_se),#
+              alpha=0.2, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()#
+#comments: #
+##
+#       1. t increase (more heterogeneous) distances decrease and clustering gets harder#
+#       2. Omni has the closests centroids in some cases#
+#       3. Omnibar looks to always have the furthest centers#
+#
+ggsave(filename = "distance_by_t.pdf", #
+       width = 6, height =4, #
+       units = "in", #
+       path = "../figures")
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=Dist - dist_se,#
+                  ymax=Dist + dist_se),#
+              alpha=0.2, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()#
+#comments: #
+##
+#       1. t increase (more heterogeneous) distances decrease and clustering gets harder#
+#       2. Omni has the closests centroids in some cases#
+#       3. Omnibar looks to always have the furthest centers#
+#
+ggsave(filename = "distance_by_t.pdf", #
+       width = 6, height =4, #
+       units = "in", #
+       path = "~/Desktop/paper_figures/classification_simulation/figures/")
+head(plotdf)
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=Dist - dist_se,#
+                  ymax=Dist + dist_se),#
+              alpha=0.2, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  #geom_ribbon(aes(ymin=Dist - dist_se,#
+  #                ymax=Dist + dist_se),#
+  #            alpha=0.2, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+head(plotdf)
+table(plotdf$net_size)
+ggplot(plotdf %>% filter(net_size == 90), aes(t, Dist, col = Method))+
+geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=Dist - dist_se,#
+                  ymax=Dist + dist_se),#
+              alpha=0.2, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+head(plotdf)
+tail(df)
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=Dist - dist_se,#
+                  ymax=Dist + dist_se),#
+              alpha=0.2, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+                  ymax=MC_Rate + mc_se),#
+              alpha=0.1, linetype = 0)
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+                  ymax=MC_Rate + mc_se),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+                  ymax=MC_Rate + mc_se),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+                  ymax=MC_Rate + mc_se),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+                  ymax=MC_Rate + mc_se),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_sqrt()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+                  ymax=MC_Rate + mc_se),#
+              alpha=0.1, linetype = 0)+#
+#  scale_x_sqrt()+#
+#  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+scale_x_log10()+
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+                  ymax=MC_Rate + mc_se),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+#  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se,#
+                  ymax=MC_Rate + mc_se),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+#  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+                  ymax=MC_Rate + mc_se/19.6),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+#  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+                  ymax=MC_Rate + mc_se/1.96),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+ # scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph, scales = "free")+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+                  ymax=MC_Rate + mc_se/1.96),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+ # scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph, scales = "free_y")+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+                  ymax=MC_Rate + mc_se/1.96),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+ # scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_wrap(~Graph, scales = "free_y")+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+                  ymax=MC_Rate + mc_se/1.96),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+ # scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+                  ymax=MC_Rate + mc_se/1.96),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+ # scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+                  ymax=MC_Rate + mc_se/1.96),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_sqrt()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+                  ymax=MC_Rate + mc_se/1.96),#
+              alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  #geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+  #                ymax=MC_Rate + mc_se/1.96),#
+  #            alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1, position = pd)+#
+  #geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+  #                ymax=MC_Rate + mc_se/1.96),#
+  #            alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1)+#
+  #geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+  #                ymax=MC_Rate + mc_se/1.96),#
+  #            alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1)+#
+  #geom_ribbon(aes(ymin=MC_Rate - mc_se/1.96,#
+  #                ymax=MC_Rate + mc_se/1.96),#
+  #            alpha=0.1, linetype = 0)+#
+  scale_x_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()#
+#comments: #
+##
+#       1. Network size increases, MC rate decreases#
+#       2. Omnibar and Abar looks like theyre clustered (probably can prove this)#
+#       3. Omni2 reflects changes in A2 but this lets increased performance of Omni1#
+#       4. Cases where Omni is better than Omnibar and Abar but Omnibar and Abar#
+#           seem to be the most reliable#
+#
+ggsave(filename = "mc_rate_by_net_size.pdf", #
+       width = 6, height =4, #
+       units = "in", #
+       path = "~/Desktop/paper_figures/classification_simulation/figures/")
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_ribbon(aes(ymin=Dist - dist_se,#
+                  ymax=Dist + dist_se),#
+              alpha=0.2, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+head(plotdf)
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(type = Graph)+#
+  #facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(type = vars(Graph))+#
+  #facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(type = vars(Graph))+#
+  #facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(linetype = vars(Graph))+#
+  #facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  #facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  #facet_grid(~Graph)+#
+  #geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  #geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(lineype = Graph))+#
+  geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(lineype = Graph))+#
+  #geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  #geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se/1.96,ymax=MC_Rate + mc_se/1.96), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  #geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se,ymax=MC_Rate + mc_se), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  #geom_line(aes(linetype = Graph))+#
+  geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se,ymax=MC_Rate + mc_se), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  #geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .2, alpha = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .05)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .1)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .05)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  #geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .05)+#
+  geom_ribbon(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), alpha = .1, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .05)+#
+  #geom_ribbon(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), alpha = .1, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggsave(filename = "distance_by_t.pdf", #
+       width = 6, height =4, #
+       units = "in", #
+       path = "~/Desktop/paper_figures/classification_simulation/figures/")
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+ # geom_line(aes(linetype = Graph))+#
+  geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .05)+#
+  #geom_ribbon(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), alpha = .1, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  #geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .05)+#
+  #geom_ribbon(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), alpha = .1, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggsave(filename = "distance_by_t.pdf", #
+       width = 6, height =4, #
+       units = "in", #
+       path = "~/Desktop/paper_figures/classification_simulation/figures/")
+ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+#
+  geom_point(alpha = .5)+#
+  geom_line(aes(linetype = Graph))+#
+  #geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .05)+#
+  #geom_ribbon(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), alpha = .1, linetype = 0)+#
+  labs(x = "t", #
+       y = "Distance between Centroids")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  #geom_line(aes(linetype = Graph))+#
+  geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se,ymax=MC_Rate + mc_se), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+#--------------------------------------#
+##
+#       Classification Simulations#
+##
+#--------------------------------------#
+#
+#sampling functions#
+getP <- function(X) tcrossprod(X)#
+sampBern <- function(p) rbinom(1,1,p) #
+sampP <- function(P){#
+  A <- apply(P, c(1,2), sampBern)#
+  A[lower.tri(A)] <- t(A)[lower.tri(A)]#
+  diag(A) <- 0#
+  A#
+} #
+#
+#estimating functions#
+H <- function(g,m){#
+  ones <- rep(1, m)#
+  e <- diag(m)[,g]#
+  .5 * (tcrossprod(ones,e) + tcrossprod(e,ones))#
+}#
+H1 <- function(x){#
+  ones <- rep(1, length(x))#
+  .5 * (tcrossprod(ones,x) + tcrossprod(x,ones))#
+}#
+make_omni <- function(A,B,C){#
+  kronecker(H(1,2), A) + kronecker(H(2,2), B)#
+}#
+make_omni2 <- function(mats){#
+  m <- length(mats)#
+  Reduce("+", lapply(1:m, function(x) kronecker(H(x,m), mats[[x]])))#
+}#
+norm2 <- function(u){#
+  sqrt(sum(u^2))#
+} #
+normalize.cols<- function(A){#
+  norm.vec <- function(u) u/norm2(u) #define vector normalization func.#
+  if(ncol(A) == 1) return(norm.vec(A[,1]))#
+  apply(A, 2, norm.vec) # vectorize #
+} #
+ase <- function(A,d){#
+  E <- eigen(A)#
+  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))#
+  S <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)#
+  U %*% S#
+}#
+#
+#clustering functions#
+get_mc <- function(x, true){#
+  n <- length(x)#
+  mc1 <- sum(abs(x - samp))#
+  mc2 <- sum(abs(ifelse(x == 1, 2, 1) - samp))#
+  return(min(c(mc1/n, mc2/n)))#
+}#
+#
+#mahalanobis distances#
+get_mahalanobis <- function(X, Y){#
+  #get sample sizes#
+  nx <- nrow(X)#
+  ny <- nrow(Y)#
+  #get covariances#
+  CX <- cov(X)#
+  CY <- cov(Y)#
+  #pool covariances#
+  Cpool <- ((nx - 1)*CX + (ny - 1)*CY)/(nx + ny -2)#
+  #get column means#
+  xbar <- colMeans(X)#
+  ybar <- colMeans(Y)#
+  #calcualte R^{-T}(x - y)#
+  Rc <- chol(Cpool)#
+  fact <- forwardsolve(t(Rc), xbar - ybar)#
+  #return distance#
+  norm2(fact)#
+  #return average distance#
+  #return(norm2(xbar - ybar))#
+  #return average Mah distance#
+  #return(0.5 *(mahalanobis(xbar - ybar, center = FALSE, CX, inverted = TRUE) + mahalanobis(xbar - ybar, center = FALSE, CY, inverted = TRUE)))#
+  #take cholesky decomposition#
+  #Rx <- chol(CX)#
+  #Ry <- chol(CY)#
+  #standarize variances#
+  #xstan <- backsolve(Rx, xbar)#
+  #ystan <- backsolve(Ry, ybar)#
+  #get return distance#
+  #norm2(xstan - ystan)#
+}#
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+pi <- .5#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- pi * tcrossprod(x1) + (1 - pi)*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, -t + 1))#
+}#
+#
+#-----------------------------------------#
+##
+#    Set up Bias matrices #
+##
+#-----------------------------------------#
+#
+S <- function(C){#
+  #bias matrices#
+  v1 <- c(1, C[1,1])#
+  v2 <- c(1, C[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- diag(c(a1[1], a2[1]))#
+  S2 <- diag(c(a1[2], a2[2]))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Set up Community #
+#     Detection Simulation#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- c(25, 50, 75, 100, 150, 200) #network sizes #
+net_size <- round(10^(seq(log(25, base = 10), log(250, base = 10), length.out = 10))) #network sizes #
+#
+t <- seq(0, 1, length.out = 11)[-11]#
+mc_runs <- 200 #number of iterations#
+#
+#set up storage#
+here <- 1#
+df_list <- list()#
+#
+#set seed #
+set.seed(1985)#
+#
+for(i in 1:length(net_size)){#
+  for(j in 1:length(t)){#
+    #iterate over mc_runs#
+    for(k in 1:mc_runs){#
+    #sample rows of X#
+    samp <- sample(1:2, net_size[i], replace = TRUE) #
+    X <- L[samp, ]#
+    #Get bias scaling matrices #
+    tmp <- S(C(t[j]))#
+    S1 <- tmp[[1]]#
+    S2 <- tmp[[2]]#
+    #set up P matrices#
+    P1 <- tcrossprod(X)#
+    P2 <- tcrossprod(X %*% C(t[j]), X)#
+      #sample A1 and A2 #
+      A1 <- sampP(P1)#
+      A2 <- sampP(P2)#
+      #----------------------#
+      #   ASE Clustering#
+      #----------------------#
+      #embedd individually #
+      X_hat <- ase(A1, 2)#
+      Y_hat <- ase(A2, 2)#
+      #run k means on rows#
+      groups1 <- kmeans(X_hat, centers = 2)$cluster#
+      groups2 <- kmeans(Y_hat, centers = 2)$cluster#
+      #get misclassification rates#
+      ase_mc1 <- get_mc(groups1, samp)#
+      ase_mc2 <- get_mc(groups2, samp)#
+      #get mahalanobis distances#
+      ase_graph1_dist <- get_mahalanobis(X_hat[samp == 1,], X_hat[samp == 2,])#
+      ase_graph2_dist <- get_mahalanobis(Y_hat[samp == 1,], Y_hat[samp == 2,])#
+      #----------------------#
+      #   Abar Clustering#
+      #----------------------#
+      #embedd A bar#
+      X_hat <- ase((A1 + A2)/2, 2)#
+      #run k means on rows#
+      groups1 <- kmeans(X_hat, centers = 2)$cluster#
+      #get misclassification rates#
+      abar_mc1 <- abar_mc2 <- get_mc(groups1, samp)#
+      #get mahalanobis distances#
+      abar_graph1_dist <- abar_graph2_dist <- get_mahalanobis(X_hat[samp == 1,], X_hat[samp == 2,])#
+      #----------------------#
+      #   Omni Clustering#
+      #----------------------#
+      #construct Omni + embed#
+      Atil <- make_omni(A1, A2)#
+      Lhat <- ase(Atil, 2)#
+      #run k means on rows#
+      groups1 <- kmeans(Lhat[1:net_size[i],], centers = 2)$cluster#
+      groups2 <- kmeans(Lhat[(net_size[i]+1):(2*net_size[i]), ], centers = 2)$cluster#
+      #get misclassification rates#
+      omni_mc1 <- get_mc(groups1, samp)#
+      omni_mc2 <- get_mc(groups2, samp)#
+      #get mahalanobis distances#
+      omni_graph1_dist <- get_mahalanobis(Lhat[1:net_size[i],][samp == 1,], Lhat[1:net_size[i],][samp == 2,])#
+      omni_graph2_dist <- get_mahalanobis(Lhat[(net_size[i]+1):(2*net_size[i]), ][samp == 1,], #
+                                          Lhat[(net_size[i]+1):(2*net_size[i]), ][samp == 2,])#
+      #----------------------#
+      #   Omni bar Clustering#
+      #----------------------#
+      #get average#
+      Lmean <- .5*(Lhat[1:net_size[i],] + Lhat[(net_size[i]+1):(2*net_size[i]), ])#
+      #run k means on rows#
+      groups <- kmeans(Lmean, centers = 2)$cluster#
+      #get misclassification rates#
+      omnibar_mc1 <- omnibar_mc2 <- get_mc(groups, samp)#
+      #get mahalanobis distances#
+      omnibar_graph1_dist <- omnibar_graph2_dist <- get_mahalanobis(Lmean[samp == 1,], Lmean[samp == 2,])#
+      #----------------------#
+      #   Store result#
+      #----------------------#
+      df_list[[here]] <- matrix(c(k, net_size[i], t[j], "ASE", "Graph 1", ase_graph1_dist, ase_mc1,#
+                                  k, net_size[i], t[j], "ASE", "Graph 2", ase_graph2_dist, ase_mc2,#
+                                  k, net_size[i], t[j], "Omni", "Graph 1", omni_graph1_dist, omni_mc1,#
+                                  k, net_size[i], t[j], "Omni", "Graph 2", omni_graph2_dist, omni_mc2,#
+                                  k, net_size[i], t[j], "Abar", "Graph 1", abar_graph1_dist, abar_mc1,#
+                                  k, net_size[i], t[j], "Abar", "Graph 2", abar_graph2_dist, abar_mc2,#
+                                  k, net_size[i], t[j], "Omnibar", "Graph 1", omnibar_graph1_dist, omnibar_mc1,#
+                                  k, net_size[i], t[j], "Omnibar", "Graph 2", omnibar_graph2_dist, omnibar_mc2), #
+                                              nrow = 8, ncol = 7, byrow = TRUE)#
+      #update counter #
+      here <- here + 1#
+    }      #
+  }#
+  print(i)#
+}#
+#
+#----------------------------------------#
+##
+#       Data Cleaning + Storage#
+##
+#----------------------------------------#
+library(dplyr)#
+df <- as.data.frame(do.call("rbind", df_list))#
+#recast variables#
+df[,1] <- as.numeric(as.character(df[,1]))#
+df[,2] <- as.numeric(as.character(df[,2]))#
+df[,3] <- as.numeric(as.character(df[,3]))#
+df[,6] <- as.numeric(as.character(df[,6]))#
+df[,7] <- as.numeric(as.character(df[,7]))#
+#
+#name columns#
+colnames(df) <- c("sim_number","net_size", "t","Method", "Graph","dist","mc_rate")#
+#
+#collapse over number of simulations#
+plotdf <- df %>% #
+  group_by(net_size, t, Method, Graph) %>%#
+  summarize(MC_Rate = mean(mc_rate),#
+            mc_se = sd(mc_rate)/sqrt(n()),#
+            Dist = mean(dist),#
+            dist_se = sqrt(var(dist)/n()), #
+            count = n())#
+#
+#------------------------------#
+#  save data frame#
+#-----------------------------#
+setwd("~/Desktop/paper_figures/classification_simulation/data")#
+write.csv(plotdf, "plotdf.csv")
+plotdf <- read.csv("~/Desktop/paper_figures/classification_simulation/data/plotdf.csv", header = TRUE)[,-1]
+library(ggplot2)
+library(dplyr)
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  #geom_line(aes(linetype = Graph))+#
+  geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se,ymax=MC_Rate + mc_se), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+head(plotdf)
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  #geom_line(aes(linetype = Graph))+#
+  geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se,ymax=MC_Rate + mc_se), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)
+plotdf <- read.csv("~/Desktop/paper_figures/classification_simulation/data/plotdf.csv", header = TRUE)[,-1]
+head(plotdf)
+class(plotdf)
+table(plotdf$t)
+ggplot(plotdf %>% filter(t == .3), aes(net_size, MC_Rate, col = Method))+#
+  geom_point(alpha = .5)+#
+  #geom_line(aes(linetype = Graph))+#
+  geom_line()+facet_grid(~Graph)+#
+  geom_errorbar(aes(ymin=MC_Rate - mc_se,ymax=MC_Rate + mc_se), width = .1)+#
+  scale_x_log10()+#
+  labs(x = expression(paste('log'[10], "(Network Size)")),#
+       y = "Misclassification Rate")+#
+  theme_bw()
+plotdf %>% filter(t == .3)
+plotdf %>% filter(t == .5)
