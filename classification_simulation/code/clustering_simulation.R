@@ -332,5 +332,5 @@ plotdf <- df %>%
 #------------------------------
 #  save data frame
 #-----------------------------
-setwd("~/Desktop/paper_figures/classification_simulation/data")
+setwd("~/Documents/Work/github/BJSE/classification_simulation/data")
 write.csv(plotdf, "plotdf.csv")

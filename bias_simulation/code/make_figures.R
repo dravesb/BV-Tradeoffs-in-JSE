@@ -1,4 +1,4 @@
-plotdf <- read.csv("~/Desktop/paper_figures/bias_simulation/data/plotting_data.csv", header = TRUE)[,-1]
+plotdf <- read.csv("~/Documents/Work/github/BJSE/bias_simulation/data/plotting_data.csv", header = TRUE)[,-1]
 #------------------------------------------------
 #
 #         Cirlce Funtions
@@ -44,7 +44,7 @@ ggplot() +
 ggsave("analytic_bias.jpeg", 
        width = 8, height = 6, units = "in", 
        device = "jpeg", 
-       path = "~/Desktop/paper_figures/bias_simulation/figures/")
+       path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
 ggplot() +
   geom_point(aes(Xhat, Yhat, col = Community), plotdf,
@@ -64,7 +64,7 @@ ggplot() +
 ggsave("observed_bias.jpeg", 
        width = 8, height = 6, units = "in", 
        device = "jpeg", 
-       path = "~/Desktop/paper_figures/bias_simulation/figures/")
+       path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
 #-------------------------------------------------
 #
@@ -85,7 +85,7 @@ ggplot() +
 ggsave("residual_bounds.jpeg", 
        width = 8, height = 6, units = "in", 
        device = "jpeg", 
-       path = "~/Desktop/paper_figures/bias_simulation/figures/")
+       path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
 ggplot() +
   geom_point(aes(RX, RY, col = Community), plotdf,size = .01, alpha = .05) +
@@ -102,6 +102,6 @@ ggplot() +
 ggsave("residuals.jpeg", 
        width = 8, height = 6, units = "in", 
        device = "jpeg", 
-       path = "~/Desktop/paper_figures/bias_simulation/figures/")
+       path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
 

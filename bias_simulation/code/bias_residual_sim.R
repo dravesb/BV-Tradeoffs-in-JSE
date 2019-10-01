@@ -301,5 +301,5 @@ plotdf <- data.frame(Network.Size = as.numeric(df[,1]), #network size
 )
 
 
-write.csv(plotdf, "~/Desktop/paper_figures/bias_simulation/data/plotting_data.csv")
+write.csv(plotdf, "~/Documents/Work/github/BJSE/bias_simulation/data/plotting_data.csv")
 

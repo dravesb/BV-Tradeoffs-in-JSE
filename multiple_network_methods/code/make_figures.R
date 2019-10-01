@@ -15,7 +15,7 @@ library(reshape2)
 #     format data
 #-----------------------------
 
-df <- as.data.frame(read.csv("~/Desktop/paper_figures/multiple_network_methods/data/data.csv")[,-1])
+df <- as.data.frame(read.csv("~/Documents/Work/github/BJSE/multiple_network_methods/data/data.csv")[,-1])
 
 #group by iteration & method
 df <- df %>% melt(id.vars = 1:3)  %>% 
@@ -46,4 +46,4 @@ ggplot(df, aes(t, MC_Rate, col = Method)) +
 ggsave("multiple_methods_mc_comp.jpeg",
        width = 5, height = 4, units = "in", 
        device = "jpeg", 
-       path = "~/Desktop/paper_figures/multiple_network_methods/figures/")
+       path = "~/Documents/Work/github/BJSE/multiple_network_methods/figures/")

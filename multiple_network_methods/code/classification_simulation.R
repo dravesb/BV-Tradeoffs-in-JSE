@@ -17,10 +17,10 @@ library(matlib)
 library(irlba)
 
 #source nesseary functions
-source("~/Desktop/paper_figures/multiple_network_methods/code/je_classification.R")
-source("~/Desktop/paper_figures/multiple_network_methods/code/mase_classification.R")
-source("~/Desktop/paper_figures/multiple_network_methods/code/omni_classification.R")
-source("~/Desktop/paper_figures/multiple_network_methods/code/mrdpg_classification.R")
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/je_classification.R")
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/mase_classification.R")
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/omni_classification.R")
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/mrdpg_classification.R")
 
 #-----------------------------
 #     Set up Model 
@@ -142,7 +142,7 @@ for(l in 1:length(n)){#loop over n
 #     write out simulation
 #-----------------------------
 
-write.csv(df, "~/Desktop/paper_figures/multiple_network_methods/data/data.csv")
+write.csv(df, "~/Documents/Work/github/BJSE/multiple_network_methods/data/data.csv")
 
 
 

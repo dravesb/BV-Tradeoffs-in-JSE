@@ -335,7 +335,7 @@ plotdf <- as.data.frame(df) %>%
   summarize(average_mse = mean(value),
             sd = sqrt(average_mse*(1 - average_mse)/n()))
 
-setwd("~/Desktop/paper_figures/two_dim_BV_tradeoff/data/")
+setwd("~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/data/")
 #write.csv(plotdf, "plotdf.csv")
 plotdf <- read.csv("plotdf.csv")[,-1]
 
@@ -357,7 +357,7 @@ ggplot(plotdf, aes(t, average_mse, col = Method)) +
 
 ggsave(filename = "2d_mse_median.pdf", 
        width = 8, height =8, 
-       path = "~/Desktop/paper_figures/two_dim_BV_tradeoff/figures/", 
+       path = "~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/figures/", 
        units = "in")
   
 
@@ -377,7 +377,7 @@ ggplot(plotdf %>% filter(Method != "Omnibar"),
 
 ggsave(filename = "2d_mse_3_estimators_median.pdf", 
        width = 6, height = 6, 
-       path = "~/Desktop/paper_figures/two_dim_BV_tradeoff/figures/", 
+       path = "~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/figures/", 
        units = "in")
 
 

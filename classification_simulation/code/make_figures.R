@@ -4,7 +4,7 @@
 #       Plotting figures
 #
 #----------------------------------------
-plotdf <- read.csv("~/Desktop/paper_figures/classification_simulation/data/plotdf.csv", header = TRUE)[,-1]
+plotdf <- read.csv("~/Documents/Work/github/BJSE/classification_simulation/data/plotdf.csv", header = TRUE)[,-1]
 
 library(ggplot2)
 library(dplyr)
@@ -36,7 +36,7 @@ ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+
 ggsave(filename = "mc_rate_by_net_size.pdf", 
        width = 6, height =4, 
        units = "in", 
-       path = "~/Desktop/paper_figures/classification_simulation/figures/")
+       path = "~/Documents/Work/github/BJSE/classification_simulation/figures/")
 
 #------------------------------
 #  Distance between centers
@@ -63,7 +63,7 @@ ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+
 ggsave(filename = "distance_by_t.pdf", 
        width = 6, height =4, 
        units = "in", 
-       path = "~/Desktop/paper_figures/classification_simulation/figures/")
+       path = "~/Documents/Work/github/BJSE/classification_simulation/figures/")
 
 #------------------------------
 #  MC Rate by Distance

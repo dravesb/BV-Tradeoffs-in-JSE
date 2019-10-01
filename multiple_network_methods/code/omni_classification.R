@@ -5,7 +5,7 @@
 #--------------------------------------
 
 #source basic function
-source("~/Desktop/paper_figures/multiple_network_methods/code/basic_functions.R")
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")
 
 omni_classes <- function(adj_matrices, d, K){
   #create omnibus matrix

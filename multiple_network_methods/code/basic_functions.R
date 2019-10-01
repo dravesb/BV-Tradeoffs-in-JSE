@@ -104,23 +104,5 @@ get_mahalanobis <- function(X, Y){
   #return distance
   norm2(fact)
   
-  #return average distance
-  #return(norm2(xbar - ybar))
-  
-  #return average Mah distance
-  #return(0.5 *(mahalanobis(xbar - ybar, center = FALSE, CX, inverted = TRUE) + mahalanobis(xbar - ybar, center = FALSE, CY, inverted = TRUE)))
-  
-  #take cholesky decomposition
-  #Rx <- chol(CX)
-  #Ry <- chol(CY)
-  
-  
-  #standarize variances
-  #xstan <- backsolve(Rx, xbar)
-  #ystan <- backsolve(Ry, ybar)
-  
-  #get return distance
-  #norm2(xstan - ystan)
-  
 }
 
