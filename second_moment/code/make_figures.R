@@ -134,3 +134,28 @@ library(reshape2)
 
 #read in data
 plotdf <- as.data.frame(read.csv("~/Documents/Work/github/BJSE/second_moment/data/data_Z_minus_LS_CLT.csv")[,-1])
+
+#plot residual term
+ggplot(plotdf, aes(RX, RY, col = t))+
+  geom_point(alpha = .1, size = .5)+
+  facet_grid(rows = vars(Community),
+             cols = vars(Graph))+
+  theme_bw()
+
+#plot clt term
+ggplot(plotdf, 
+       aes(sqrt(Network.Size) * RX, sqrt(Network.Size) * RY, 
+           col = t))+
+  geom_point(alpha = .1, size = .5)+
+  facet_grid(rows = vars(Community),
+             cols = vars(Graph))+
+  labs(x = "x - Residual", y = "y - Residual")+
+  theme_bw()
+
+#plot residual term
+ggplot(plotdf, aes(RX, RY, col = t))+
+  geom_point(alpha = .1, size = .5)+
+  facet_grid(rows = vars(Community),
+             cols = vars(Network.Size))+
+  theme_bw()
+

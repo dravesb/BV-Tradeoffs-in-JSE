@@ -87,9 +87,9 @@ get_rotation <- function(target = X, input = Y){
 #-----------------------------
 
 #set up base parameters 
-net_size <- 200
+net_size <- c(250, 500, 1000)
 t <- c(0,.25,.5,.75,1)#seq(0, 1, length.out = 11)[-11]
-mc_runs <- 100 #number of iterations
+mc_runs <- 10 #number of iterations
 
 
 #set up storage
@@ -125,8 +125,7 @@ for(i in 1:length(net_size)){#iterate over network size
       W <- get_rotation(target = Ls, input = Z)
       
       #Get Main residual Lhat - Ls  
-      R <- Z %*% W - Ls
-      
+      R1 <- Z %*% W - Ls
       
       #store residuals in dataframe
       update <- here + 2*net_size[i] - 1
@@ -135,7 +134,7 @@ for(i in 1:length(net_size)){#iterate over network size
                                 rep(t[j], 2*net_size[i]), # t
                                 c(rep("Graph 1", net_size[i]), rep("Graph 2", net_size[i])), # Graph
                                 rep(samp, 2), # Community assignmentl
-                                R #(ZW - Ls) - (A - P)Ls S^{-1} residual
+                                R1 #(ZW - Ls) - (A - P)Ls S^{-1} residual
       )
       here <- update + 1
     }
