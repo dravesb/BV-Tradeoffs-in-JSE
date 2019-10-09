@@ -1,0 +1,350 @@
+---
+title: "Does_Z_Equal_Ls"
+author: "Benjamin Draves"
+date: "10/9/2019"
+output: html_document
+---
+
+# Analytic Walk Through
+
+Here, we're looking to see if there is a difference between the Adjacency Spectral Embedding (ASE) of $\tilde{\mathbf{P}}$, $\mathbf{Z} = \text{ASE}(\tilde{\mathbf{P}}, d)$ and our own constructed matrix
+\begin{align*}
+\mathbf{L}_S = \begin{bmatrix}
+\mathbf{XS}^{(1)}\\
+\mathbf{XS}^{(2)}\\
+\vdots\\
+\mathbf{XS}^{(m)}
+\end{bmatrix}
+\end{align*}
+We've constructed the scaling matrices $\mathbf{S}^{(g)}$ such that
+\begin{align*}
+\mathbf{L}_S\mathbf{L}_S^T = \sum_{j = 1}^d \mathbf{H}^{+}(\mathbf{v}_j) \otimes \mathbf{X}_{\cdot j }\mathbf{X}_{\cdot j }^T
+\end{align*}
+Where $\mathbf{H}^{+}(\mathbf{v}_j)$ denotes the outer product rank one spectral embedding of $\mathbf{H}(\mathbf{v}_j)$. 
+We have also shown that $\mathbf{L}_S\mathbf{L}_S^T$ is positive definite and that 
+\begin{align*}
+\tilde{\mathbf{P}} =\mathbf{L}_S\mathbf{L}_S^T  - \tilde{\mathbf{L}}_S\tilde{\mathbf{L}}_S^T
+\end{align*}
+Where 
+\begin{align*}
+\tilde{\mathbf{L}}_S\tilde{\mathbf{L}}_S^T = \sum_{j = 1}^d \mathbf{H}^{-}(\mathbf{v}_j) \otimes \mathbf{X}_{\cdot j }\mathbf{X}_{\cdot j }^T
+\end{align*}
+Where $\mathbf{H}^{+}(\mathbf{v}_j)$ denotes the outer product vector perpendicular to the rank 1 adjacency spectral embedding of $\mathbf{H}(\mathbf{v}_j)$.
+Therefore, we see that $\tilde{\mathbf{P}}^{+} = \mathbf{L}_S\mathbf{L}_S^T$ is a positive defininite matrix and $\tilde{\mathbf{P}}^{-} = \tilde{\mathbf{L}}_S\tilde{\mathbf{L}}_S^T$ is positive semidefinite with $\mathbf{\tilde{P}} = \mathbf{\tilde{P}}^{+} - \mathbf{\tilde{P}}^{-}$. 
+From here Horn and Johnson state that 
+\begin{align*}
+\lambda(\mathbf{ZZ}^T) = \lambda(\mathbf{L}_S\mathbf{L}_S^T)
+\end{align*}
+I don't think that's entirely true... Consider a rank $4$ matrix $\mathbf{M}$ with 2 positive eigenvalues and two negative eigenvalues (as with $\tilde{\mathbf{P}}$ when $d = 2$). 
+Then for some $c\in\mathbb{R}_+$ for $\delta = \min_i|\lambda_i(\mathbf{M})|$ we have
+\begin{align*}
+\mathbf{M} = \mathbf{M}^{+} - \mathbf{M}^{-} = (\mathbf{M}^{+} +\lambda\mathbf{I}) -  (\mathbf{M}^{-} + \lambda\mathbf{I})
+\end{align*}
+Then
+\begin{align*}
+&\lambda_{1}(\mathbf{M}^{+}) = \lambda_1\quad \quad &&\lambda_{2}(\mathbf{M}^{+}) = \lambda_2\\
+&\lambda_{1}(\mathbf{M}^{+} + c\mathbf{I}) = \lambda_1 + c\quad \quad &&\lambda_{2}(\mathbf{M}^{+}+c\mathbf{I}) = \lambda_2+c 
+\end{align*}
+Similarly
+\begin{align*}
+&\lambda_{3}(\mathbf{M}^{-}) = |\lambda_3|\quad \quad &&\lambda_{4}(\mathbf{M}^{-}) = |\lambda_4|\\
+&\lambda_{3}(\mathbf{M}^{-} + c\mathbf{I}) = |\lambda_3| + c\quad \quad &&\lambda_{4}(\mathbf{M}^{+}+c\mathbf{I}) = |\lambda_4|+c 
+\end{align*}
+
+From this we see that $\mathbf{M}$ can still be factored into a difference of positive definite matrices. 
+But this decomposition is not unique. 
+
+In this example, however, we see that $\mathbf{M}$ was written as a difference between matrices with a larger rank (i.e. rank $n$). 
+I believe the statement is true if you require that the rank of each component be less than or equal to the rank of $\mathbf{M}$ this would be a true statement. 
+
+
+# Eigenvalue Difference
+
+Going back to our main issue, we see that by construction $\mathbf{ZZ}^T$ and $\mathbf{L}_S\mathbf{L}_S^T$ are both rank $d$. 
+Therefore Proposition 4.1.13 should apply (maybe?).
+Let's test it. 
+
+
+First we set up some useful functions. 
+
+```{r}
+#-----------------------------------------
+#
+#    Set up of Useful Functions
+#
+#-----------------------------------------
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")
+library(ggplot2); library(dplyr)
+rotate <- function(target = X, input = Y){
+  tmp <- svd(crossprod(target,input))
+  W <- tcrossprod(tmp$v, tmp$u)
+  return(input %*% W)
+  
+}
+Wtil <- function(left, right, d){
+  U_L <- eigen(left)$vectors[,1:d]
+  U_R <- eigen(left)$vectors[,1:d]
+  W1_Sigma_W2 <- svd(crossprod(U_L, U_R))
+  
+  W_til <- tcrossprod(W1_Sigma_W2$u, W1_Sigma_W2$v)
+  
+}
+get_pd <- function(A, d) tcrossprod(ase(A, d))
+```
+
+Next we set up the classic 2 block SBM and choose a scaling matrix parameterized by $t$ as 
+\begin{align*}
+\mathbf{C}(t) = \begin{bmatrix}
+t + 1 & 0 \\
+0 & 1 - t
+\end{bmatrix}
+\end{align*}
+
+
+```{r}
+#-----------------------------------------
+#
+#    Set up of Base Model
+#
+#-----------------------------------------
+
+#set up blocks
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)
+b_ase <- ase(B, 2)
+
+#get latent positions
+x1 <- b_ase[1,]; x2 <- b_ase[2,]
+
+#set prior probabilities
+pi <- .5
+
+#get rotation (eigenvectors of Delta)
+Delta <- pi * tcrossprod(x1) + (1 - pi)*tcrossprod(x2) 
+R <- eigen(Delta)$vectors
+
+#Apply rotation to x1 and x2
+x1_til <- t(R) %*% x1 
+x2_til <- t(R) %*% x2
+
+#set base latent positions
+L <- rbind(t(x1_til), t(x2_til))
+
+#-----------------------------------------
+#
+#     Set up C values & Scaling Matrices
+#
+#-----------------------------------------
+
+#converges to ER with p = .3 (1,1) --> (2,0)
+C <- function(t){
+  diag(c(t + 1, -t + 1))
+}
+
+
+S <- function(C){
+  #bias matrices
+  v1 <- c(1, C[1,1])
+  v2 <- c(1, C[2,2])
+  
+  #get embeddings
+  a1 <- ase(H1(v1), 1)[,1]
+  a2 <- ase(H1(v2), 1)[,1]  
+  
+  #define scaling matrices
+  S1 <- diag(c(a1[1], a2[1]))
+  S2 <- diag(c(a1[2], a2[2]))
+  
+  #return results
+  return(list(S1, S2))
+}
+```
+
+
+
+
+Next we run a simulation to see if indeed $\lambda(\mathbf{ZZ}^T) = \lambda(\mathbf{L}_S\mathbf{L}_S^T)$. 
+```{r}
+#simulation parameters
+n.t <- 20 
+t <- seq(0, 1, length.out = n.t)
+mc_runs <- 10
+n <- 500
+```
+
+We let $t\in[0,1]$ take on `r n.t` different values. 
+We consider networks of size `r n` and we compare the eigenvalues of interest. 
+We compare this for `r mc_runs` number of iterations. 
+
+
+```{r}
+#-----------------------------------------
+#
+#     Simulate To attain differences
+#
+#-----------------------------------------
+
+#set seed
+set.seed(1985)
+
+
+#data structure
+df <- matrix(NA, ncol = 6, nrow = n.t * mc_runs)
+colnames(df) <- c("Sim_Number", "t", "Com_Balance", "Value_Difference", "Vector_Difference", "Zrot_Difference")
+here <- 1
+
+
+for(i in 1:n.t){
+  for(j in 1:mc_runs){
+  #sample rows of X 
+  samp <- sample(1:2, n, replace = TRUE) 
+  X <- L[samp, ]
+  
+  #get community balance
+  cb <- unname(prop.table(table(samp))[1])
+  
+  #get P matrices
+  P1 <- tcrossprod(X)
+  P2 <- tcrossprod(X, X %*% C(t[i]))
+  
+  #get Z, Ls, and rotate Z 
+  Z <- ase(make_omni(list(P1, P2)), 2)
+  Ls <- rbind(X %*% S(C(t[i]))[[1]], X %*% S(C(t[i]))[[2]])
+  Z.rot <- rotate(target = Ls, input = Z)
+  
+  #calculate differences
+  d1 <- norm2(eigen(tcrossprod(Z), only.values = TRUE)$values -  eigen(tcrossprod(Ls), only.values = TRUE)$values)
+  d2 <- norm(tcrossprod(Z)- tcrossprod(Ls), type = "F")
+  d3 <- norm(Z.rot- Ls, type = "F")
+  
+  #store results
+  df[here, ] <- c(j, t[i], cb, d1, d2, d3)
+  
+  #update pointer
+  here <- here + 1
+  }
+}
+```
+
+Next we visualize the results of this simulation. 
+
+
+```{r}
+plotdf <- as.data.frame(df)
+
+#----------------------
+#eigenvalue difference
+#----------------------
+
+#x = t
+ggplot(plotdf, aes(t, Value_Difference)) + 
+  geom_point(size = .3)+
+  theme_bw()
+
+#x = cb  
+ggplot(plotdf, aes(Com_Balance, Value_Difference)) + 
+  geom_point(size = .3)+
+  theme_bw()
+
+#t against cb
+ggplot(plotdf, aes(Com_Balance, t)) + 
+  geom_point(size = .3)+
+  theme_bw()
+```
+So it looks like the eigenvalues are different. Specifically when $V\neq I$ we see that this equivalence is false...! 
+
+
+# Eigenvector Difference and Z - Ls
+
+```{r}
+#----------------------
+#eigenvector difference
+#----------------------
+
+#x = t
+ggplot(plotdf, aes(t, Vector_Difference)) + 
+  geom_point(size = .3)+
+  theme_bw()
+
+#x = cb  
+ggplot(plotdf, aes(Com_Balance, Vector_Difference)) + 
+  geom_point(size = .3)+
+  theme_bw()
+
+```
+
+```{r}
+#----------------------
+#Z - Ls difference
+#----------------------
+
+#x = t
+ggplot(plotdf, aes(t, Zrot_Difference)) + 
+  geom_point(size = .3)+
+  theme_bw()
+
+#x = cb  
+ggplot(plotdf, aes(Com_Balance, Zrot_Difference)) + 
+  geom_point(size = .3)+
+  theme_bw()
+```
+
+# Average Differences and Z - Ls
+
+```{r}
+plotdf <- as.data.frame(df) %>%
+  group_by(t) %>%
+  summarize(dvalue = mean(Value_Difference),
+            sdvalues = sd(Value_Difference),
+            dvector = mean(Vector_Difference),
+            sdvector = sd(Vector_Difference),
+            drot = mean(Zrot_Difference), 
+            sdrot = sd(Zrot_Difference),
+            com.balance = mean(Com_Balance))
+
+```
+
+
+```{r}
+#values plot
+ggplot(plotdf, aes(t, com.balance)) + 
+  geom_point(size = .3)+
+  theme_bw()+
+  labs(x = "t", y = "Com Balance")
+```
+
+
+```{r}
+
+#values plot
+ggplot(plotdf, aes(t, dvalue)) + 
+  geom_point(size = .3)+
+  theme_bw()+
+    labs(x = "t",y =  "||lambda(ZZ^T) - lambda(LsLs^T)||_2")
+```
+
+
+```{r}
+#vectors plot
+ggplot(plotdf, aes(t, dvector)) + 
+  geom_point(size = .3)+
+  theme_bw()+
+  labs(x = "t", y = "||ZZ^T - LsLs^T||_F")
+```
+
+
+```{r}
+ggplot(plotdf, aes(t, drot)) + 
+  geom_point(size = .3)+
+  theme_bw()+
+  labs(x = "t", y =  "||Z - Ls||_F")
+```
+
+
+
+Conclusion: Even when ``marginalizing out" $t$ is also driving the difference between $\mathbf{Z}$ and $\mathbf{L}_S$. 
+
+
+
+
+
+

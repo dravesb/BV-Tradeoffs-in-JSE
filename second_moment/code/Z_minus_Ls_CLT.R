@@ -87,9 +87,9 @@ get_rotation <- function(target = X, input = Y){
 #-----------------------------
 
 #set up base parameters 
-net_size <- c(250, 500, 1000)
-t <- c(0,.25,.5,.75,1)#seq(0, 1, length.out = 11)[-11]
-mc_runs <- 10 #number of iterations
+net_size <- c(250, 500, 1000, 1500, 2500) 
+t <- c(0,.25,.5,.75,1) #seq(0, 1, length.out = 11)[-11]
+mc_runs <- 1 #number of iterations
 
 
 #set up storage
@@ -101,13 +101,18 @@ here <- 1
 #set seed 
 set.seed(1985)
 
-
 for(i in 1:length(net_size)){#iterate over network size
   for(j in 1:length(t)){#iterate over t values
+    com.balance <- round(seq(net_size[i]*(.5 - 1/sqrt(net_size[i])), 
+                             net_size[i]*(.5 + 1/sqrt(net_size[i])),
+                             length.out = mc_runs))
+    
+    
     for(k in 1:mc_runs){#number of MC simulations
       
       #sample group assignments
-      samp <- sample(1:2, size = net_size[i], replace = TRUE)
+      #samp <- sample(1:2, size = net_size[i], replace = TRUE)
+      samp <- c(rep(1, com.balance[1]), rep(2, net_size[i] - com.balance[1]))
       
       #set up X and P1 and P2
       X <- L[samp,]

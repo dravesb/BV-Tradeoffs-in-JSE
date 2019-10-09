@@ -81,11 +81,6 @@ ggsave(filename = "root_n_Z_Ls.pdf",
 #     Preliminaries
 #-----------------------------
 
-#load up necessary packages
-library(ggplot2)
-library(dplyr)
-library(reshape2)
-
 #read in data
 plotdf <- as.data.frame(read.csv("~/Documents/Work/github/BJSE/second_moment/data/power_method_data.csv")[,-1])
 
@@ -127,11 +122,6 @@ ggsave(filename = "root_n_pm_Ls.pdf.pdf",
 #     Preliminaries
 #-----------------------------
 
-#load up necessary packages
-library(ggplot2)
-library(dplyr)
-library(reshape2)
-
 #read in data
 plotdf <- as.data.frame(read.csv("~/Documents/Work/github/BJSE/second_moment/data/data_Z_minus_LS_CLT.csv")[,-1])
 
@@ -153,9 +143,9 @@ ggplot(plotdf,
   theme_bw()
 
 #plot residual term
-ggplot(plotdf, aes(RX, RY, col = t))+
+ggplot(plotdf, aes(sqrt(Network.Size)*RX, sqrt(Network.Size)*RY, col = t))+
   geom_point(alpha = .1, size = .5)+
-  facet_grid(rows = vars(Community),
+  facet_grid(#rows = vars(Graph),
              cols = vars(Network.Size))+
   theme_bw()
 
