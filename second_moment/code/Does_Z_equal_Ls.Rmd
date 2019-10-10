@@ -167,7 +167,7 @@ Next we run a simulation to see if indeed $\lambda(\mathbf{ZZ}^T) = \lambda(\mat
 #simulation parameters
 n.t <- 20 
 t <- seq(0, 1, length.out = n.t)
-mc_runs <- 10
+mc_runs <- 1
 n <- 500
 ```
 
@@ -197,6 +197,7 @@ for(i in 1:n.t){
   for(j in 1:mc_runs){
   #sample rows of X 
   samp <- sample(1:2, n, replace = TRUE) 
+  samp <- c(rep(1, n/2), rep(2,n/2))
   X <- L[samp, ]
   
   #get community balance
@@ -208,6 +209,7 @@ for(i in 1:n.t){
   
   #get Z, Ls, and rotate Z 
   Z <- ase(make_omni(list(P1, P2)), 2)
+  Z <- dan(make_omni(list(P1, P2)))
   Ls <- rbind(X %*% S(C(t[i]))[[1]], X %*% S(C(t[i]))[[2]])
   Z.rot <- rotate(target = Ls, input = Z)
   

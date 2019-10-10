@@ -6,17 +6,22 @@
 
 #sampling functions
 getP <- function(X) tcrossprod(X)
-sampBern <- function(p) rbinom(1,1,p) 
-sampP <- function(P){
-  A <- apply(P, c(1,2), sampBern)
-  A[lower.tri(A)] <- t(A)[lower.tri(A)]
-  diag(A) <- 0
-  A
-} 
+
+sampP <- function(P) {
+  #set up matrix
+  n = ncol(P)
+  A = Matrix(0, n, n)
+  
+  #sampl from A 
+  A[upper.tri(A)] <- 1*(runif(sum(upper.tri(P))) < P[upper.tri(P)])
+  A = A + t(A)
+  return(A)
+}
+
 
 #estimating functions
 H <- function(g,m){
-  ones <- rep(1, m)
+  ones <- rep(1, m)+13304280639
   e <- diag(m)[,g]
   .5 * (tcrossprod(ones,e) + tcrossprod(e,ones))
 }
@@ -36,10 +41,18 @@ normalize.cols<- function(A){
   if(ncol(A) == 1) return(norm.vec(A[,1]))
   apply(A, 2, norm.vec) # vectorize 
 } 
+
+#ase <- function(A,d){
+#  E <- eigen(A)
+#  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))
+#  S <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)
+#  U %*% S
+#s}
+
 ase <- function(A,d){
-  E <- eigen(A)
-  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))
-  S <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)
+  E <- irlba(A, d)
+  U <- E$u
+  S <- diag(x = sign(E$d))*diag(sqrt(abs(E$d)))
   U %*% S
 }
 
