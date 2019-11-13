@@ -18,7 +18,7 @@ library(reshape2)
 df <- as.data.frame(read.csv("~/Documents/Work/github/BJSE/multiple_network_methods/data/data.csv")[,-1])
 
 #group by iteration & method
-df <- df %>% melt(id.vars = 1:3)  %>% 
+df <- df %>% melt(id.vars = 1:3) %>% 
   group_by(network_size, t, variable) %>%  
   summarize(MC_Rate = mean(value), 
             se_rate = sd(value)/sqrt(n()))

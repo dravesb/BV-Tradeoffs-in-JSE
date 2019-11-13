@@ -1,10 +1,9 @@
-
 #----------------------------------------
 #
 #       Plotting figures
 #
 #----------------------------------------
-plotdf <- read.csv("~/Documents/Work/github/BJSE/classification_simulation/data/plotdf.csv", header = TRUE)[,-1]
+plotdf <- read.csv("~/Documents/Work/github/BJSE/classification_simulation/data/plotdf_gmm.csv", header = TRUE)[,-1]
 
 library(ggplot2)
 library(dplyr)
@@ -95,7 +94,7 @@ ggsave(filename = "mc_rate_by_distance.pdf",
        path = "../figures")
 
 
-  ggplot(plotdf %>% filter(t == 0.9), aes(net_size,Dist, col = Method))+
+ggplot(plotdf %>% filter(t == 0.9), aes(net_size,Dist, col = Method))+
   geom_point()+
   geom_line()+
   facet_grid(~Graph)+

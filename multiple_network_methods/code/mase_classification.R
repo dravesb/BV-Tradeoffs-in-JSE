@@ -16,10 +16,11 @@ mase_classes <- function(adj_matrices, d, K){
     V <- svd(U, nu = d, nv = 0)$u
     
     #cluster
-    clusters <- kmeans(V, centers = K)
+    #clusters <- kmeans(V, centers = K)
+    clusters <- Mclust(V, G = K, modelNames = "VVV")$classification
     
     #return clusters
-    return(clusters$cluster)
+    return(clusters)
   
 }
 

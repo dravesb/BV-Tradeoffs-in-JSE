@@ -21,7 +21,7 @@ sampP <- function(P) {
 
 #estimating functions
 H <- function(g,m){
-  ones <- rep(1, m)+13304280639
+  ones <- rep(1, m)
   e <- diag(m)[,g]
   .5 * (tcrossprod(ones,e) + tcrossprod(e,ones))
 }
@@ -42,19 +42,19 @@ normalize.cols<- function(A){
   apply(A, 2, norm.vec) # vectorize 
 } 
 
-#ase <- function(A,d){
-#  E <- eigen(A)
-#  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))
-#  S <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)
-#  U %*% S
-#s}
-
 ase <- function(A,d){
-  E <- irlba(A, d)
-  U <- E$u
-  S <- diag(x = sign(E$d))*diag(sqrt(abs(E$d)))
+  E <- eigen(A)
+  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))
+  S <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)
   U %*% S
 }
+
+#ase <- function(A,d){
+#  E <- irlba(A, d)
+#  U <- normalize.cols(E$u)
+#  S <- diag(sign(E$d) * sqrt(abs(E$d)), nrow = d)
+#  U %*% S
+#}
 
 #clustering functions
 get_mc <- function(x, true){

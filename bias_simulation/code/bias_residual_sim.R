@@ -90,6 +90,7 @@ x2_til <- t(R) %*% x2
 #set base latent positions
 L <- rbind(t(x1_til), t(x2_til))
 
+
 library(MCMCpack)
 #Define three different C matrices
 C1 <- diag(c(.75, .5))
@@ -136,7 +137,7 @@ bias_dat <- data.frame(x = as.numeric(bias_dat[,1]),
 #
 #-----------------------------------------
 library(dplyr)
-net_size <- c(250,500,750,1000)
+net_size <- c(250, 500,1000)
 mc_runs <- 25
 expan.size <- 0
 
@@ -175,16 +176,15 @@ for(i in 1:length(net_size)){
     #set up latent positions and right singular vectors
     X <- L[ind,]
     
-    tmp <- svd(X) 
+    #tmp <- svd(X) 
     D <- diag(sign(diag(tmp$v)))
     V <- tmp$v 
     Sigma <- diag(tmp$d)
     U <- tmp$u 
     
     #set up Xtil 
-    Xtil <- rbind(U %*% Sigma %*% sqrt(C1), 
-                  U %*% Sigma %*% sqrt(C2), 
-                  U %*% Sigma %*% sqrt(C3))
+    #Xtil <- rbind(U %*% Sigma %*% sqrt(C1), U %*% Sigma %*% sqrt(C2), U %*% Sigma %*% sqrt(C3))
+    Xtil <- rbind(X %*% S1, X %*% S2, X %*% S3)
     
     #calculate theta
     theta.here <- asin((D %*% V)[2,1])

@@ -25,7 +25,8 @@ omni_classes <- function(adj_matrices, d, K){
   Xbar <- crossprod(Im_stack, Xhat)
   
   #cluster based on k means
-  clusters <- kmeans(Xbar, centers = K)$cluster
+  #clusters <- kmeans(Xbar, centers = K)$cluster
+  clusters <- Mclust(Xbar, G = K, modelNames = "VVV")$classification
   
   #return clusters
   return(clusters)

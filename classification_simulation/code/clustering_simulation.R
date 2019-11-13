@@ -4,6 +4,9 @@
 #
 #--------------------------------------
 
+#load packages
+library(mclust)
+
 #sampling functions
 getP <- function(X) tcrossprod(X)
 sampBern <- function(p) rbinom(1,1,p) 
@@ -198,7 +201,6 @@ for(i in 1:length(net_size)){
     S1 <- tmp[[1]]
     S2 <- tmp[[2]]
     
-    
     #set up P matrices
     P1 <- tcrossprod(X)
     P2 <- tcrossprod(X %*% C(t[j]), X)
@@ -215,10 +217,9 @@ for(i in 1:length(net_size)){
       X_hat <- ase(A1, 2)
       Y_hat <- ase(A2, 2)
       
-     
-      #run k means on rows
-      groups1 <- kmeans(X_hat, centers = 2)$cluster
-      groups2 <- kmeans(Y_hat, centers = 2)$cluster
+      #run GMM on rows
+      groups1 <- Mclust(X_hat, G = 2, modelNames = "VVV")$classification
+      groups2 <- Mclust(Y_hat, G = 2, modelNames = "VVV")$classification
       
       #get misclassification rates
       ase_mc1 <- get_mc(groups1, samp)
@@ -234,8 +235,8 @@ for(i in 1:length(net_size)){
       #embedd A bar
       X_hat <- ase((A1 + A2)/2, 2)
       
-      #run k means on rows
-      groups1 <- kmeans(X_hat, centers = 2)$cluster
+      #run GMM on rows
+      groups1 <- Mclust(X_hat, G = 2, modelNames = "VVV")$classification
       
       #get misclassification rates
       abar_mc1 <- abar_mc2 <- get_mc(groups1, samp)
@@ -251,9 +252,9 @@ for(i in 1:length(net_size)){
       Atil <- make_omni(A1, A2)
       Lhat <- ase(Atil, 2)
       
-      #run k means on rows
-      groups1 <- kmeans(Lhat[1:net_size[i],], centers = 2)$cluster
-      groups2 <- kmeans(Lhat[(net_size[i]+1):(2*net_size[i]), ], centers = 2)$cluster
+      #run GMM on rows
+      groups1 <- Mclust(Lhat[1:net_size[i],], G = 2, modelNames = "VVV")$classification
+      groups2 <- Mclust(Lhat[(net_size[i]+1):(2*net_size[i]), ], G = 2, modelNames = "VVV")$classification
       
       #get misclassification rates
       omni_mc1 <- get_mc(groups1, samp)
@@ -271,8 +272,8 @@ for(i in 1:length(net_size)){
       #get average
       Lmean <- .5*(Lhat[1:net_size[i],] + Lhat[(net_size[i]+1):(2*net_size[i]), ])
       
-      #run k means on rows
-      groups <- kmeans(Lmean, centers = 2)$cluster
+      #run GMM  on rows
+      groups <- Mclust(Lmean, G = 2, modelNames = "VVV")$classification
       
       #get misclassification rates
       omnibar_mc1 <- omnibar_mc2 <- get_mc(groups, samp)
@@ -323,14 +324,14 @@ colnames(df) <- c("sim_number","net_size", "t","Method", "Graph","dist","mc_rate
 #collapse over number of simulations
 plotdf <- df %>% 
   group_by(net_size, t, Method, Graph) %>%
-  summarize(MC_Rate = mean(mc_rate),
-            mc_se = sd(mc_rate)/sqrt(n()),
-            Dist = mean(dist),
-            dist_se = sqrt(var(dist)/n()), 
+  summarize(MC_Rate = mean(mc_rate, na.rm = TRUE),
+            mc_se = sd(mc_rate, na.rm = TRUE)/sqrt(n()),
+            Dist = mean(dist, na.rm = TRUE),
+            dist_se = sqrt(var(dist, na.rm = TRUE)/n()), 
             count = n())
 
 #------------------------------
 #  save data frame
 #-----------------------------
 setwd("~/Documents/Work/github/BJSE/classification_simulation/data")
-write.csv(plotdf, "plotdf.csv")
+write.csv(plotdf, "plotdf_gmm.csv")

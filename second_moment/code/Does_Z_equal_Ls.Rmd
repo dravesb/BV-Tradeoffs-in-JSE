@@ -90,6 +90,16 @@ Wtil <- function(left, right, d){
   
 }
 get_pd <- function(A, d) tcrossprod(ase(A, d))
+
+ase2 <- function(A, start, stop){
+  E <- eigen(A)
+  U <- normalize.cols(as.matrix(E$vectors[,start:stop], ncol = stop - start))
+  S <- diag(x = sign(E$values[start:stop]), ncol = stop - start + 1, nrow = stop - start + 1)*
+    diag(sqrt(abs(E$values[start:stop])), nrow = stop - start + 1, ncol = stop - start + 1)
+  U %*% S
+}
+
+
 ```
 
 Next we set up the classic 2 block SBM and choose a scaling matrix parameterized by $t$ as 
@@ -157,6 +167,25 @@ S <- function(C){
   #return results
   return(list(S1, S2))
 }
+
+
+S2 <- function(C){
+  #bias matrices
+  v1 <- c(1, C[1,1])
+  v2 <- c(1, C[2,2])
+  
+  #get embeddings
+  a1 <- ase2(H1(v1), 2, 2)[,1]
+  a2 <- ase2(H1(v2), 2, 2)[,1]  
+  
+  #define scaling matrices
+  S1 <- diag(c(a1[1], a2[1]))
+  S2 <- diag(c(a1[2], a2[2]))
+  
+  #return results
+  return(list(S1, S2))
+}
+
 ```
 
 
@@ -186,7 +215,6 @@ We compare this for `r mc_runs` number of iterations.
 #set seed
 set.seed(1985)
 
-
 #data structure
 df <- matrix(NA, ncol = 6, nrow = n.t * mc_runs)
 colnames(df) <- c("Sim_Number", "t", "Com_Balance", "Value_Difference", "Vector_Difference", "Zrot_Difference")
@@ -209,7 +237,7 @@ for(i in 1:n.t){
   
   #get Z, Ls, and rotate Z 
   Z <- ase(make_omni(list(P1, P2)), 2)
-  Z <- dan(make_omni(list(P1, P2)))
+  #Z <- dan(make_omni(list(P1, P2)))
   Ls <- rbind(X %*% S(C(t[i]))[[1]], X %*% S(C(t[i]))[[2]])
   Z.rot <- rotate(target = Ls, input = Z)
   
@@ -344,6 +372,102 @@ ggplot(plotdf, aes(t, drot)) +
 
 
 Conclusion: Even when ``marginalizing out" $t$ is also driving the difference between $\mathbf{Z}$ and $\mathbf{L}_S$. 
+
+
+
+# Analyzing Rank 4 Embeddings
+
+
+```{r}
+#-----------------------------------------
+#
+#     Simulate To attain differences
+#
+#-----------------------------------------
+
+#set parameter
+n.t <- 10 
+t <- seq(0, 1, length.out = n.t)
+mc_runs <- 10
+n <- 250
+
+#data structure
+df <- matrix(NA, ncol = 8, nrow = n.t * mc_runs)
+colnames(df) <- c("Sim_Number", "t", "Com_Balance","Ptil_minus_LLt", "Ptil_minus_ZZt","ZZt_minus_LLt", "top2", "bottom2")
+here <- 1
+
+
+for(i in 1:n.t){
+  for(j in 1:mc_runs){
+  #sample rows of X 
+  samp <- sample(1:2, n, replace = TRUE) 
+  X <- L[samp, ]
+  
+  #get community balance
+  cb <- unname(prop.table(table(samp))[1])
+  
+  #get P matrices
+  P1 <- tcrossprod(X)
+  P2 <- tcrossprod(X, X %*% C(t[i]))
+  
+  #calculating S's
+  top_S <- S(C(t[i]))
+  bottom_S <- S2(C(t[i]))
+  
+  #set up Ptil
+  Ptil <- make_omni(list(P1,P2))
+  
+  #Set up L and Ltil
+  Ls <- rbind(X %*% top_S[[1]], X %*% top_S[[2]])
+  Lstil <- rbind(X %*% bottom_S[[1]], X %*% bottom_S[[2]])
+  
+  #get Z
+  Z <- ase(Ptil, 2)
+  Ztil <- ase2(Ptil, 2*n-1, 2*n)
+  
+  
+  #calculate differences
+  d1 <- norm(Ptil - (tcrossprod(Ls) - tcrossprod(Lstil)), type = "F")
+  d2 <- norm(Ptil - (tcrossprod(Z) - tcrossprod(Ztil)), type = "F")
+  d3 <- norm((tcrossprod(Z) - tcrossprod(Ztil)) - (tcrossprod(Ls) - tcrossprod(Lstil)), type = "F")
+  d4 <- norm(tcrossprod(Z) - tcrossprod(Ls), type = "F")
+  d5 <- norm(tcrossprod(Ztil) - tcrossprod(Lstil), type = "F")
+  
+  #store results
+  df[here, ] <- c(j, t[i], cb, d1, d2, d3, d4, d5)
+  
+  #update pointer
+  here <- here + 1
+  }
+  print(i)
+}
+```
+
+
+```{r}
+plotdf <- as.data.frame(df)
+
+#----------------------
+#Full matrix differences
+#----------------------
+
+#x = t
+ggplot() +
+  geom_jitter(aes(t,Ptil_minus_LLt), data = plotdf, size = .3, col = "red")+
+  #geom_jitter(aes(t,Ptil_minus_ZZt), data = plotdf, size = .3, col = "blue")+
+  geom_jitter(aes(t,ZZt_minus_LLt), data = plotdf, size = .3, col = "green")+
+  theme_bw()+
+  labs(y = "Frobenius Difference")
+
+
+#x = cb
+ggplot() +
+  geom_jitter(aes(cb,Ptil_minus_LLt), data = plotdf, size = .3, col = "red")+
+  #geom_jitter(aes(cb,Ptil_minus_ZZt), data = plotdf, size = .3, col = "blue")+
+  geom_jitter(aes(cb,ZZt_minus_LLt), data = plotdf, size = .3, col = "green")+
+  theme_bw()
+
+```
 
 
 

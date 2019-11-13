@@ -78,10 +78,11 @@ mrdpg_classes <- function(adj_matrices, d, K){
   U <- mrdpg_U(adj_matrices, d)
   
   #kmeans on the rows of U
-  classes <- kmeans(U, centers = K)
+  #classes <- kmeans(U, centers = K)
+  classes <- Mclust(U, G = K, modelNames = "VVV")$classification
   
   #return classes
-  return(classes$cluster)
+  return(classes)
 }
 
 

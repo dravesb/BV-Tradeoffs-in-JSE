@@ -91,15 +91,6 @@ L <- rbind(t(x1_til), t(x2_til))
 #
 #-----------------------------------------
 
-C <- function(t){
-  diag(c(4*t + 1, 1.5*t + 1))
-}
-
-#converges to ER with p = 3/4
-C <- function(t){
-  diag(c(4*t + 1, -t + 1))
-}
-
 #converges to ER with p = .3 (1,1) --> (2,0)
 C <- function(t){
   diag(c(t + 1, -t + 1))
@@ -122,8 +113,8 @@ S <- function(C){
   a2 <- ase(H1(v2), 1)[,1]  
   
   #define scaling matrices
-  S1 <- diag(c(a1[1], a2[1]))
-  S2 <- diag(c(a1[2], a2[2]))
+  S1 <- abs(diag(c(a1[1], a2[1])))
+  S2 <- abs(diag(c(a1[2], a2[2])))
   
   #return results
   return(list(S1, S2))
@@ -137,12 +128,12 @@ S <- function(C){
 #-----------------------------------------
 
 #set up base parameters 
-net_size <- 200
+net_size <- 250
 t <- seq(0, 1, length.out = 11)[-11]
-mc_runs <- 500 #number of iterations
+mc_runs <- 10000 #number of iterations
 
 #load aligning packages
-library(MCMCpack)
+require(MCMCpack)
 
 #set up storage
 here <- 1
@@ -194,21 +185,21 @@ for(i in 1:length(net_size)){
       Y_mse <- apply(Y_hat - (X %*% sqrt(C(t[j]))), 1, get_mse)
       
       #get average mse for each group and in graph 1
-      #ase_comm1_mse1 <- mean(X_mse[samp == 1])
-      #ase_comm2_mse1 <- mean(X_mse[samp == 2])
+      ase_comm1_mse1 <- mean(X_mse[samp == 1])
+      ase_comm2_mse1 <- mean(X_mse[samp == 2])
       
-      ase_comm1_mse1 <- median(X_mse[samp == 1])
-      ase_comm2_mse1 <- median(X_mse[samp == 2])
+      #ase_comm1_mse1 <- median(X_mse[samp == 1])
+      #ase_comm2_mse1 <- median(X_mse[samp == 2])
       
       #get average mse for each group and in graph 2
-      #ase_comm1_mse2 <- mean(Y_mse[samp == 1])
-      #ase_comm2_mse2 <- mean(Y_mse[samp == 2])
+      ase_comm1_mse2 <- mean(Y_mse[samp == 1])
+      ase_comm2_mse2 <- mean(Y_mse[samp == 2])
       
-      ase_comm1_mse2 <- median(Y_mse[samp == 1])
-      ase_comm2_mse2 <- median(Y_mse[samp == 2])
+      #ase_comm1_mse2 <- median(Y_mse[samp == 1])
+      #ase_comm2_mse2 <- median(Y_mse[samp == 2])
       
       #----------------------
-      #   Abar Clustering
+      #   Abar MSE
       #----------------------
       
       #embedd A bar
@@ -222,18 +213,18 @@ for(i in 1:length(net_size)){
       Y_mse <- apply(X_hat - L[samp,] %*% sqrt(C(t[j])), 1, get_mse)
       
       #get average mse for each group and in graph 1
-      #abar_comm1_mse1 <- mean(X_mse[samp == 1])
-      #abar_comm2_mse1 <- mean(X_mse[samp == 2])
+      abar_comm1_mse1 <- mean(X_mse[samp == 1])
+      abar_comm2_mse1 <- mean(X_mse[samp == 2])
       
-      abar_comm1_mse1 <- median(X_mse[samp == 1])
-      abar_comm2_mse1 <- median(X_mse[samp == 2])
+      #abar_comm1_mse1 <- median(X_mse[samp == 1])
+      #abar_comm2_mse1 <- median(X_mse[samp == 2])
       
       #get average mse for each group and in graph 2
-      #abar_comm1_mse2 <- mean(Y_mse[samp == 1])
-      #abar_comm2_mse2 <- mean(Y_mse[samp == 2])
+      abar_comm1_mse2 <- mean(Y_mse[samp == 1])
+      abar_comm2_mse2 <- mean(Y_mse[samp == 2])
       
-      abar_comm1_mse2 <- median(Y_mse[samp == 1])
-      abar_comm2_mse2 <- median(Y_mse[samp == 2])
+      #abar_comm1_mse2 <- median(Y_mse[samp == 1])
+      #abar_comm2_mse2 <- median(Y_mse[samp == 2])
       
       #----------------------
       #   Omni Clustering
@@ -253,18 +244,18 @@ for(i in 1:length(net_size)){
       Y_mse <- apply(Y_hat - L[samp,] %*% sqrt(C(t[j])), 1, get_mse)
       
       #get average mse for each group and in graph 1
-      #omni_comm1_mse1 <- mean(X_mse[samp == 1])
-      #omni_comm2_mse1 <- mean(X_mse[samp == 2])
+      omni_comm1_mse1 <- mean(X_mse[samp == 1])
+      omni_comm2_mse1 <- mean(X_mse[samp == 2])
       
-      omni_comm1_mse1 <- median(X_mse[samp == 1])
-      omni_comm2_mse1 <- median(X_mse[samp == 2])
+      #omni_comm1_mse1 <- median(X_mse[samp == 1])
+      #omni_comm2_mse1 <- median(X_mse[samp == 2])
       
       #get average mse for each group and in graph 2
-      #omni_comm1_mse2 <- mean(Y_mse[samp == 1])
-      #omni_comm2_mse2 <- mean(Y_mse[samp == 2])
+      omni_comm1_mse2 <- mean(Y_mse[samp == 1])
+      omni_comm2_mse2 <- mean(Y_mse[samp == 2])
       
-      omni_comm1_mse2 <- median(Y_mse[samp == 1])
-      omni_comm2_mse2 <- median(Y_mse[samp == 2])
+      #omni_comm1_mse2 <- median(Y_mse[samp == 1])
+      #omni_comm2_mse2 <- median(Y_mse[samp == 2])
       
       
       #----------------------
@@ -279,18 +270,18 @@ for(i in 1:length(net_size)){
       Y_mse <- apply(Lmean - L[samp,] %*% sqrt(C(t[j])), 1, get_mse)
       
       #get average mse for each group and in graph 1
-      #omnibar_comm1_mse1 <- mean(X_mse[samp == 1])
-      #omnibar_comm2_mse1 <- mean(X_mse[samp == 2])
+      omnibar_comm1_mse1 <- mean(X_mse[samp == 1])
+      omnibar_comm2_mse1 <- mean(X_mse[samp == 2])
       
-      omnibar_comm1_mse1 <- median(X_mse[samp == 1])
-      omnibar_comm2_mse1 <- median(X_mse[samp == 2])
+      #omnibar_comm1_mse1 <- median(X_mse[samp == 1])
+      #omnibar_comm2_mse1 <- median(X_mse[samp == 2])
       
       #get average mse for each group and in graph 2
-      #omnibar_comm1_mse2 <- mean(Y_mse[samp == 1])
-      #omnibar_comm2_mse2 <- mean(Y_mse[samp == 2])
+      omnibar_comm1_mse2 <- mean(Y_mse[samp == 1])
+      omnibar_comm2_mse2 <- mean(Y_mse[samp == 2])
       
-      omnibar_comm1_mse2 <- median(Y_mse[samp == 1])
-      omnibar_comm2_mse2 <- median(Y_mse[samp == 2])
+      #omnibar_comm1_mse2 <- median(Y_mse[samp == 1])
+      #omnibar_comm2_mse2 <- median(Y_mse[samp == 2])
       
       
       #----------------------
@@ -311,17 +302,19 @@ for(i in 1:length(net_size)){
       #update counter 
       here <- here + 1
     }      
+  
+    #
+    print(j)
   }
-  print(i)
 }
 
 
 #------------------------------
 #
-#       MSE figures
+#       Data Prep 
 #
 #-----------------------------
-library(dplyr); library(reshape)
+library(dplyr); library(reshape2)
 
 #melt data frame and add community, graph, and method labels
 plotdf <- as.data.frame(df) %>% 
@@ -330,32 +323,183 @@ plotdf <- as.data.frame(df) %>%
          graph = ifelse(variable %in% c("ase11", "ase21","abar11", "abar21","omni11", "omni21","omnibar11", "omnibar21"), "Graph 1", "Graph 2"),
          Method = ifelse(variable %in% c("ase11", "ase21", "ase12", "ase22"), "ASE",
                          ifelse(variable %in% c("abar11", "abar21", "abar12", "abar22"), "Abar",
-                                ifelse(variable %in% c("omni11", "omni21", "omni12", "omni22"), "Omni", "Omnibar"))))%>%
+                                ifelse(variable %in% c("omni11", "omni21", "omni12", "omni22"), "Omni", "Omnibar")))) %>%
   group_by(net_size, t, community, graph, Method) %>%
-  summarize(average_mse = mean(value),
-            sd = sqrt(average_mse*(1 - average_mse)/n()))
+  summarize(mse_se = sd(value),
+    average_mse = mean(value)
+    #,mse_se = sd(value)/sqrt(mc_runs + net_size/2)
+            ) %>% 
+  mutate(mse_se = mse_se/sqrt(mc_runs + net_size/2))
 
+
+#------------------------------
+#
+#       Read in data 
+#             + 
+#       format data
+#
+#-----------------------------
 setwd("~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/data/")
 #write.csv(plotdf, "plotdf.csv")
 plotdf <- read.csv("plotdf.csv")[,-1]
 
+#replace comm1 == 1, graph == 1, method ase with average across t
+params1 <- plotdf %>% 
+  filter(community == "Community 1", graph == "Graph 1", Method == "ASE") %>% 
+  group_by(net_size) %>%
+  summarize(m = mean(average_mse), s = mean(mse_se))
+params2 <- plotdf %>% 
+  filter(community == "Community 2", graph == "Graph 1", Method == "ASE") %>% 
+  group_by(net_size) %>%
+  summarize(m = mean(average_mse), s = mean(mse_se))
+
+#update graph 1 comm1 parameters
+plotdf$average_mse[which(plotdf$community == "Community 1" & plotdf$graph == "Graph 1" & plotdf$Method == "ASE")] <- params1$m
+plotdf$mse_se[which(plotdf$community == "Community 1" & plotdf$graph == "Graph 1" &plotdf$Method == "ASE")] <- params1$s
+
+#update graph 1 comm2 parameters
+plotdf$average_mse[which(plotdf$community == "Community 2" & plotdf$graph == "Graph 1" & plotdf$Method == "ASE")] <- params2$m
+plotdf$mse_se[which(plotdf$community == "Community 2" & plotdf$graph == "Graph 1" &plotdf$Method == "ASE")] <- params2$s
+
+
+#------------------------------------------------
+#
+#         Make a priori lines data
+#
+#------------------------------------------------
+#Variance matrices
+sigma_2 <- function(y, C, k){
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)
+}
+Sigma_tilde <- function(y, g, C_list){
+  
+  #set up preliminaries
+  K <- nrow(L)
+  d <- ncol(L)
+  
+  #get sum
+  tot <- matrix(0,nrow = d, ncol = d)
+  for(k in 1:K){
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])
+    
+  }
+  return(tot)
+  
+}
+Sigma <- function(y,g,C_list, S_list){
+  
+  #get S2D_inv
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))
+  
+  #preliminary values
+  d <- ncol(L)
+  m <- length(C_list)
+  
+  #first summand
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))
+  
+  #second summard
+  tot2 <- matrix(0, nrow = d, ncol = d)
+  for(k in (1:m)[-g]){
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]
+  }
+  
+  #return covariance matrix
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)
+}
+
+#make apriori lines
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))
+here <-  1
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")
+
+
+for(j in 1:length(t)){#drift parameter
+  #get S_list/C_list
+  S_list <- S(C(t[j]))
+  C_list <- list(diag(2), C(t[j]))
+  
+  for(i in 1:2){#network loop
+    for(k in 1:2){#community loop
+      
+      #ASE MSE 
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])
+      ase_bias <- 0
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj
+      ase_mse_here <- sum(diag(ase_var)) / net_size
+      
+      #ABAR MSE
+      Cbar <- Reduce("+", C_list)/length(C_list)
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)
+      
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj
+      
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))
+      
+      #Omni MSE
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]
+      omni_var <- Sigma(L[k,], i, C_list, S_list) 
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)
+      
+      
+      #Omnibar
+      m <- length(S_list)
+      Sbar <- Reduce("+", S_list)/m
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))
+      
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)
+      
+      #store
+      apriori[here,] <- c(paste("Graph", i), #graph
+                          paste("Community", k), #community
+                          t[j], #dirft parameter
+                          #MSE's
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)
+      )
+      
+      #update pointer 
+      here <- here + 1
+    }
+    
+  }
+}
+
+
+apriori_mse <- apriori %>% melt(id.vars = 1:3)
+colnames(apriori_mse) <- c("graph", "community", "t", "Method", "MSE")
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)
+apriori_mse$t<- as.numeric(apriori_mse$t)
+
+
+#------------------------------------------------
+#
+#         Make Figures
+#
+#------------------------------------------------
+
 #plot figure
 library(ggplot2)
-ggplot(plotdf, aes(t, average_mse, col = Method)) +
-  geom_point(alpha = .5)+
-  geom_line()+
+ggplot(plotdf) +
+  geom_point(aes(t, average_mse, col = Method), plotdf, alpha = .5)+
+  geom_line(aes(t, average_mse, col = Method), plotdf)+
+  geom_line(aes(t, MSE, col = Method), apriori_mse, linetype = "dashed")+
   facet_grid(rows = vars(graph),
              cols = vars(community))+
-  #geom_ribbon(aes(ymin= average_mse - 1.96*sd,
-  #                ymax= average_mse + 1.96*sd),
-  #            alpha=0.1, linetype = 0)+
+  geom_ribbon(aes(t, ymin = average_mse - 1.96*mse_se,
+                  ymax = average_mse + 1.96*mse_se),
+              plotdf, alpha=0.1, linetype = 0)+
   theme_bw()+
   scale_y_log10()+
   labs(y = expression(paste('log'[10], "(MSE)")),
-       x = "Deviation from SBM (x = 0) to ER (x = 1)")
+       x = "Deviation from SBM (x = 0) to ER (x = 1)") 
 
 
-ggsave(filename = "2d_mse_median.pdf", 
+
+ggsave(filename = "2d_mse_mean.pdf", 
        width = 8, height =8, 
        path = "~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/figures/", 
        units = "in")
@@ -367,9 +511,9 @@ ggplot(plotdf %>% filter(Method != "Omnibar"),
   geom_line(size = 1)+
   facet_grid(rows = vars(graph),
              cols = vars(community))+
-  #geom_ribbon(aes(ymin= average_mse - 1.96*sd,
-  #                ymax= average_mse + 1.96*sd),
-  #            alpha=0.1, linetype = 0)+
+  geom_ribbon(aes(ymin= average_mse - 1.96*mse_se,
+                  ymax= average_mse + 1.96*mse_se),
+              alpha=0.1, linetype = 0)+
   theme_bw()+
   scale_y_log10()+
   labs(y = expression(paste('log'[10], "(MSE)")),

@@ -15,6 +15,7 @@ library(dplyr)
 library(reshape2)
 library(matlib)
 library(irlba)
+library(mclust)
 
 #source nesseary functions
 source("~/Documents/Work/github/BJSE/multiple_network_methods/code/je_classification.R")
@@ -72,7 +73,7 @@ k <- 20
 t <- seq(0, 1, length.out =  k)
 
 #number of mc iterations
-mc_runs <- 500
+mc_runs <- 50
 
 #set network size
 #n <- round(10^(seq(log(25, base = 10), log(250, base = 10), length.out = 10))) #network sizes 
@@ -126,6 +127,25 @@ for(l in 1:length(n)){#loop over n
       mrdpg_mc <- get_mc(mrdpg_estimates, samp)
       je_mc <- get_mc(je_estimates, samp)
       mase_mc <- get_mc(mase_estimates, samp)    
+      
+      if(is.na(omni_mc)){
+        print(paste("BROKE DOWN AT ", c(l,i,k)))
+        break
+      }
+      if(is.na(mrdpg_mc)){
+        print(paste("BROKE DOWN AT ", c(l,i,k)))
+        break
+      }
+      if(is.na(je_mc)){
+        print(paste("BROKE DOWN AT ", c(l,i,k)))
+        break
+      }
+      
+      if(is.na(mase_mc)){
+        print(paste("BROKE DOWN AT ", c(l,i,k)))
+        break
+      }
+      
       
       #store data
       df[here, ] <- c(n[l], t[i], j, omni_mc, mase_mc, je_mc, mrdpg_mc)
