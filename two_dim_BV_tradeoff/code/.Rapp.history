@@ -1,0 +1,1698 @@
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+probs <- c(.5, .5)#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C/S values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Set up Community #
+#     Detection Simulation#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}#
+#
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")#
+for(j in 1:length(t)){#drift parameter#
+  #get S_list/C_list#
+  S_list <- S(t[j])#
+  C_list <- list(diag(2), C(t[j]))#
+  for(i in 1:2){#network loop#
+    for(k in 1:2){#community loop#
+      #ASE MSE #
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])#
+      ase_bias <- 0#
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size#
+      #ABAR MSE#
+      Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)#
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]#
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))#
+      #Omni MSE#
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]#
+      omni_var <- Sigma(L[k,], i, C_list, S_list) #
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)#
+      #Omnibar#
+      m <- length(S_list)#
+      Sbar <- Reduce("+", S_list)/m#
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]#
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv#
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)#
+      #store#
+      apriori[here,] <- c(paste("Graph", i), #graph#
+                          paste("Community", k), #community#
+                          t[j], #dirft parameter#
+                          #MSE's#
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here#
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)#
+                          )#
+      #update pointer #
+      here <- here + 1#
+    }#
+  }#
+}#
+apriori_mse <- apriori %>% melt(id.vars = 1:3)#
+colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")#
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)#
+apriori_mse$t<- as.numeric(apriori_mse$t)#
+#
+ggplot(apriori_mse, aes(t, MSE, col = Method)) +#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(y = expression(paste('log'[10], "(MSE)")),#
+       x = "Deviation from SBM (x = 0) to ER (x = 1)")
+library(ggplot2)
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+probs <- c(.5, .5)#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C/S values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Get Variance Values#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}#
+#-----------------------------------------#
+##
+#     Make apriori line data#
+##
+#-----------------------------------------#
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")#
+for(j in 1:length(t)){#drift parameter#
+  #get S_list/C_list#
+  S_list <- S(t[j])#
+  C_list <- list(diag(2), C(t[j]))#
+  for(i in 1:2){#network loop#
+    for(k in 1:2){#community loop#
+      #ASE MSE #
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])#
+      ase_bias <- 0#
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size#
+      #ABAR MSE#
+      Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)#
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]#
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))#
+      #Omni MSE#
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]#
+      omni_var <- Sigma(L[k,], i, C_list, S_list) #
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)#
+      #Omnibar#
+      m <- length(S_list)#
+      Sbar <- Reduce("+", S_list)/m#
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]#
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv#
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)#
+      #store#
+      apriori[here,] <- c(paste("Graph", i), #graph#
+                          paste("Community", k), #community#
+                          t[j], #dirft parameter#
+                          #MSE's#
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here#
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)#
+                          )#
+      #update pointer #
+      here <- here + 1#
+    }#
+  }#
+}#
+#-----------------------------------------#
+##
+#	     Plot Results#
+##
+#-----------------------------------------#
+library(ggplot2)#
+apriori_mse <- apriori %>% melt(id.vars = 1:3)#
+colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")#
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)#
+apriori_mse$t<- as.numeric(apriori_mse$t)#
+#
+ggplot(apriori_mse, aes(t, MSE, col = Method)) +#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(y = expression(paste('log'[10], "(MSE)")),#
+       x = "Deviation from SBM (x = 0) to ER (x = 1)")
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+probs <- c(.5, .5)#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C/S values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Get Variance Values#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}#
+#-----------------------------------------#
+##
+#     Make apriori line data#
+##
+#-----------------------------------------#
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")#
+for(j in 1:length(t)){#drift parameter#
+  #get S_list/C_list#
+  S_list <- S(t[j])#
+  C_list <- list(diag(2), C(t[j]))#
+  for(i in 1:2){#network loop#
+    for(k in 1:2){#community loop#
+      #ASE MSE #
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])#
+      ase_bias <- 0#
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size#
+      #ABAR MSE#
+      Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)#
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]#
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))#
+      #Omni MSE#
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]#
+      omni_var <- Sigma(L[k,], i, C_list, S_list) #
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)#
+      #Omnibar#
+      m <- length(S_list)#
+      Sbar <- Reduce("+", S_list)/m#
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]#
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv#
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)#
+      #store#
+      apriori[here,] <- c(paste("Graph", i), #graph#
+                          paste("Community", k), #community#
+                          t[j], #dirft parameter#
+                          #MSE's#
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here#
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)#
+                          )#
+      #update pointer #
+      here <- here + 1#
+    }#
+  }#
+}#
+#-----------------------------------------#
+##
+#	     Plot Results#
+##
+#-----------------------------------------#
+library(ggplot2); library(dplyr)#
+apriori_mse <- apriori %>% melt(id.vars = 1:3)#
+colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")#
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)#
+apriori_mse$t<- as.numeric(apriori_mse$t)#
+#
+ggplot(apriori_mse, aes(t, MSE, col = Method)) +#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(y = expression(paste('log'[10], "(MSE)")),#
+       x = "Deviation from SBM (x = 0) to ER (x = 1)")
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+probs <- c(.5, .5)#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C/S values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Get Variance Values#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}#
+#-----------------------------------------#
+##
+#     Make apriori line data#
+##
+#-----------------------------------------#
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")#
+for(j in 1:length(t)){#drift parameter#
+  #get S_list/C_list#
+  S_list <- S(t[j])#
+  C_list <- list(diag(2), C(t[j]))#
+  for(i in 1:2){#network loop#
+    for(k in 1:2){#community loop#
+      #ASE MSE #
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])#
+      ase_bias <- 0#
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size#
+      #ABAR MSE#
+      Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)#
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]#
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))#
+      #Omni MSE#
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]#
+      omni_var <- Sigma(L[k,], i, C_list, S_list) #
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)#
+      #Omnibar#
+      m <- length(S_list)#
+      Sbar <- Reduce("+", S_list)/m#
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]#
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv#
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)#
+      #store#
+      apriori[here,] <- c(paste("Graph", i), #graph#
+                          paste("Community", k), #community#
+                          t[j], #dirft parameter#
+                          #MSE's#
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here#
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)#
+                          )#
+      #update pointer #
+      here <- here + 1#
+    }#
+  }#
+}#
+#-----------------------------------------#
+##
+#	     Plot Results#
+##
+#-----------------------------------------#
+library(ggplot2); library(dplyr); library(reshape2)#
+apriori_mse <- apriori %>% melt(id.vars = 1:3)#
+colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")#
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)#
+apriori_mse$t<- as.numeric(apriori_mse$t)#
+#
+ggplot(apriori_mse, aes(t, MSE, col = Method)) +#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(y = expression(paste('log'[10], "(MSE)")),#
+       x = "Deviation from SBM (x = 0) to ER (x = 1)")
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")
+#source files#
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+probs <- c(.5, .5)#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C/S values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Get Variance Values#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}#
+#-----------------------------------------#
+##
+#     Make apriori line data#
+##
+#-----------------------------------------#
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")#
+for(j in 1:length(t)){#drift parameter#
+  #get S_list/C_list#
+  S_list <- S(t[j])#
+  C_list <- list(diag(2), C(t[j]))#
+  for(i in 1:2){#network loop#
+    for(k in 1:2){#community loop#
+      #ASE MSE #
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])#
+      ase_bias <- 0#
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size#
+      #ABAR MSE#
+      Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)#
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]#
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))#
+      #Omni MSE#
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]#
+      omni_var <- Sigma(L[k,], i, C_list, S_list) #
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)#
+      #Omnibar#
+      m <- length(S_list)#
+      Sbar <- Reduce("+", S_list)/m#
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]#
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv#
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)#
+      #store#
+      apriori[here,] <- c(paste("Graph", i), #graph#
+                          paste("Community", k), #community#
+                          t[j], #dirft parameter#
+                          #MSE's#
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here#
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)#
+                          )#
+      #update pointer #
+      here <- here + 1#
+    }#
+  }#
+}#
+#-----------------------------------------#
+##
+#	     Plot Results#
+##
+#-----------------------------------------#
+library(ggplot2); library(dplyr); library(reshape2)#
+apriori_mse <- apriori %>% melt(id.vars = 1:3)#
+colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")#
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)#
+apriori_mse$t<- as.numeric(apriori_mse$t)#
+#
+ggplot(apriori_mse, aes(t, MSE, col = Method)) +#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(y = expression(paste('log'[10], "(MSE)")),#
+       x = "Deviation from SBM (x = 0) to ER (x = 1)")
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#source files#
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+probs <- c(.5, .5)#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C/S values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Get Variance Values#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}#
+#-----------------------------------------#
+##
+#     Make apriori line data#
+##
+#-----------------------------------------#
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")#
+for(j in 1:length(t)){#drift parameter#
+  #get S_list/C_list#
+  S_list <- S(t[j])#
+  C_list <- list(diag(2), C(t[j]))#
+  for(i in 1:2){#network loop#
+    for(k in 1:2){#community loop#
+      #ASE MSE #
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])#
+      ase_bias <- 0#
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size#
+      #ABAR MSE#
+      Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)#
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]#
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))#
+      #Omni MSE#
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]#
+      omni_var <- Sigma(L[k,], i, C_list, S_list) #
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)#
+      #Omnibar#
+      m <- length(S_list)#
+      Sbar <- Reduce("+", S_list)/m#
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]#
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv#
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)#
+      #store#
+      apriori[here,] <- c(paste("Graph", i), #graph#
+                          paste("Community", k), #community#
+                          t[j], #dirft parameter#
+                          #MSE's#
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here#
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)#
+                          )#
+      #update pointer #
+      here <- here + 1#
+    }#
+  }#
+}#
+#-----------------------------------------#
+##
+#	     Plot Results#
+##
+#-----------------------------------------#
+library(ggplot2); library(dplyr); library(reshape2)#
+apriori_mse <- apriori %>% melt(id.vars = 1:3)#
+colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")#
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)#
+apriori_mse$t<- as.numeric(apriori_mse$t)#
+#
+ggplot(apriori_mse, aes(t, MSE, col = Method)) +#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(y = expression(paste('log'[10], "(MSE)")),#
+       x = "Deviation from SBM (t = 0) to ER (t = 1)")
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)
+x1 <- b_ase[1,]; x2 <- b_ase[2,]
+probs <- c(.5, .5)
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2)
+R <- eigen(Delta)$vectors
+x1_til <- t(R) %*% x1
+x1_til <- t(R) %*% x1
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))
+L
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")
+j <- 1
+i <- 1
+k <- 1
+conj <- solve(.5 *crossprod(L) %*% C_list[[i]])
+ase_bias <- 0
+ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size
+Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)
+Cbar
+C_list
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]
+t
+j
+i
+k
+length(C_list)
+S_list <- S(t[j])
+C_list <- list(diag(2), C(t[j]))
+S_list
+C_list
+Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)
+Cbar
+conj
+(sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]
+conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj
+m <- length(S_list)
+Sbar <- Reduce("+", S_list)/m
+Sbar
+solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))
+S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))
+S2D.inv
+conj
+solve(.5 *crossprod(L) %*% Cbar)
+Reduce("+", lapply(S_list, function(x) x^2))
+.25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*%
+.25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv
+.25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv
+omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv
+abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj
+abar_var/omnibar_var
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#source files#
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+probs <- c(.5, .5)#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C/S values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Get Variance Values#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}#
+#-----------------------------------------#
+##
+#     Make apriori line data#
+##
+#-----------------------------------------#
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")#
+for(j in 1:length(t)){#drift parameter#
+  #get S_list/C_list#
+  S_list <- S(t[j])#
+  C_list <- list(diag(2), C(t[j]))#
+  for(i in 1:2){#network loop#
+    for(k in 1:2){#community loop#
+      #ASE MSE #
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])#
+      ase_bias <- 0#
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size#
+      #ABAR MSE#
+      Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)#
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]#
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))#
+      #Omni MSE#
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]#
+      omni_var <- Sigma(L[k,], i, C_list, S_list) #
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)#
+      #Omnibar#
+      m <- length(S_list)#
+      Sbar <- Reduce("+", S_list)/m#
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]#
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv#
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)#
+      #store#
+      apriori[here,] <- c(paste("Graph", i), #graph#
+                          paste("Community", k), #community#
+                          t[j], #dirft parameter#
+                          #MSE's#
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here#
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)#
+                          )#
+      #update pointer #
+      here <- here + 1#
+    }#
+  }#
+}#
+#-----------------------------------------#
+##
+#	     Plot Results#
+##
+#-----------------------------------------#
+library(ggplot2); library(dplyr); library(reshape2)#
+apriori_mse <- apriori %>% melt(id.vars = 1:3)#
+colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")#
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)#
+apriori_mse$t<- as.numeric(apriori_mse$t)#
+#
+ggplot(apriori_mse, aes(t, MSE, col = Method)) +#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(y = expression(paste('log'[10], "(MSE)")),#
+       x = "Deviation from SBM (t = 0) to ER (t = 1)")
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#source files#
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+probs <- c(.5, .5)#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C/S values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Get Variance Values#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}#
+#-----------------------------------------#
+##
+#     Make apriori line data#
+##
+#-----------------------------------------#
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")#
+for(j in 1:length(t)){#drift parameter#
+  #get S_list/C_list#
+  S_list <- S(t[j])#
+  C_list <- list(diag(2), C(t[j]))#
+  for(i in 1:2){#network loop#
+    for(k in 1:2){#community loop#
+      #ASE MSE #
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])#
+      ase_bias <- 0#
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size#
+      #ABAR MSE#
+      Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)#
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]#
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))#
+      #Omni MSE#
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]#
+      omni_var <- Sigma(L[k,], i, C_list, S_list) #
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)#
+      #Omnibar#
+      m <- length(S_list)#
+      Sbar <- Reduce("+", S_list)/m#
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]#
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv#
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)#
+      #store#
+      apriori[here,] <- c(paste("Graph", i), #graph#
+                          paste("Community", k), #community#
+                          t[j], #dirft parameter#
+                          #MSE's#
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here#
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)#
+                          )#
+      #update pointer #
+      here <- here + 1#
+    }#
+  }#
+}#
+#-----------------------------------------#
+##
+#	     Plot Results#
+##
+#-----------------------------------------#
+library(ggplot2); library(dplyr); library(reshape2)#
+apriori_mse <- apriori %>% melt(id.vars = 1:3)#
+colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")#
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)#
+apriori_mse$t<- as.numeric(apriori_mse$t)#
+#
+ggplot(apriori_mse, aes(t, MSE, col = Method)) +#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(y = expression(paste('log'[10], "(MSE)")),#
+       x = "Deviation from SBM (t = 0) to ER (t = 1)") #
+#
+ggsave("analytic_mse.jpeg",#
+       width = 5, height = 4, units = "in", #
+       device = "jpeg", #
+       path = "~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/figures/")
+#-----------------------------------------#
+##
+#    Set up of Base Model#
+##
+#-----------------------------------------#
+#
+#source files#
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")#
+#
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+probs <- c(.5, .5)#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- probs[1] * tcrossprod(x1) + probs[2]*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))#
+#
+#-----------------------------------------#
+##
+#     Set up C/S values#
+##
+#-----------------------------------------#
+#
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, 1-t))#
+}#
+#
+S <- function(x){#
+  #bias matrices#
+  v1 <- c(1, C(x)[1,1])#
+  v2 <- c(1, C(x)[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}#
+#
+#-----------------------------------------#
+##
+#     Get Variance Values#
+##
+#-----------------------------------------#
+#
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+#
+#Variance matrices#
+sigma_2 <- function(y, C, k){#
+  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)#
+}#
+Sigma_tilde <- function(y, g, C_list){#
+  #set up preliminaries#
+  K <- nrow(L)#
+  d <- ncol(L)#
+  #get sum#
+  tot <- matrix(0,nrow = d, ncol = d)#
+  for(k in 1:K){#
+    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])#
+  }#
+  return(tot)#
+}#
+Sigma <- function(y,g,C_list, S_list){#
+  #get S2D_inv#
+  S2D_inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+  #preliminary values#
+  d <- ncol(L)#
+  m <- length(C_list)#
+  #first summand#
+  tot1 <- (S_list[[g]] + Reduce("+",S_list)) %*% Sigma_tilde(y, g, C_list) %*% (S_list[[g]] + Reduce("+",S_list))#
+  #second summard#
+  tot2 <- matrix(0, nrow = d, ncol = d)#
+  for(k in (1:m)[-g]){#
+    tot2 <- tot2 + S_list[[k]] %*% Sigma_tilde(y, k, C_list) %*% S_list[[k]]#
+  }#
+  #return covariance matrix#
+  return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)#
+}#
+#-----------------------------------------#
+##
+#     Make apriori line data#
+##
+#-----------------------------------------#
+#make apriori lines#
+apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))#
+here <-  1#
+colnames(apriori)[4:7] <- c("Abar", "ASE", "Omni", "Omnibar")#
+for(j in 1:length(t)){#drift parameter#
+  #get S_list/C_list#
+  S_list <- S(t[j])#
+  C_list <- list(diag(2), C(t[j]))#
+  for(i in 1:2){#network loop#
+    for(k in 1:2){#community loop#
+      #ASE MSE #
+      conj <- solve(.5 *crossprod(L) %*% C_list[[i]])#
+      ase_bias <- 0#
+      ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      ase_mse_here <- sum(diag(ase_var)) / net_size#
+      #ABAR MSE#
+      Cbar <- Reduce("+", C_list)/length(C_list)#
+      conj <-  solve(.5 *crossprod(L) %*% Cbar)#
+      abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]#
+      abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj#
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))#
+      #Omni MSE#
+      omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]#
+      omni_var <- Sigma(L[k,], i, C_list, S_list) #
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)#
+      #Omnibar#
+      m <- length(S_list)#
+      Sbar <- Reduce("+", S_list)/m#
+      S2D.inv <- solve(.5 * crossprod(L) %*%  Reduce("+", lapply(S_list, function(x) x^2)))#
+      omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]#
+      omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv#
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)#
+      #store#
+      apriori[here,] <- c(paste("Graph", i), #graph#
+                          paste("Community", k), #community#
+                          t[j], #dirft parameter#
+                          #MSE's#
+                          abar_mse_here,ase_mse_here, omni_mse_here,omnibar_mse_here#
+                          #norm2(abar_bias), norm2(ase_bias), norm2(omni_bias), norm2(omnibar_bias)#
+                          )#
+      #update pointer #
+      here <- here + 1#
+    }#
+  }#
+}#
+#-----------------------------------------#
+##
+#	     Plot Results#
+##
+#-----------------------------------------#
+library(ggplot2); library(dplyr); library(reshape2)#
+apriori_mse <- apriori %>% melt(id.vars = 1:3)#
+colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")#
+apriori_mse$MSE <- as.numeric(apriori_mse$MSE)#
+apriori_mse$t<- as.numeric(apriori_mse$t)#
+#
+ggplot(apriori_mse, aes(t, MSE, col = Method)) +#
+  geom_point(alpha = .5)+#
+  geom_line()+#
+  facet_grid(rows = vars(Graph),#
+             cols = vars(Community))+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(y = expression(paste('log'[10], "(MSE)")),#
+       x = "Deviation from SBM (t = 0) to ER (t = 1)") #
+#
+ggsave("analytic_mse.jpeg",#
+       width = 7, height = 5, units = "in", #
+       device = "jpeg", #
+       path = "~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/figures/")
+write.csv(apriori_mse, "~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/figures/apriori_mse.csv")
+write.csv(apriori_mse, "~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/data/apriori_mse.csv")
+#sampling functions#
+getP <- function(X) tcrossprod(X)#
+sampBern <- function(p) rbinom(1,1,p) #
+sampP <- function(P){#
+  A <- apply(P, c(1,2), sampBern)#
+  A[lower.tri(A)] <- t(A)[lower.tri(A)]#
+  diag(A) <- 0#
+  A#
+} #
+#
+#estimating functions#
+H <- function(g,m){#
+  ones <- rep(1, m)#
+  e <- diag(m)[,g]#
+  .5 * (tcrossprod(ones,e) + tcrossprod(e,ones))#
+}#
+H1 <- function(x){#
+  ones <- rep(1, length(x))#
+  .5 * (tcrossprod(ones,x) + tcrossprod(x,ones))#
+}#
+make_omni <- function(A,B,C){#
+  kronecker(H(1,2), A) + kronecker(H(2,2), B)#
+}#
+norm2 <- function(u){#
+  sqrt(sum(u^2))#
+} #
+normalize.cols<- function(A){#
+  norm.vec <- function(u) u/norm2(u) #define vector normalization func.#
+  if(ncol(A) == 1) return(norm.vec(A[,1]))#
+  apply(A, 2, norm.vec) # vectorize #
+} #
+ase <- function(A,d){#
+  E <- eigen(A)#
+  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))#
+  S <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)#
+  U %*% S#
+}#
+#
+#clustering functions#
+get_mc <- function(x, true){#
+  n <- length(x)#
+  mc1 <- sum(abs(x - samp))#
+  mc2 <- sum(abs(ifelse(x == 1, 2, 1) - samp))#
+  return(min(c(mc1/n, mc2/n)))#
+}#
+#
+#vector mse functions (assumed x centered)#
+get_mse <- function(x){#
+  norm2(x)^2#
+}#
+#
+#-----------------------------------
+#set up blocks#
+B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)#
+b_ase <- ase(B, 2)#
+#
+#get latent positions#
+x1 <- b_ase[1,]; x2 <- b_ase[2,]#
+#
+#set prior probabilities#
+pi <- .5#
+#
+#get rotation (eigenvectors of Delta)#
+Delta <- pi * tcrossprod(x1) + (1 - pi)*tcrossprod(x2) #
+R <- eigen(Delta)$vectors#
+#
+#Apply rotation to x1 and x2#
+x1_til <- t(R) %*% x1 #
+x2_til <- t(R) %*% x2#
+#
+#set base latent positions#
+L <- rbind(t(x1_til), t(x2_til))
+#converges to ER with p = .3 (1,1) --> (2,0)#
+C <- function(t){#
+  diag(c(t + 1, -t + 1))#
+}#
+#-----------------------------------------#
+##
+#    Set up Bias matrices #
+##
+#-----------------------------------------#
+#
+S <- function(C){#
+  #bias matrices#
+  v1 <- c(1, C[1,1])#
+  v2 <- c(1, C[2,2])#
+  #get embeddings#
+  a1 <- ase(H1(v1), 1)[,1]#
+  a2 <- ase(H1(v2), 1)[,1]  #
+  #define scaling matrices#
+  S1 <- abs(diag(c(a1[1], a2[1])))#
+  S2 <- abs(diag(c(a1[2], a2[2])))#
+  #return results#
+  return(list(S1, S2))#
+}
+#set up base parameters #
+net_size <- 250#
+t <- seq(0, 1, length.out = 11)[-11]#
+mc_runs <- 10000 #num

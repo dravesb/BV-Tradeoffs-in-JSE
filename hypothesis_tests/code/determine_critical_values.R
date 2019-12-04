@@ -1,7 +1,6 @@
 #--------------------------------------
 #
-#       Full Graph Hypothesis 
-#       Testing Simulations
+#      Determine Critical Values
 #           
 #--------------------------------------
 
@@ -253,10 +252,11 @@ get_T_threshold <- function(X_known){
 #-----------------------------
 #    Simulation Parameters
 #-----------------------------
+library(MCMCpack)
 
 #set up base parameters 
-net_size <- 500#c(100, 250)
-t <- seq(0, .2,length.out = 5) #c(0, .25, .5, .75, 1)
+net_size <- c(100, 250, 500)
+t <- 0 #c(0, .25, .5, .75, 1)
 mc_runs <- 100 #number of iterations
 
 #set up storage
@@ -313,18 +313,12 @@ for(i in 1:length(net_size)){#iterate over network size
       #---------------------
       
       #known variance
-      #T_star0 <- sum(get_test_stats_known_variance(samp, L, X1, X2, S_list, C_list)) #statistic
-      #test_rej_known <- ifelse(T_star0 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
-      
-      T_star0 <- (sum(get_test_stats_known_variance(samp, L, X1, X2, S_list, C_list)) - 2*net_size[i]) / 4*net_size[i] #statistic
-      test_rej_known <- ifelse(T_star0 > qnorm(.95), 1, 0) #get rejections yes/no
+      T_star0 <- sum(get_test_stats_known_variance(samp, L, X1, X2, S_list, C_list)) #statistic
+      test_rej_known <- ifelse(T_star0 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
       
       #unknown variance
-      #T_star1 <- sum(get_test_stats(Lhat, net_size[i], X1, X2)) #statistic
-      #test_rej <- ifelse(T_star1 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
-      
-      T_star1 <- (sum(get_test_stats(Lhat, net_size[i], X1, X2)) - 2*net_size[i]) / 4*net_size[i] #statistic
-      test_rej <- ifelse(T_star1 > qnorm(.95), 1, 0) #get rejections yes/no
+      T_star1 <- sum(get_test_stats(Lhat, net_size[i], X1, X2)) #statistic
+      test_rej <- ifelse(T_star1 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
       
       #get omni test statistic & threshold
       T_star2 <- sum(apply(X1 - X2, 1, norm2)) #get statistic
@@ -343,28 +337,10 @@ for(i in 1:length(net_size)){#iterate over network size
 }
 
 #-----------------------------
-#    Save files 
-#-----------------------------
-
-test_stat_df <- cbind(df[,1:3], df[,4:6])
-reject_df <- cbind(df[,1:3], df[,7:9])
-
-write.csv(test_stat_df, 
-          "/Users/benjamindraves/Documents/Work/github/BJSE/hypothesis_tests/data/test_stat_df.csv")
-write.csv(reject_df, 
-          file = "/Users/benjamindraves/Documents/Work/github/BJSE/hypothesis_tests/data/reject_df.csv")
-
-#-----------------------------
 #
 #    Visualize Results
 #
 #-----------------------------
-
-#-----------------------------
-#    read in data
-#-----------------------------
-test_stat_df <- read.csv("/Users/benjamindraves/Documents/Work/github/BJSE/hypothesis_tests/data/test_stat_df.csv")[,-1]
-reject_df <- read.csv("/Users/benjamindraves/Documents/Work/github/BJSE/hypothesis_tests/data/reject_df.csv")[,-1]
 
 #-----------------------------
 #    Power Curves
@@ -386,7 +362,7 @@ plotdf <- as.data.frame(reject_df) %>%
   summarize(Par_Known = mean(t_known_rej),
             Par_Unknown = mean(test_rej),
             SemiPar = mean(omni_rej)
-            ) %>% 
+  ) %>% 
   melt(id.vars = c(1,2)) %>%
   mutate(se = as.numeric(se[,4]))
 
@@ -404,43 +380,78 @@ ggplot(plotdf, aes(t, value, col = variable, group = variable))+
   labs(x = "t", y = "Empirical Power", 
        title = "Full Graph Hypothesis Testing Power Curve",
        color = "Test\n Statistic"
-       )
-  
-ggsave("full_graph_power.jpeg",
+  )
+#-----------------------------
+#    Save Dataframe
+#-----------------------------
+write.csv(df, "~/Documents/Work/github/BJSE/hypothesis_tests/data/check_critical_value.csv")
+
+df <- read.csv("~/Documents/Work/github/BJSE/hypothesis_tests/data/check_critical_value.csv")[,-1]
+#-----------------------------
+#    Visualize Test Stat
+#-----------------------------
+
+plotdf <- as.data.frame(df[,1:6]) %>%
+  melt(id.vars = 1:3)
+
+ggplot(as.data.frame(plotdf) %>% filter(variable != "T_Omni"), 
+       aes(value, col = variable))+
+  geom_histogram(fill = "white")+
+  facet_grid(rows = vars(variable),
+             cols = vars(network_size),
+             scales="free")+
+  theme_bw()
+
+ggsave("test_stat_under_null.jpeg",
        height = 6, width = 6,
        units = "in",
        path = "~/Documents/Work/github/BJSE/hypothesis_tests/figures/")
 
 
 #-----------------------------
-#    Visualize Test Stat
+#    Determine Critical Value
+#-----------------------------
+size <- net_size[3]
+
+t_known <- quantile((plotdf %>% filter(variable == "T_known", network_size == size))[,"value"], probs = .95)
+t_unknown <- quantile((plotdf %>% filter(variable == "T_unknown", network_size == size))[,"value"], probs = .95)
+CV <- qchisq(.95, 2*size)
+
+c(t_known, t_unknown, CV)
+
+sum((plotdf %>% filter(variable == "T_known", network_size == size))[,"value"] < qchisq(.95, 2*size))/size
+sum((plotdf %>% filter(variable == "T_unknown", network_size == size))[,"value"] < qchisq(.95, 2*size))/size
+
+
+#Take away: the unknown variance estimator is overinflated so we're testing based on 
+#           an improper reference distribution
+#Next up: Do a simulation that relates the reference distribution to the observed 
+#         95% intervals and try to tease out the correction rate
+
+#-----------------------------
+#    Visualize Power
 #-----------------------------
 
-plotdf <- as.data.frame(test_stat_df) %>%
-  melt(id.vars = 1:3)
+powerdf <- df %>% 
+  group_by(network_size, t) %>% 
+  summarize(known_power = mean(t_known_rej), 
+            unknown_power = mean(test_rej),
+            omni_power = mean(omni_rej)) %>% 
+  melt(id.vars = 1:2)
 
-ggplot(as.data.frame(plotdf) %>% 
-         filter(variable != "T_Omni", 
-                network_size == 250), 
-       aes(value, col = variable))+
-  geom_histogram(fill = "white")+
-  #geom_vline(xintercept = qchisq(.95, 2*250), linetype = "dashed", col = "grey")+
-  geom_vline(xintercept = qnorm(.95), linetype = "dashed", col = "grey")+
-  facet_grid(rows = vars(t),
-             cols = vars(variable),
-             scales="free")+
+ggplot(powerdf, aes(network_size, value, col = variable))+
+  geom_point(size = 2)+
+  geom_line()+
+  geom_hline(yintercept = .05, col = "grey", linetype = "dashed")+
+  labs(x = "Network Size", 
+       y = "Power", 
+       color = "Method")+
   theme_bw()
 
-
-ggplot(as.data.frame(plotdf) %>% 
-         filter(variable == "T_Omni"), 
-       aes(value, col = variable))+
-  geom_histogram(fill = "white")+
-  facet_grid(rows = vars(t),
-             cols = vars(network_size),
-             scales="free")+
-  theme_bw()
-
+ggsave("null_power_few.jpeg",
+       height = 6, width = 6,
+       units = "in",
+       path = "~/Documents/Work/github/BJSE/hypothesis_tests/figures/")
 
 
 

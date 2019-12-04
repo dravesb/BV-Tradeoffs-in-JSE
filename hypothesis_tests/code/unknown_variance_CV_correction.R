@@ -1,7 +1,6 @@
 #--------------------------------------
 #
-#       Full Graph Hypothesis 
-#       Testing Simulations
+#      Determine Critical Values
 #           
 #--------------------------------------
 
@@ -253,27 +252,22 @@ get_T_threshold <- function(X_known){
 #-----------------------------
 #    Simulation Parameters
 #-----------------------------
+library(MCMCpack)
 
 #set up base parameters 
-net_size <- 500#c(100, 250)
-t <- seq(0, .2,length.out = 5) #c(0, .25, .5, .75, 1)
+net_size <- round(exp(seq(log(100), log(1000), length.out = 20)))
+t <- 0 #c(0, .25, .5, .75, 1)
 mc_runs <- 100 #number of iterations
 
 #set up storage
-df <- matrix(NA, nrow = length(net_size) * mc_runs * length(t) , ncol = 9)
-colnames(df) <- c("network_size", "iter", "t",
-                  "T_known", "T_unknown", "T_Omni",
-                  "t_known_rej", "test_rej", "omni_rej")
+df <- matrix(NA, nrow = length(net_size) * mc_runs * length(t) , ncol = 4)
+colnames(df) <- c("network_size", "iter", "t", "T_unknown")
 here <- 1 
 
 #set seed 
 set.seed(1985)
 
 for(i in 1:length(net_size)){#iterate over network size
-  
-  #set up threshold on equal group sized X
-  X_known <- L[c(rep(1, net_size[i]/2), rep(2, net_size[i]/2)),]
-  thres <- get_T_threshold(X_known)
   
   for(j in 1:length(t)){#iterate over t values
     
@@ -311,29 +305,11 @@ for(i in 1:length(net_size)){#iterate over network size
       #---------------------
       #Get test statistics
       #---------------------
-      
-      #known variance
-      #T_star0 <- sum(get_test_stats_known_variance(samp, L, X1, X2, S_list, C_list)) #statistic
-      #test_rej_known <- ifelse(T_star0 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
-      
-      T_star0 <- (sum(get_test_stats_known_variance(samp, L, X1, X2, S_list, C_list)) - 2*net_size[i]) / 4*net_size[i] #statistic
-      test_rej_known <- ifelse(T_star0 > qnorm(.95), 1, 0) #get rejections yes/no
-      
       #unknown variance
-      #T_star1 <- sum(get_test_stats(Lhat, net_size[i], X1, X2)) #statistic
-      #test_rej <- ifelse(T_star1 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
-      
-      T_star1 <- (sum(get_test_stats(Lhat, net_size[i], X1, X2)) - 2*net_size[i]) / 4*net_size[i] #statistic
-      test_rej <- ifelse(T_star1 > qnorm(.95), 1, 0) #get rejections yes/no
-      
-      #get omni test statistic & threshold
-      T_star2 <- sum(apply(X1 - X2, 1, norm2)) #get statistic
-      omni_rej <- ifelse(T_star2 > thres, 1, 0) #get yes/no based on threshold value
-      
+      T_star1 <- sum(get_test_stats(Lhat, net_size[i], X1, X2)) #statistic
+  
       #store results
-      df[here, ] <- c(net_size[i], k, t[j], 
-                      T_star0,T_star1,T_star2, 
-                      test_rej_known, test_rej, omni_rej)
+      df[here, ] <- c(net_size[i], k, t[j], T_star1)
       
       #update pointer 
       here <- here + 1
@@ -343,16 +319,11 @@ for(i in 1:length(net_size)){#iterate over network size
 }
 
 #-----------------------------
-#    Save files 
+#    Save Data
 #-----------------------------
 
-test_stat_df <- cbind(df[,1:3], df[,4:6])
-reject_df <- cbind(df[,1:3], df[,7:9])
-
-write.csv(test_stat_df, 
-          "/Users/benjamindraves/Documents/Work/github/BJSE/hypothesis_tests/data/test_stat_df.csv")
-write.csv(reject_df, 
-          file = "/Users/benjamindraves/Documents/Work/github/BJSE/hypothesis_tests/data/reject_df.csv")
+#write.csv(df, "~/Documents/Work/github/BJSE/hypothesis_tests/data/determine_critical_value.csv")
+dat <- read.csv("~/Documents/Work/github/BJSE/hypothesis_tests/data/determine_critical_value.csv")[,-1]
 
 #-----------------------------
 #
@@ -361,85 +332,119 @@ write.csv(reject_df,
 #-----------------------------
 
 #-----------------------------
-#    read in data
-#-----------------------------
-test_stat_df <- read.csv("/Users/benjamindraves/Documents/Work/github/BJSE/hypothesis_tests/data/test_stat_df.csv")[,-1]
-reject_df <- read.csv("/Users/benjamindraves/Documents/Work/github/BJSE/hypothesis_tests/data/reject_df.csv")[,-1]
-
-#-----------------------------
-#    Power Curves
+#    Comparing Cutoffs
 #-----------------------------
 library(dplyr); library(reshape2)
 
-#calculate standard errors
-se <- as.data.frame(reject_df) %>%
+plotdf <- as.data.frame(dat) %>%
   group_by(t, network_size) %>% 
-  summarize(Par_Known_se = 2 * sd(t_known_rej) / sqrt(n()),
-            Par_Unknown_se = 2 * sd(test_rej) / sqrt(n()),
-            SemiPar_se = 2 * sd(omni_rej) / sqrt(n())
+  summarize(cutoff = quantile(T_unknown, probs = c(.95))
   ) %>% 
-  melt(id.vars = c(1,2))
+  mutate(chisq_value = sapply(net_size, function(x) qchisq(.95, 2*x)))
 
-#calculate means
-plotdf <- as.data.frame(reject_df) %>%
-  group_by(t, network_size) %>% 
-  summarize(Par_Known = mean(t_known_rej),
-            Par_Unknown = mean(test_rej),
-            SemiPar = mean(omni_rej)
-            ) %>% 
-  melt(id.vars = c(1,2)) %>%
-  mutate(se = as.numeric(se[,4]))
-
-#Change variable name
-
-#visualize
-ggplot(plotdf, aes(t, value, col = variable, group = variable))+
-  geom_point(alpha = 1, size = .1)+
-  geom_line(alpha = 1)+
-  geom_ribbon(aes(ymin = value - se, ymax = value + se), 
-              fill = "grey70", alpha = .2, colour = NA)+ 
-  geom_hline(yintercept = .05, col = "grey", linetype = "dashed")+
-  facet_grid(rows = vars(network_size))+
+ggplot(plotdf, aes(network_size, cutoff - chisq_value))+
+  geom_point(size = 2)+
+  geom_line(alpha = .2)+
   theme_bw()+
-  labs(x = "t", y = "Empirical Power", 
-       title = "Full Graph Hypothesis Testing Power Curve",
-       color = "Test\n Statistic"
-       )
+  labs(y = "Observed minus Theoretical Quantile", 
+       x = "Network Size")
+
+ggsave("obs_min_theo.jpeg",
+       height = 6, width = 6,
+       units = "in",
+       path = "~/Documents/Work/github/BJSE/hypothesis_tests/figures/")
+
+#bootstrap quantiles
+boot <- function(x, B){replicate(B, {
+    samp <- sample(1:length(x), size= length(x), replace = TRUE)
+    quant <- unname(quantile(x[samp], probs = .95))
+    return(quant)
+  })}
+
+B <- 1000 
+quants <- numeric()
+for(i in 1:length(net_size)){
+  quants[((i-1)*B +1):(i*B)] <- boot(dat[dat$network_size == net_size[i], 4], B) - qchisq(.95, 2*net_size[i])
+}
+plotdf <- data.frame(quants, network_size = rep(net_size, each = B))
+
+ggplot(plotdf, aes(network_size, quants))+
+  geom_jitter(size = .2, alpha = .1, height = 5, width = 5)+
+  theme_bw()+
+  labs(y = "Observed minus Theoretical Quantile", 
+       x = "Network Size")
+
+ggsave("obs_min_theo_boot.jpeg",
+       height = 6, width = 6,
+       units = "in",
+       path = "~/Documents/Work/github/BJSE/hypothesis_tests/figures/")
+
+#-----------------------------
+#     Visualize Power
+#-----------------------------
+
+powerdf <- as.data.frame(dat) %>%
+  mutate(rej = ifelse(dat$T_unknown > qchisq(.95, 2 * dat$network_size) , 1, 0)) %>% 
+  group_by(network_size) %>%
+  summarize(power = mean(rej))
   
-ggsave("full_graph_power.jpeg",
+ggplot(powerdf, aes(network_size, power)) +
+  geom_point(size = 2)+
+  geom_line(col = "grey")+
+  theme_bw()
+
+ggsave("power_unknown_null.jpeg",
        height = 6, width = 6,
        units = "in",
        path = "~/Documents/Work/github/BJSE/hypothesis_tests/figures/")
 
 
-#-----------------------------
-#    Visualize Test Stat
-#-----------------------------
+#bootstrap quantiles
+B <- 1000 
+quants <- numeric()
+for(i in 1:length(net_size)){
+  quants[((i-1)*B +1):(i*B)] <- boot(dat[dat$network_size == net_size[i], 4], B)
+}
 
-plotdf <- as.data.frame(test_stat_df) %>%
-  melt(id.vars = 1:3)
+quantdf <- data.frame(quants, network_size = rep(net_size, each = B)) %>%
+  mutate(rej = ifelse(quants > qchisq(.95, 2 * network_size) , 1, 0)) %>% 
+  group_by(network_size) %>%
+  summarize(quant = mean(rej))
 
-ggplot(as.data.frame(plotdf) %>% 
-         filter(variable != "T_Omni", 
-                network_size == 250), 
-       aes(value, col = variable))+
-  geom_histogram(fill = "white")+
-  #geom_vline(xintercept = qchisq(.95, 2*250), linetype = "dashed", col = "grey")+
-  geom_vline(xintercept = qnorm(.95), linetype = "dashed", col = "grey")+
-  facet_grid(rows = vars(t),
-             cols = vars(variable),
-             scales="free")+
+
+ggplot(quantdf, aes(network_size, quant))+
+  geom_point(size = 2)+
+  geom_line(col = "grey")+
+  geom_hline(yintercept = .05, col = "grey", linetype = "dashed")+
+  labs(x = "Network Size", 
+       y = "Proportion of Quantiles\n Above Cuttoff", 
+       title = "Bootstrapped Cuttoff Values")+
   theme_bw()
 
+ggsave("cutoff_unknown_null_boot.jpeg",
+       height = 6, width = 6,
+       units = "in",
+       path = "~/Documents/Work/github/BJSE/hypothesis_tests/figures/")
 
-ggplot(as.data.frame(plotdf) %>% 
-         filter(variable == "T_Omni"), 
-       aes(value, col = variable))+
-  geom_histogram(fill = "white")+
-  facet_grid(rows = vars(t),
-             cols = vars(network_size),
-             scales="free")+
-  theme_bw()
+#-----------------------------
+#     Visualize Test Stat
+#-----------------------------
+
+ggplot(dat, aes((T_unknown - 2*network_size)/sqrt(4*network_size))) + 
+  geom_histogram(fill = "red", col = "black", alpha = .5, bins = 50)+
+  facet_grid(rows = vars(network_size))+
+  geom_vline(xintercept = qnorm(.95))+
+  theme_bw()+
+  labs(x = "Wald Statistic")
+  
+test <- (dat$T_unknown - 2*dat$network_size)/sqrt(4*dat$network_size)
+
+level <- numeric(length(net_size))
+for(i in 1:length(net_size)){
+  level[i] <- length(which(test[dat$network_size == net_size[i]] > qnorm(.95)))/net_size[i]
+}
+level
+plot(net_size, level, type = "l")
 
 
 

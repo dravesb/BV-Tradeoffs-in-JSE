@@ -12,6 +12,7 @@
 library(ggplot2)
 library(dplyr)
 library(reshape2)
+library(MCMCpack)
 
 #source nesseary functions
 source("~/Documents/Work/github/BJSE/second_moment/code/basic_functions.R")
@@ -231,9 +232,9 @@ get_T_threshold <- function(X_known){
 #-----------------------------
 
 #set up base parameters 
-net_size <- c(2000)
+net_size <- c(250)
 t <- seq(0, .2, length.out = 4)[-11] #c(0, .25, .5, .75, 1)
-mc_runs <- 50 #number of iterations
+mc_runs <- 500 #number of iterations
 
 #set up storage
 df <- matrix(NA, nrow = length(net_size) * mc_runs * length(t) , ncol = 6)
@@ -265,12 +266,18 @@ for(i in 1:length(net_size)){#iterate over network size
       P1 <- tcrossprod(X)
       P2 <- tcrossprod(X, X %*% C(t[j]))
       
+      #define Xtil 
+      Xtil <- rbind(X, X %*% sqrt(C(t[j])))
+      
       #sample A1 and A2
       A1 <- sampP(P1)
       A2 <- sampP(P2)
       
       #make Omni and embedd for Lhat and Z
       Lhat <- ase(make_omni(list(A1, A2)), 2)
+      
+      #procrustes!
+      Lhat <- procrustes(Lhat, Xtil)$X.new
       
       #make X1 and X2
       X1 <- Lhat[1:(net_size[i]),]
@@ -316,18 +323,17 @@ library(dplyr); library(reshape2)
 
 #calculate means
 plotdf <- as.data.frame(df) %>%
-  melt(id.vars = c(1:3)) %>% 
-  mutate()
+  melt(id.vars = c(1:3))
 
 #visualize
-ggplot(plotdf %>% filter(variable == "know_T", t == 0), 
+ggplot(plotdf %>% filter(t == 0), 
        aes(value, col = variable, group = variable))+
   geom_histogram(fill = "white")+
   geom_vline(xintercept = qchisq(.95, 2 * net_size), lty = 2, col= "grey")+
-  facet_grid(rows = vars(network_size), 
-             cols = vars(t))+
+  facet_grid(rows = vars(variable), 
+             scales = "free_y")+
   theme_bw()+
-  labs(x = "t", y = "Empirical Power", title = "Full Graph Hypothesis Testing Power Curve")
+  labs(x = "t", y = "Empirical Power", title = "Full Graph Hypothesis Test Statistic")
 
 
 

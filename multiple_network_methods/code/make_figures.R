@@ -20,8 +20,8 @@ df <- as.data.frame(read.csv("~/Documents/Work/github/BJSE/multiple_network_meth
 #group by iteration & method
 df <- df %>% melt(id.vars = 1:3) %>% 
   group_by(network_size, t, variable) %>%  
-  summarize(MC_Rate = mean(value), 
-            se_rate = sd(value)/sqrt(n()))
+  summarize(MC_Rate = mean(value, na.rm = TRUE), 
+            se_rate = sd(value, na.rm = TRUE)/sqrt(n()))
 
 colnames(df)[3] <- "Method"
 

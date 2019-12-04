@@ -73,7 +73,7 @@ k <- 20
 t <- seq(0, 1, length.out =  k)
 
 #number of mc iterations
-mc_runs <- 50
+mc_runs <- 500
 
 #set network size
 #n <- round(10^(seq(log(25, base = 10), log(250, base = 10), length.out = 10))) #network sizes 

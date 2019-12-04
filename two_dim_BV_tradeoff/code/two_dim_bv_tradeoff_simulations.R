@@ -55,7 +55,7 @@ get_mc <- function(x, true){
 
 #vector mse functions (assumed x centered)
 get_mse <- function(x){
-  norm2(x)^2
+  sum(x^2)
 }
 
 #-----------------------------------------
@@ -96,7 +96,6 @@ C <- function(t){
   diag(c(t + 1, -t + 1))
 }
 
-
 #-----------------------------------------
 #
 #    Set up Bias matrices 
@@ -130,7 +129,7 @@ S <- function(C){
 #set up base parameters 
 net_size <- 250
 t <- seq(0, 1, length.out = 11)[-11]
-mc_runs <- 10000 #number of iterations
+mc_runs <- 50 #number of iterations
 
 #load aligning packages
 require(MCMCpack)
@@ -151,15 +150,16 @@ for(i in 1:length(net_size)){
   for(j in 1:length(t)){
     
     #sample rows of X
-    samp <- sample(1:2, net_size[i], replace = TRUE) 
+    samp <- rep(c(1, 2), each = net_size[i]/2)#sample(1:2, net_size[i], replace = TRUE) 
     X <- L[samp, ]
-  
+    Xc <- X %*% sqrt(C(t[j]))
+    
     #set up scaled latent positions
-    X.scaled <- rbind(X, X %*% sqrt(C(t[j])))
+    X.scaled <- rbind(X, Xc)
     
     #set up P matrices
     P1 <- tcrossprod(X)
-    P2 <- tcrossprod(X %*% C(t[j]), X)
+    P2 <- tcrossprod(Xc)
     
     #iterate over mc_runs
     for(k in 1:mc_runs){
@@ -178,25 +178,19 @@ for(i in 1:length(net_size)){
       
       #align matrices
       X_hat <- procrustes(X_hat.here, X)$X.new
-      Y_hat <- procrustes(Y_hat.here, X %*% sqrt(C(t[j])))$X.new
+      Y_hat <- procrustes(Y_hat.here, Xc)$X.new
         
       #getrowise mse
       X_mse <- apply(X_hat - X, 1, get_mse)
-      Y_mse <- apply(Y_hat - (X %*% sqrt(C(t[j]))), 1, get_mse)
+      Y_mse <- apply(Y_hat - Xc, 1, get_mse)
       
       #get average mse for each group and in graph 1
       ase_comm1_mse1 <- mean(X_mse[samp == 1])
       ase_comm2_mse1 <- mean(X_mse[samp == 2])
-      
-      #ase_comm1_mse1 <- median(X_mse[samp == 1])
-      #ase_comm2_mse1 <- median(X_mse[samp == 2])
-      
+  
       #get average mse for each group and in graph 2
       ase_comm1_mse2 <- mean(Y_mse[samp == 1])
       ase_comm2_mse2 <- mean(Y_mse[samp == 2])
-      
-      #ase_comm1_mse2 <- median(Y_mse[samp == 1])
-      #ase_comm2_mse2 <- median(Y_mse[samp == 2])
       
       #----------------------
       #   Abar MSE
@@ -209,25 +203,19 @@ for(i in 1:length(net_size)){
       X_hat <- procrustes(X_hat.here, X)$X.new
       
       #get rowwise mse
-      X_mse <- apply(X_hat - L[samp,], 1, get_mse)
-      Y_mse <- apply(X_hat - L[samp,] %*% sqrt(C(t[j])), 1, get_mse)
+      X_mse <- apply(X_hat - X, 1, get_mse)
+      Y_mse <- apply(X_hat - Xc, 1, get_mse)
       
       #get average mse for each group and in graph 1
       abar_comm1_mse1 <- mean(X_mse[samp == 1])
       abar_comm2_mse1 <- mean(X_mse[samp == 2])
       
-      #abar_comm1_mse1 <- median(X_mse[samp == 1])
-      #abar_comm2_mse1 <- median(X_mse[samp == 2])
-      
       #get average mse for each group and in graph 2
-      abar_comm1_mse2 <- mean(Y_mse[samp == 1])
+      abar_comm1_mse2 <- Y_mse[1,]mean(Y_mse[samp == 1])
       abar_comm2_mse2 <- mean(Y_mse[samp == 2])
       
-      #abar_comm1_mse2 <- median(Y_mse[samp == 1])
-      #abar_comm2_mse2 <- median(Y_mse[samp == 2])
-      
       #----------------------
-      #   Omni Clustering
+      #   Omni MSE
       #----------------------
       
       #construct Omni + embed
@@ -240,49 +228,35 @@ for(i in 1:length(net_size)){
       Y_hat <- L_hat[(net_size[i]+1):(2*net_size[i]),]
       
       #getrowise mse
-      X_mse <- apply(X_hat - L[samp,], 1, get_mse)
-      Y_mse <- apply(Y_hat - L[samp,] %*% sqrt(C(t[j])), 1, get_mse)
+      X_mse <- apply(X_hat - X, 1, get_mse)
+      Y_mse <- apply(Y_hat - Xc, 1, get_mse)
       
       #get average mse for each group and in graph 1
       omni_comm1_mse1 <- mean(X_mse[samp == 1])
       omni_comm2_mse1 <- mean(X_mse[samp == 2])
       
-      #omni_comm1_mse1 <- median(X_mse[samp == 1])
-      #omni_comm2_mse1 <- median(X_mse[samp == 2])
-      
       #get average mse for each group and in graph 2
       omni_comm1_mse2 <- mean(Y_mse[samp == 1])
       omni_comm2_mse2 <- mean(Y_mse[samp == 2])
       
-      #omni_comm1_mse2 <- median(Y_mse[samp == 1])
-      #omni_comm2_mse2 <- median(Y_mse[samp == 2])
-      
-      
       #----------------------
-      #   Omni bar Clustering
+      #   Omnibar MSE
       #----------------------
       
       #get average
-      Lmean <- .5*(L_hat[1:net_size[i],] + L_hat[(net_size[i]+1):(2*net_size[i]), ])
+      Lmean <- .5*(X_hat + Y_hat)
       
       #get rowwise mse
-      X_mse <- apply(Lmean - L[samp,], 1, get_mse)
-      Y_mse <- apply(Lmean - L[samp,] %*% sqrt(C(t[j])), 1, get_mse)
+      X_mse <- apply(Lmean - X, 1, get_mse)
+      Y_mse <- apply(Lmean - Xc, 1, get_mse)
       
       #get average mse for each group and in graph 1
       omnibar_comm1_mse1 <- mean(X_mse[samp == 1])
       omnibar_comm2_mse1 <- mean(X_mse[samp == 2])
       
-      #omnibar_comm1_mse1 <- median(X_mse[samp == 1])
-      #omnibar_comm2_mse1 <- median(X_mse[samp == 2])
-      
       #get average mse for each group and in graph 2
       omnibar_comm1_mse2 <- mean(Y_mse[samp == 1])
       omnibar_comm2_mse2 <- mean(Y_mse[samp == 2])
-      
-      #omnibar_comm1_mse2 <- median(Y_mse[samp == 1])
-      #omnibar_comm2_mse2 <- median(Y_mse[samp == 2])
-      
       
       #----------------------
       #   Store Results
@@ -301,10 +275,12 @@ for(i in 1:length(net_size)){
       
       #update counter 
       here <- here + 1
+      
+      #print update
+      print(k)
     }      
   
-    #
-    print(j)
+    
   }
 }
 
@@ -426,7 +402,7 @@ for(j in 1:length(t)){#drift parameter
       conj <- solve(.5 *crossprod(L) %*% C_list[[i]])
       ase_bias <- 0
       ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj
-      ase_mse_here <- sum(diag(ase_var)) / net_size
+      ase_mse_here <- sum(diag(ase_var)) / (net_size^2/2)
       
       #ABAR MSE
       Cbar <- Reduce("+", C_list)/length(C_list)
@@ -435,12 +411,12 @@ for(j in 1:length(t)){#drift parameter
       abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]
       abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj
       
-      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / net_size^2/2)
       
       #Omni MSE
       omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]
       omni_var <- Sigma(L[k,], i, C_list, S_list) 
-      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size^2/2)
       
       
       #Omnibar
@@ -475,6 +451,8 @@ apriori_mse$MSE <- as.numeric(apriori_mse$MSE)
 apriori_mse$t<- as.numeric(apriori_mse$t)
 
 
+apriori_mse <- read.csv("~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/data/apriori_mse.csv")[,-1]
+
 #------------------------------------------------
 #
 #         Make Figures
@@ -483,10 +461,10 @@ apriori_mse$t<- as.numeric(apriori_mse$t)
 
 #plot figure
 library(ggplot2)
-ggplot(plotdf) +
+ggplot() +
   geom_point(aes(t, average_mse, col = Method), plotdf, alpha = .5)+
   geom_line(aes(t, average_mse, col = Method), plotdf)+
-  geom_line(aes(t, MSE, col = Method), apriori_mse, linetype = "dashed")+
+  geom_line(aes(t, MSE, col = Method), apriori_mse%>% filter(Method == "Omni"), linetype = "dashed")+
   facet_grid(rows = vars(graph),
              cols = vars(community))+
   geom_ribbon(aes(t, ymin = average_mse - 1.96*mse_se,
@@ -496,7 +474,6 @@ ggplot(plotdf) +
   scale_y_log10()+
   labs(y = expression(paste('log'[10], "(MSE)")),
        x = "Deviation from SBM (x = 0) to ER (x = 1)") 
-
 
 
 ggsave(filename = "2d_mse_mean.pdf", 

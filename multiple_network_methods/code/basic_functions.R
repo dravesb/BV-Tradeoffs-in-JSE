@@ -119,3 +119,7 @@ get_mahalanobis <- function(X, Y){
   
 }
 
+#vector mse functions (assumed x centered)
+get_mse <- function(x){
+  sum(x^2)
+}

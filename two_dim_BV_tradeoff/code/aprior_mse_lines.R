@@ -4,6 +4,9 @@
 #
 #-----------------------------------------
 
+#source files
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/basic_functions.R")
+
 #set up blocks
 B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)
 b_ase <- ase(B, 2)
@@ -55,8 +58,7 @@ S <- function(x){
 
 #-----------------------------------------
 #
-#     Set up Community 
-#     Detection Simulation
+#     Get Variance Values
 #
 #-----------------------------------------
 
@@ -66,7 +68,8 @@ t <- seq(0, 1, length.out = 11)[-11]
 
 #Variance matrices
 sigma_2 <- function(y, C, k){
-  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)
+  p <- crossprod(y, C %*% L[k,])
+  as.numeric(p - p^2)
 }
 Sigma_tilde <- function(y, g, C_list){
   
@@ -75,9 +78,9 @@ Sigma_tilde <- function(y, g, C_list){
   d <- ncol(L)
   
   #get sum
-  tot <- matrix(0,nrow = d, ncol = d)
+  tot <- matrix(0, nrow = d, ncol = d)
   for(k in 1:K){
-    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])
+    tot <- tot + (probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,]))
     
   }
   return(tot)
@@ -105,6 +108,13 @@ Sigma <- function(y,g,C_list, S_list){
   return(.25 * S2D_inv %*% (tot1 + tot2) %*% S2D_inv)
 }
 
+#-----------------------------------------
+#
+#     Make apriori line data
+#
+#-----------------------------------------
+
+
 #make apriori lines
 apriori <- as.data.frame(matrix(NA, ncol = 7, nrow = 4 * length(t)))
 here <-  1
@@ -123,7 +133,7 @@ for(j in 1:length(t)){#drift parameter
       conj <- solve(.5 *crossprod(L) %*% C_list[[i]])
       ase_bias <- 0
       ase_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj
-      ase_mse_here <- sum(diag(ase_var)) / net_size
+      ase_mse_here <- ase_bias + sum(diag(ase_var)) / (net_size + net_size/2)
       
       #ABAR MSE
       Cbar <- Reduce("+", C_list)/length(C_list)
@@ -132,13 +142,12 @@ for(j in 1:length(t)){#drift parameter
       abar_bias <- (sqrt(Cbar) - sqrt(C_list[[i]])) %*% L[k,]
       abar_var <- conj %*% Sigma_tilde(L[k,], i, C_list) %*% conj
       
-      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*net_size))
+      abar_mse_here <- norm2(abar_bias) + (sum(diag(abar_var)) / (length(S_list)*(net_size + net_size/2)))
       
       #Omni MSE
       omni_bias <- (S_list[[i]] - sqrt(C_list[[i]])) %*% L[k,]
       omni_var <- Sigma(L[k,], i, C_list, S_list) 
-      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / net_size)
-      
+      omni_mse_here <- norm2(omni_bias) + (sum(diag(omni_var)) / (net_size + net_size/2))
       
       #Omnibar
       m <- length(S_list)
@@ -147,7 +156,7 @@ for(j in 1:length(t)){#drift parameter
       
       omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]
       omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv
-      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / (net_size + net_size/2))
         
       #store
       apriori[here,] <- c(paste("Graph", i), #graph
@@ -165,19 +174,39 @@ for(j in 1:length(t)){#drift parameter
   }
 }
 
+#-----------------------------------------
+#
+#	     Plot Results
+#
+#-----------------------------------------
+library(ggplot2); library(dplyr); library(reshape2)
+
 
 apriori_mse <- apriori %>% melt(id.vars = 1:3)
-colnames(apriori_mse) <- c("Graph", "Community", "t", "Method", "MSE")
+colnames(apriori_mse) <- c("graph", "community", "t", "Method", "MSE")
 apriori_mse$MSE <- as.numeric(apriori_mse$MSE)
 apriori_mse$t<- as.numeric(apriori_mse$t)
 
 ggplot(apriori_mse, aes(t, MSE, col = Method)) +
   geom_point(alpha = .5)+
   geom_line()+
-  facet_grid(rows = vars(Graph),
-             cols = vars(Community))+
+  facet_grid(rows = vars(graph),
+             cols = vars(community))+
   theme_bw()+
   scale_y_log10()+
   labs(y = expression(paste('log'[10], "(MSE)")),
-       x = "Deviation from SBM (x = 0) to ER (x = 1)") 
+       x = "Deviation from SBM (t = 0) to ER (t = 1)") 
 
+ggsave("analytic_mse.jpeg",
+       width = 7, height = 5, units = "in", 
+       device = "jpeg", 
+       path = "~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/figures/")
+
+
+#-----------------------------------------
+#
+#	     Save Data
+#
+#-----------------------------------------
+
+write.csv(apriori_mse, "~/Documents/Work/github/BJSE/two_dim_BV_tradeoff/data/apriori_mse.csv")
