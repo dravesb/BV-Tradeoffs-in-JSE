@@ -92,26 +92,59 @@ psd_proj <- function(M){
 #    Set up variance 
 #     matrices
 #-----------------------------
-sigma2 <- function(x, y) as.numeric((crossprod(x,y) - crossprod(x,y)^2)) * tcrossprod(y, y)
-sigma_2 <- function(y, C, k){
-  as.numeric(crossprod(y, C %*% L[k,]) - crossprod(y, C %*% L[k,])^2)
+#helper variance functions
+Sigma_tilde <- function(z, C, L.here = L){
+  #fetch latent positions
+  l1 <- L.here[1,]; l2 <- L.here[2,]; d <- ncol(L)
+  
+  #set up constants
+  c1 <- tcrossprod(crossprod(z, C), l1) - (tcrossprod(crossprod(z, C), l1))^2
+  c2 <- tcrossprod(crossprod(z, C), l2) - (tcrossprod(crossprod(z, C), l2))^2
+  
+  #set up matrices
+  mat1 <- matrix(c(l1[1]^2, l1[1]*l1[2], l1[1]*l1[2], l1[2]^2),
+                 ncol = d, nrow = d)
+  mat2 <- matrix(c((c1+c2)/2, (c1-c2)/2, (c1-c2)/2, (c1+c2)/2),
+                 ncol = d, nrow = d)
+  
+  #return sigma_tilde
+  return(mat1*mat2)
+  
 }
-Sigma_tilde <- function(y, g, C_list){
+Sigma_sum_omni <- function(S_list, C_list, graph, comm, L.here = L){
+  #fetch m
+  m <- length(S_list)
   
-  #set up preliminaries
-  K <- nrow(L)
-  d <- ncol(L)
+  #define mSbar
+  S <- Reduce('+', S_list)
   
-  #get sum
-  tot <- matrix(0,nrow = d, ncol = d)
-  for(k in 1:K){
-    tot <- tot + probs[k] * sigma_2(y, C_list[[g]], k) * tcrossprod(L[k,])
-    
+  #calculate variance
+  V1 <- (S_list[[graph]] + S) %*% Sigma_tilde(L.here[comm,], C_list[[graph]]) %*% (S_list[[graph]] + S)
+  V2 <- 0
+  for(g in (1:m)[-graph]){
+    V2 <- V2 + S_list[[g]] %*% Sigma_tilde(L.here[comm,], C_list[[g]]) %*% S_list[[g]] 
   }
-  return(tot)
+  
+  #return variance
+  return(V1 + V2)
   
 }
-
+Sigma_sum_omnibar <- function(S_list, C_list, comm, L.here = L){
+  
+  #set Sbar
+  m <- length(S_list)
+  Sbar <- Reduce('+', S_list)/m
+  
+  #calculate variance
+  mat <- 0
+  for(g in 1:m){
+    mat <- mat + (Sbar + S_list[[g]]) %*% Sigma_tilde(L.here[comm,], C_list[[g]]) %*% (Sbar + S_list[[g]])
+  }
+  
+  #return variance
+  return(mat)
+  
+}
 
 #set up SigmaD unknown
 Sigma_D_unknown <- function(Lhat,n,i){

@@ -12,15 +12,16 @@ library(dplyr)
 #  Net Size increasing figures
 #-----------------------------
 
-ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+
+ggplot(plotdf %>% filter(t == .5), aes(net_size, 1 - MC_Rate, col = Method))+
   geom_point(alpha = .5)+
   #geom_line(aes(linetype = Graph))+
-  geom_line()+facet_grid(~Graph)+
+  geom_line()+
+  facet_grid(~Graph)+
   #geom_errorbar(aes(ymin=MC_Rate - mc_se,ymax=MC_Rate + mc_se), width = .1)+
-  geom_ribbon(aes(ymin=MC_Rate - mc_se,ymax=MC_Rate + mc_se), alpha = .1, linetype = 0)+
+  geom_ribbon(aes(ymin=1 - MC_Rate - mc_se,ymax=1 - MC_Rate + mc_se), alpha = .1, linetype = 0)+
   scale_x_log10()+
   labs(x = expression(paste('log'[10], "(Network Size)")),
-       y = "Misclassification Rate")+
+       y = "Accurary")+
   theme_bw()
 
 
@@ -33,7 +34,7 @@ ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+
 #           seem to be the most reliable
 
 ggsave(filename = "mc_rate_by_net_size.pdf", 
-       width = 6, height =4, 
+       width = 8, height =4, 
        units = "in", 
        path = "~/Documents/Work/github/BJSE/classification_simulation/figures/")
 
@@ -41,11 +42,11 @@ ggsave(filename = "mc_rate_by_net_size.pdf",
 #  Distance between centers
 #     as a function of t
 #-----------------------------
-ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+
+ggplot(plotdf %>% filter(net_size == 100), aes(t, Dist, col = Method))+
   geom_point(alpha = .5)+
   #geom_line(aes(linetype = Graph))+
   geom_line()+facet_grid(~Graph)+
-  geom_vline(xintercept = .5, linetype = 2, col = "grey")+
+  #geom_vline(xintercept = .5, linetype = 2, col = "grey")+
   #geom_errorbar(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), width = .03)+
   geom_ribbon(aes(ymin= Dist - dist_se,ymax=Dist + dist_se), alpha = .1, linetype = 0)+
   labs(x = "t", 
@@ -60,7 +61,7 @@ ggplot(plotdf %>% filter(net_size == 250), aes(t, Dist, col = Method))+
 #       3. Omnibar looks to always have the furthest centers
 
 ggsave(filename = "distance_by_t.pdf", 
-       width = 6, height =4, 
+       width = 8, height =4, 
        units = "in", 
        path = "~/Documents/Work/github/BJSE/classification_simulation/figures/")
 

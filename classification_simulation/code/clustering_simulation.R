@@ -173,8 +173,9 @@ S <- function(C){
 #-----------------------------------------
 
 #set up base parameters 
-net_size <- c(25, 50, 75, 100, 150, 200) #network sizes 
+#net_size <- c(25, 50, 75, 100, 150, 200) #network sizes 
 net_size <- round(10^(seq(log(25, base = 10), log(250, base = 10), length.out = 10))) #network sizes 
+net_size <- sort(c(net_size, 100))
 
 t <- seq(0, 1, length.out = 11)[-11]
 mc_runs <- 200 #number of iterations

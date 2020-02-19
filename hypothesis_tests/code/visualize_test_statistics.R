@@ -234,7 +234,7 @@ get_T_threshold <- function(X_known){
 #set up base parameters 
 net_size <- c(250)
 t <- seq(0, .2, length.out = 4)[-11] #c(0, .25, .5, .75, 1)
-mc_runs <- 500 #number of iterations
+mc_runs <- 500 #number of iterations  
 
 #set up storage
 df <- matrix(NA, nrow = length(net_size) * mc_runs * length(t) , ncol = 6)

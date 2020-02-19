@@ -5,134 +5,14 @@
 #
 #--------------------------------------
 
-#sampling functions
-getP <- function(X) tcrossprod(X)
-sampBern <- function(p) rbinom(1,1,p) 
-sampP <- function(P){
-  A <- apply(P, c(1,2), sampBern)
-  A[lower.tri(A)] <- t(A)[lower.tri(A)]
-  diag(A) <- 0
-  A
-} 
-
-#estimating functions
-H <- function(g,m){
-  ones <- rep(1, m)
-  e <- diag(m)[,g]
-  .5 * (tcrossprod(ones,e) + tcrossprod(e,ones))
-}
-H1 <- function(x){
-  ones <- rep(1, length(x))
-  .5 * (tcrossprod(ones,x) + tcrossprod(x,ones))
-}
-make_omni <- function(A,B,C){
-  kronecker(H(1,2), A) + kronecker(H(2,2), B)
-}
-norm2 <- function(u){
-  sqrt(sum(u^2))
-} 
-normalize.cols<- function(A){
-  norm.vec <- function(u) u/norm2(u) #define vector normalization func.
-  if(ncol(A) == 1) return(norm.vec(A[,1]))
-  apply(A, 2, norm.vec) # vectorize 
-} 
-ase <- function(A,d){
-  E <- eigen(A)
-  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))
-  S <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)
-  U %*% S
-}
-
-#clustering functions
-get_mc <- function(x, true){
-  
-  n <- length(x)
-  mc1 <- sum(abs(x - samp))
-  mc2 <- sum(abs(ifelse(x == 1, 2, 1) - samp))
-  
-  return(min(c(mc1/n, mc2/n)))
-}
-
-#vector mse functions (assumed x centered)
-get_mse <- function(x){
-  sum(x^2)
-}
-
-#-----------------------------------------
+#--------------------------------------
 #
-#    Set up of Base Model
+#       DON'T USE THIS FILE 
+#       USE: two_dim_BV_tradeoff.R
 #
-#-----------------------------------------
+#--------------------------------------
 
-#set up blocks
-B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)
-b_ase <- ase(B, 2)
 
-#get latent positions
-x1 <- b_ase[1,]; x2 <- b_ase[2,]
-
-#set prior probabilities
-pi <- .5
-
-#get rotation (eigenvectors of Delta)
-Delta <- pi * tcrossprod(x1) + (1 - pi)*tcrossprod(x2) 
-R <- eigen(Delta)$vectors
-
-#Apply rotation to x1 and x2
-x1_til <- t(R) %*% x1 
-x2_til <- t(R) %*% x2
-
-#set base latent positions
-L <- rbind(t(x1_til), t(x2_til))
-
-#-----------------------------------------
-#
-#     Set up C values
-#
-#-----------------------------------------
-
-#converges to ER with p = .3 (1,1) --> (2,0)
-C <- function(t){
-  diag(c(t + 1, -t + 1))
-}
-
-#-----------------------------------------
-#
-#    Set up Bias matrices 
-#
-#-----------------------------------------
-
-S <- function(C){
-  #bias matrices
-  v1 <- c(1, C[1,1])
-  v2 <- c(1, C[2,2])
-  
-  #get embeddings
-  a1 <- ase(H1(v1), 1)[,1]
-  a2 <- ase(H1(v2), 1)[,1]  
-  
-  #define scaling matrices
-  S1 <- abs(diag(c(a1[1], a2[1])))
-  S2 <- abs(diag(c(a1[2], a2[2])))
-  
-  #return results
-  return(list(S1, S2))
-}
-
-#-----------------------------------------
-#
-#     Set up Community 
-#     Detection Simulation
-#
-#-----------------------------------------
-
-#set up base parameters 
-net_size <- 250
-t <- seq(0, 1, length.out = 11)[-11]
-mc_runs <- 50 #number of iterations
-
-#load aligning packages
-require(MCMCpack)
 
 #set up storage
 here <- 1
@@ -426,7 +306,7 @@ for(j in 1:length(t)){#drift parameter
       
       omnibar_bias <- (Sbar - sqrt(C_list[[i]])) %*% L[k,]
       omnibar_var <- .25 * S2D.inv %*% Reduce("+",  lapply(1:m, function(ind) (Sbar + m*S_list[[ind]]) %*% Sigma_tilde(L[k,], ind, C_list) %*% (Sbar + m*S_list[[ind]]))) %*%  S2D.inv
-      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / net_size)
+      omnibar_mse_here <- norm2(omnibar_bias)+ (sum(diag(omnibar_var)) / 1.5 * net_size)
       
       #store
       apriori[here,] <- c(paste("Graph", i), #graph
@@ -464,7 +344,7 @@ library(ggplot2)
 ggplot() +
   geom_point(aes(t, average_mse, col = Method), plotdf, alpha = .5)+
   geom_line(aes(t, average_mse, col = Method), plotdf)+
-  geom_line(aes(t, MSE, col = Method), apriori_mse%>% filter(Method == "Omni"), linetype = "dashed")+
+  geom_line(aes(t, MSE, col = Method), apriori_mse, linetype = "dashed")+
   facet_grid(rows = vars(graph),
              cols = vars(community))+
   geom_ribbon(aes(t, ymin = average_mse - 1.96*mse_se,

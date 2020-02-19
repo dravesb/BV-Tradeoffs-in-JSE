@@ -6,7 +6,6 @@
 
 #sampling functions
 getP <- function(X) tcrossprod(X)
-
 sampP <- function(P) {
   #set up matrix
   n = ncol(P)
@@ -18,8 +17,7 @@ sampP <- function(P) {
   return(A)
 }
 
-
-#estimating functions
+#Estimating functions
 H <- function(g,m){
   ones <- rep(1, m)
   e <- diag(m)[,g]

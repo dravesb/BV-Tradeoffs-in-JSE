@@ -58,8 +58,8 @@ X <- L[com,]
 
 #set up P matrices
 P1 <- tcrossprod(X, X %*% C(0)) # t = 0 
-P2 <- tcrossprod(X, X %*% C(.2)) # t = 0.5
-P3 <- tcrossprod(X, X %*% C(.6)) # t = .6
+P2 <- tcrossprod(X, X %*% C(.2)) # t = 0.2
+P3 <- tcrossprod(X, X %*% C(.6)) # t = 0.6
 P3 <- tcrossprod(X, X %*% C(1)) # t = 1
 
 #-----------------------------
@@ -128,15 +128,92 @@ plot(g4, vertex.size = 5)
 dev.off()
 
 
+#-----------------------------
+#     Visualize Change in 
+#     Latent Positions
+#-----------------------------
 
+setwd("~/Documents/Work/github/BJSE/visualizing_network_changes/")
 
+#set latent positions
+X0 <- L %*% C(0) #t = 0
+X1 <- L %*% C(.2) #t = 0.2
+X2 <- L %*% C(.6) #t = 0.6
+X3 <- L %*% C(1) #t = 0
 
+#combine
+X_move <- as.data.frame(rbind(X0, X1, X2, X3))
+colnames(X_move) <- c("x", "y")
+plot(X_move)
 
+#plot together and highlight points for different t values
+set.seed(1)
+ggplot()+
+  geom_point(data = X_move[1:2,], aes(x, y), shape= 23, fill = "white",size = 5)+
+  geom_point(data = X_move[1:2,], aes(x, y), col = c("red", "blue"))+
+  geom_point(data = X_move[3:6,], aes(x, y), col = rep(c("red", "blue"), 2), alpha = .2, size = 2)+
+  geom_jitter(data = X_move[7:8,], aes(x, y), col = c("red", "blue"),
+              alpha = .2, size = 2, width = .005, height = 0)+
+  labs(x = "", y = "",
+       title = )+
+  theme_bw()+
+  theme(axis.title.x=element_blank(),
+        #axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        #axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+ggsave("./figures/latent_position_0.jpeg",device = "jpeg", width = 2.8, height = 2.8, units = "in")
 
+set.seed(1)
+ggplot()+
+  geom_point(data = X_move[3:4,], aes(x, y), shape= 23, fill = "white",size = 5)+
+  geom_point(data = X_move[3:4,], aes(x, y), col = c("red", "blue"))+
+  geom_point(data = X_move[c(1:2, 5:6),], aes(x, y), col = rep(c("red", "blue"), 2), alpha = .2, size = 2)+
+  geom_jitter(data = X_move[7:8,], aes(x, y), col = c("red", "blue"),
+              alpha = .2, size = 2, width = .005, height = 0)+
+  labs(x = "", y = "")+
+  theme_bw()+
+  theme(axis.title.x=element_blank(),
+        #axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        #axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+ggsave("./figures/latent_position_2.jpeg",device = "jpeg", width = 2.8, height = 2.8, units = "in")
 
+set.seed(1)
+ggplot()+
+  geom_point(data = X_move[5:6,], aes(x, y), shape= 23, fill = "white",size = 5)+
+  geom_point(data = X_move[5:6,], aes(x, y), col = c("red", "blue"))+
+  geom_point(data = X_move[1:4,], aes(x, y), col = rep(c("red", "blue"), 2), alpha = .2, size = 2)+
+  geom_jitter(data = X_move[7:8,], aes(x, y), col = c("red", "blue"),
+              alpha = .2, size = 2, width = .005, height = 0)+
+  labs(x = "", y = "")+
+  theme_bw()+
+  theme(axis.title.x=element_blank(),
+        #axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        #axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+ggsave("./figures/latent_position_6.jpeg",device = "jpeg",width = 2.8, height = 2.8, units = "in")
 
-
-
-
+set.seed(1)
+ggplot()+
+  geom_point(data = X_move[7:8,], aes(x, y), shape= 23, fill = "white",size = 5)+
+  #geom_point(data = X_move[7:8,], aes(x, y), col = c("red", "blue"))+
+  geom_point(data = X_move[1:6,], aes(x, y), col = rep(c("red", "blue"), 3), alpha = .2, size = 2)+
+  geom_jitter(data = X_move[7:8,], aes(x, y), col = c("red", "blue"),
+              alpha = 1, size = 2, width = .005, height = 0)+
+  labs(x = "", y = "")+
+  theme_bw()+ 
+  theme(axis.title.x=element_blank(),
+        #axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        #axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+ggsave("./figures/latent_position_1.jpeg",device = "jpeg",width = 2.8, height = 2.8, units = "in")
 
 
