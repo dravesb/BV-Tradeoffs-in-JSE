@@ -252,9 +252,9 @@ plotdf <- data.frame(iter_no = as.factor(df[,1]),
             average_mse = mean(mse),
             average_estimate_X = mean(estimate_X),
             average_estimate_Y = mean(estimate_Y),
-            average_bias2 = mean(bias_X^2 + bias_Y^2),
+            average_bias2 = bias_X^2 + bias_Y^2, 
             empirical_var = sum(diag(var(cbind(estimate_X, estimate_Y)))),
-            theo_bias2 = mean(theo_bias_X^2 + theo_bias_Y^2),
+            theo_bias2 = mean(theo_bias_X)^2 + mean(theo_bias_Y)^2,
             theo_var = mean(theo_var)/net_size,
             theo_mse = mean(theo_mse))
 

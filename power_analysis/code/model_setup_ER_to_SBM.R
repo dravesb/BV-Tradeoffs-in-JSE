@@ -9,10 +9,11 @@
 #simulation paramters
 #-----------------------
 
-mc_runs <- 100
+mc_runs <- 1000
 net_size <- c(50, 100, 200)
 t <- seq(0, 0.5, by = 0.05)
 C <- function(t) diag(c(1+t, 1-t), nrow = 2)
+alpha <- 0.05
 
 #-----------------------
 #set up latent positions

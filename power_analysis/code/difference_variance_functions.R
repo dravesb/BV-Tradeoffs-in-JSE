@@ -24,15 +24,15 @@ Sigma_tilde <- function(z, C, L.here = L){
   return(mat1*mat2)
   
 }
-Sigma_sum_hat <- function(Xbar){
+Sigma_sum_hat <- function(Xbar, vertex){
   #fetch n, d
   n <- nrow(Xbar)
   d <- ncol(Xbar)
   
   #get inner sum estimate
   total <- diag(0, nrow = d, ncol = 2)
-  for(j in (1:n)[-i]){
-    total <- total + (crossprod(Xbar[i,], Xbar[j,]) - crossprod(Xbar[i,], Xbar[j,])^2) * tcrossprod(Xbar[j,])
+  for(j in (1:n)[-vertex]){
+    total <- total + as.numeric(crossprod(Xbar[vertex,], Xbar[j,]) - crossprod(Xbar[vertex,], Xbar[j,])^2) * tcrossprod(Xbar[j,])
   }
   
   #return sum 
@@ -56,10 +56,9 @@ Sigma_D <- function(X, S_list, C_list, L.here = L){
   #set up variance list 
   var.here <- list()
   for(i in 1:n){
-    var.here[[i]] <- 0.25 * solve(S2 %*% Delta) %*% S 
-                  %*% (Sigma_tilde(L.here[comm_labels[i],], C_list[[1]]) + 
-                       Sigma_tilde(L.here[comm_labels[i],], C_list[[2]])) 
-                  %*% S %*% solve(S2 %*% Delta)
+    var.here[[i]] <- 0.25 * solve(S2 %*% Delta) %*% S %*% 
+      (Sigma_tilde(L.here[comm_labels[i],], C_list[[1]]) + Sigma_tilde(L.here[comm_labels[i],], C_list[[2]])) %*% 
+      S %*% solve(S2 %*% Delta)
   }
   
   #return variances for each row of D
@@ -82,7 +81,7 @@ Sigma_D_hat <- function(L_hat){
   #set up variance list 
   var.here <- list()
   for(i in 1:n){
-    var.here[[i]] <- 0.5 * solve(S2_Delta_hat) %*% Sigma_sum_hat(Omnibar) %*% solve(S2_Delta_hat)
+    var.here[[i]] <- 0.5 * solve(S2_Delta_hat) %*% Sigma_sum_hat(Omnibar,i) %*% solve(S2_Delta_hat)
   }
   
   #return estimated variances for each row of D

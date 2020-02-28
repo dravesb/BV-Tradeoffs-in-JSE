@@ -16,9 +16,9 @@ je_classes <-  function(adj_matrices, d, K){
   H <- multidembed(A = adj_matrices, d, Innitialize = 1, maxiter = 100, large.and.sparse = F)$h
   
   #Cluster based on the rows of H
-  classes <- kmeans(H, centers = K)
+  classes <- Mclust(H, G = K, modelNames = "VVV")$classification
   
   #return clusters
-  return(classes$cluster)
+  return(classes)
    
 }

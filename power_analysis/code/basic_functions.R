@@ -83,8 +83,22 @@ get_Slist <- function(C_list){
   
   return(S_list)
   
-  
+
 }
 
+
+psd_proj <- function(M){
+  #decomp 
+  eigen_decomp <- eigen(M)
+  U <- eigen_decomp$vectors
+  S <- eigen_decomp$values
+  
+  #threshold eigenvalues
+  S.thres <- diag(sapply(S, function(x) max(c(0,x))))
+  
+  #return
+  return(tcrossprod(U %*% S.thres, U))
+  
+}
 
 
