@@ -40,6 +40,7 @@ x1 <- b_ase[1,]; x2 <- b_ase[2,]
 
 #set prior probabilities
 pi <- .5
+probs <- c(pi, 1-pi)
 
 #get rotation (eigenvectors of Delta)
 Delta <- pi * tcrossprod(x1) + (1 - pi)*tcrossprod(x2) 
@@ -61,6 +62,12 @@ C_list <- list(C1, C2, C3)
 #v vectors
 v1 <- c(C1[1,1], C2[1,1], C3[1,1])
 v2 <- c(C1[2,2], C2[2,2], C3[2,2])
+
+#initialize H1
+H1 <- function(x){
+  ones <- rep(1, length(x))
+  .5 * (tcrossprod(ones,x) + tcrossprod(x,ones))
+}
 
 #ase's
 alpha1 <- ase(H1(v1), 1)[,1]
@@ -163,15 +170,16 @@ ggplot() +
   labs(x = "X", y = "Y",
        col = "Community")
 
-ggsave("analytic_bias.jpeg", 
+ggsave("analytic_bias.pdf", 
        width = 7, height = 6, units = "in", 
-       device = "jpeg", 
+       device = "pdf", 
        path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
 ggplot() +
-  geom_point(aes(Xhat, Yhat, col = Community), plotdf,
-             size = .1,
-             alpha = .05
+  geom_point(aes(Xhat, Yhat, col = Community, 
+                 alpha = as.factor(Network.Size),
+                 size = as.factor(Network.Size)), 
+             plotdf
              )+
   geom_point(aes(XS1, XS2),  shape = 4, size = 1, plotdf) +
   geom_point(aes(XC1, XC2),  shape = 3, size = 1, plotdf) +
@@ -181,13 +189,15 @@ ggplot() +
   theme_bw()+
   theme(legend.position = "none")+
   scale_color_manual(values=c("red", "blue"))+
+  scale_alpha_manual(values=c(0.05,0.05/2, 0.05/4))+
+  scale_size_manual(values=c(0.01,0.01/2, 0.01/4))+
   guides(colour = guide_legend(override.aes = list(alpha = 1, size = 1)))+
   labs(x = "X", y = "Y",
        col = "Community")
 
-ggsave("observed_bias.jpeg", 
+ggsave("observed_bias.pdf", 
        width = 6, height = 6, units = "in", 
-       device = "jpeg", 
+       device = "pdf", 
        path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
 #-------------------------------------------------
@@ -206,16 +216,21 @@ ggplot() +
   labs(x = "X", y = "Y",
        col = "Community")
 
-ggsave("residual_bounds.jpeg", 
+ggsave("residual_bounds.pdf", 
        width = 7, height = 6, units = "in", 
-       device = "jpeg", 
+       device = "pdf", 
        path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
 ggplot() +
-  geom_point(aes(RX, RY, col = Community), plotdf,size = .01, alpha = .05) +
+  geom_point(aes(RX, RY, col = Community, 
+                 alpha = as.factor(Network.Size),
+                 size = as.factor(Network.Size)), 
+             plotdf) +
   geom_path(aes(x, y), data = circ_dat1, linetype = "dashed")+
   facet_grid(rows = vars(Graph),
              cols = vars(Network.Size))+
+  scale_alpha_manual(values=c(0.05,0.05/2, 0.05/4))+
+  scale_size_manual(values=c(0.01,0.01/2, 0.01/4))+
   scale_color_manual(values=c("red", "blue"))+
   guides(colour = guide_legend(override.aes = list(alpha = 1, size = 1)))+
   theme_bw()+
@@ -223,9 +238,9 @@ ggplot() +
   labs(x = "X", y = "Y",
        col = "Community")
 
-ggsave("residuals.jpeg", 
+ggsave("residuals.pdf", 
        width = 6, height = 6, units = "in", 
-       device = "jpeg", 
+       device = "pdf", 
        path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
 

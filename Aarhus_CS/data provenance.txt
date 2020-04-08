@@ -1,0 +1,20 @@
+Aarhus Data Provenance Notes 
+
+- arxiv: https://arxiv.org/pdf/1303.4986.pdf
+- Department of CS at Aarhus University among employees 
+- 61 / 142 employees who decided to join the survey 
+	- professors, postdocs, PhD students, administration staff 
+- Five different relationships 
+	- Working - collected via online questioner
+	- Repeated leisurely activities - collected via online questioner
+	- regularly eating lunch together - collected via online questioner
+	- co-authorship 
+	- facebook friendship 
+
+Online questioner 
+	- roster format of all people in the department 
+	- not limited number of responses 
+	- Directed data collection but flattened - only requires A to state B (one way connection) to establish an edge
+	- 77% have a facebook account 
+	- complete survey 
+	- DBLP bib database for the co authorship 

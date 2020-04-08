@@ -1,0 +1,340 @@
+---
+title: "Aarhus Multiplex Analysis"
+author: "Benjamin Draves"
+#output: html_document
+output: pdf_document
+---
+
+## Data Overview
+
+The Aarhus multiplex dataset is a multiplex network over $n = 61$ vertices corresponding to professors, postdocs, PhD students, and adminstrative staff from Aarhus University's Computer Science department.
+There are $m = 5$ layers in the network each representing a different association; working relationships, repeated lesisurely activity, regularly eating lunch together, co-authorship, and Facebook friendship. 
+
+142 employees were sent a roster of all employees in the department and were asked to identify other members in the department with whom they worked regularly, ate lunch, and engaged in repeated leisurely activity. 
+The edges were regarded as nondirectional meaning if employee $i$ identified employee $j$ as an associate in any of these activities, a non-directional edge was assigned between $i$ and $j$ in that layer. 
+$n = 61$ employees participated in the study (43\% participation).
+Every participant completed the full survey. 
+
+The Facebook friendship and co-authorship layers of these 61 participants were identified through a custom application and the DBLP bibligography database. 
+$77\%$ of the participants had a Facebook account and at least one paper in which two employees were co-authors resulted in an edge in the co-authorship layer. 
+
+
+## Data Preperation
+```{r, echo = FALSE}
+#load packages
+pacman::p_load('igraph', 'Matrix', 'grDevices', 'gridExtra', 'ggplot2',
+               'multinets')
+
+#helpful functions
+simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+        sep="", collapse=" ")
+} 
+make_omni <- function(mats){
+  #H(x) = (1x^T + x1^T)/2
+  H <- function(g,m){
+    ones <- rep(1, m)
+    e <- diag(m)[,g]
+    .5 * (tcrossprod(ones,e) + tcrossprod(e,ones))
+  }
+  
+  #sum up each kronecker 
+  m <- length(mats)
+  Reduce("+", lapply(1:m, function(x) kronecker(H(x,m), mats[[x]])))
+}
+getElbows <- function(dat, n = 3, threshold = FALSE, plot = TRUE){
+  ## Given a decreasingly sorted vector, return the given number of elbows
+  ##
+  ## Args:
+  ##   dat: a input vector (e.g. a vector of standard deviations), or a input feature matrix.
+  ##   n: the number of returned elbows.
+  ##   threshold: either FALSE or a number. If threshold is a number, then all
+  ##   the elements in d that are not larger than the threshold will be ignored.
+  ##   plot: logical. When T, it depicts a scree plot with highlighted elbows.
+  ##
+  ## Return:
+  ##   q: a vector of length n.
+  ##
+  ## Reference:
+  ##   Zhu, Mu and Ghodsi, Ali (2006), "Automatic dimensionality selection from
+  ##   the scree plot via the use of profile likelihood", Computational
+  ##   Statistics & Data Analysis, Volume 51 Issue 2, pp 918-930, November, 2006. 
+  
+  #  if (is.unsorted(-d))
+  
+  
+  if (is.matrix(dat))
+    d <- sort(apply(dat,2,sd), decreasing=TRUE)
+  
+  else
+    d <- sort(dat,decreasing=TRUE)
+  
+  if (!is.logical(threshold))
+    d <- d[d > threshold]
+  
+  p <- length(d)
+  if (p == 0)
+    stop(paste("d must have elements that are larger than the threshold ",
+               threshold), "!", sep="")
+  
+  lq <- rep(0.0, p)                     # log likelihood, function of q
+  for (q in 1:p) {
+    mu1 <- mean(d[1:q])
+    mu2 <- mean(d[-(1:q)])              # = NaN when q = p
+    sigma2 <- (sum((d[1:q] - mu1)^2) + sum((d[-(1:q)] - mu2)^2)) /
+      (p - 1 - (q < p))
+    lq[q] <- sum( dnorm(  d[1:q ], mu1, sqrt(sigma2), log=TRUE) ) +
+      sum( dnorm(d[-(1:q)], mu2, sqrt(sigma2), log=TRUE) )
+  }
+  
+  q <- which.max(lq)
+  if (n > 1 && q < p) {
+    q <- c(q, q + getElbows(d[(q+1):p], n-1, plot=FALSE))
+  }
+  
+  if (plot==TRUE) {
+    if (is.matrix(dat)) {
+      sdv <- d # apply(dat,2,sd)
+      plot(sdv,type="b",xlab="dim",ylab="stdev")
+      points(q,sdv[q],col=2,pch=19)
+    } else {
+      plot(dat, type="b")
+      points(q,dat[q],col=2,pch=19)
+    }
+  }
+  
+  return(q)
+}
+elist_to_adj <- function(X, n = 61){
+  A <- Matrix(0, nrow = n, ncol = n, sparse = TRUE)
+  for(i in 1:nrow(X)) A[X[i, 1],X[i, 2]] <- A[X[i, 2],X[i, 1]] <- 1 
+  return(A)
+}
+ase <- function(A,d){
+  #function to normalize columns of A
+  norm2 <- function(u){
+    sqrt(sum(u^2))
+  } 
+  normalize.cols<- function(A){
+    norm.vec <- function(u) u/norm2(u) #define vector normalization func.
+    if(ncol(A) == 1) return(norm.vec(A[,1]))
+    apply(A, 2, norm.vec) # vectorize 
+  } 
+  
+  #construct ASE 
+  E <- eigen(A)
+  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))
+  S_sqrt <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)
+  U %*% S_sqrt
+}
+
+```
+
+To correct for bias due to graph-specific sparsity, we normalize each adjacency matrix so that they share a common Frobenius norm.
+That is we analyze the normalized adjacencies $\mathbf{A}_{\text{norm}}^{(g)} = \mathbf{A}^{(g)}/\|\mathbf{A}^{(g)}\|_F$. 
+
+```{r results = 'hide', warning = FALSE, message = FALSE, tidy = TRUE}
+#fetch data
+devtools::install_github('achab94/mplex')
+library(mplex)
+data(aarhus_mplex)
+
+#format as Adjacency Matrices
+n <- nrow(aarhus_mplex$nodes)
+m <- length(unique(aarhus_mplex$layerNames))
+A_list <- lapply(1:m, function(x) elist_to_adj(as.matrix(aarhus_mplex[[x + 2]][1:2])))
+
+#Normalize adjacency matrices
+A_list_norm <-lapply(A_list, function(x) x/norm(x, type = 'F'))
+
+#Capitalize Layer Names
+layer_names <- as.vector(sapply(aarhus_mplex$layerNames, function(x) paste0(toupper(substring(x, 1, 1)), substring(x, 2))))
+```
+
+
+## Exploratory Data Analysis
+```{r}
+colors <- c('purple','blue','red', 'green', 'black')
+
+#plot adjacencies in a 3 x 2 Layout
+p1 <- image(A_list[[1]], xlab = '', ylab = '', sub = layer_names[1], 
+            col.regions = adjustcolor(colors[1], alpha.f = 0.6), axes = FALSE)
+p2 <- image(A_list[[2]], xlab = '', ylab = '', sub = layer_names[2], 
+            col.regions = adjustcolor(colors[2], alpha.f = 0.6))
+p3 <- image(A_list[[3]], xlab = '', ylab = '', sub = layer_names[3], 
+            col.regions = adjustcolor(colors[3], alpha.f = 0.6))
+p4 <- image(A_list[[4]], xlab = '', ylab = '', sub = layer_names[4], 
+            col.regions = adjustcolor(colors[4], alpha.f = 0.6))
+p5 <- image(A_list[[5]], xlab = '', ylab = '', sub = layer_names[5], 
+            col.regions = adjustcolor(colors[5], alpha.f = 0.6))
+
+layout <- rbind(c(1, 1, 2, 2, 3, 3), c(NA, 4, 4, 5, 5, NA))
+grid.arrange(p1, p2, p3, p4, p5, layout_matrix = layout)
+```
+
+```{r}
+#Create igraph objects
+g1 <- graph_from_adjacency_matrix(A_list[[1]], mode = 'undirected')
+g2 <- graph_from_adjacency_matrix(A_list[[2]], mode = 'undirected')
+g3 <- graph_from_adjacency_matrix(A_list[[3]], mode = 'undirected')
+g4 <- graph_from_adjacency_matrix(A_list[[4]], mode = 'undirected')
+g5 <- graph_from_adjacency_matrix(A_list[[5]], mode = 'undirected')
+
+#Plot graphs
+layout(rbind(c(1, 1, 2, 2, 3, 3), c(0, 4, 4, 5, 5, 0)))
+par(mar = rep(1, 4))
+
+lay <- layout.fruchterman.reingold(g5)
+plot(g1, vertex.label = NA, vertex.size = 6, layout = lay, 
+     vertex.color = adjustcolor(colors[1], alpha.f = 0.5), main = layer_names[1])
+plot(g2, vertex.label = NA, vertex.size = 6, layout = lay, 
+     vertex.color = adjustcolor(colors[2], alpha.f = 0.5),  main = layer_names[2])
+plot(g3, vertex.label = NA, vertex.size = 6, layout = lay, 
+     vertex.color = adjustcolor( colors[3], alpha.f = 0.5), main = layer_names[3])
+plot(g4, vertex.label = NA, vertex.size = 6, layout = lay, 
+     vertex.color = adjustcolor(colors[4], alpha.f = 0.5), main = layer_names[4])
+plot(g5, vertex.label = NA, vertex.size = 6, layout = lay, 
+     vertex.color = adjustcolor( colors[5], alpha.f = 0.5),  main = layer_names[5])
+
+```
+
+
+
+## Omnibus Data Analysis
+
+### Determining Embedding Dimension
+
+```{r}
+#make Omnibus matrix
+Atil <- make_omni(A_list_norm)
+
+#skree plot 
+evals <- eigen(Atil)$values 
+plot(evals, ylab = 'Eigenvalues', cex = 0.3)
+
+#determine d - get elbows
+non_zero_evals <- evals[which(evals > 0)]
+elbows <- getElbows(non_zero_evals, n = 3)
+
+#set d 
+d <- elbows[1]
+```
+
+### Goodness of Fit 
+
+To determine if the ESRDPG provides a good fit to the Aarhus multiplex network, we consider the matrix 
+\begin{align*}
+\hat{\mathbf{H}} = [\hat{\mathbf{X}}_{\text{Omni}}^{(1)}\hat{\mathbf{X}}_{\text{Omni}}^{(2)}\dots\hat{\mathbf{X}}_{\text{Omni}}^{(m)}]\in\mathbb{R}^{n\times md}.
+\end{align*}
+Under the ESRDPG, $\mathbf{H} = \mathbb{E}[\hat{\mathbf{H}}] = \mathbf{X}[\mathbf{S}^{(1)}\mathbf{S}^{(2)}\dots \mathbf{S}^{(m)}]$ and 
+\begin{align*}
+  \text{rank}(\mathbf{H}) \leq \min\left\{\text{rank}(\mathbf{X}), \text{rank}([\mathbf{S}^{(1)}\mathbf{S}^{(2)}\dots \mathbf{S}^{(m)}])\right\} \leq d
+\end{align*}
+Therefore, to determine if we have properly identified the model dimension, we can analyze the gap $\sigma_{d}(\hat{
+\mathbf{H}}) - \sigma_{d+1}(\hat{\mathbf{H}})$. 
+
+
+```{r}
+#Embedd Atil
+Lhat <- ase(Atil, d)
+
+#get goodness of fit matrix  
+H <- matrix(NA, nrow = n, ncol = m * d)
+for(i in 1:m){
+  H[,(d*(i-1) + 1):(d*i)] <- Lhat[(n*(i-1) + 1):(n*i), ]
+}
+
+#Is M rank d? 
+plot(svd(H)$d, col = c(rep('red', d), rep('black', d*(m-1))),
+     ylab = 'Singular Values')
+
+
+```
+
+While this analysis provides evidence to suggest that the model is of the correct dimension, it does suggest that the scaling matrices are diagnol. 
+Under the ESRDPG, in the limit $\mathbf{X}^T\mathbf{X}$ is diagnol and each scaling matrix $\{\mathbf{S}^{(g)}\}_{g=1}^m$ is diagonal. 
+Therefore, the matrix
+\begin{align*}
+\mathbf{H}^T\mathbf{H} = [\mathbf{S}^{(i)}\mathbf{X}^T\mathbf{X}\mathbf{S}^{(j)}]_{i,j = 1}^m 
+\end{align*}
+should be diagnol in each $d\times d$ block. 
+To that end we visualize $|\mathbf{H}^T\mathbf{H}|$.
+
+```{r}
+#Diagonal Scaling? 
+image(Matrix(crossprod(H)),
+            sub = '', xlab = '', ylab = '',
+            useAbs = TRUE,
+            col.regions = colorRampPalette(c('white', 'blue'))(30),
+            main = expression(paste('|', hat(bold(H))^T~hat(bold(H)),'|')),
+            border.col = NA
+            )
+```
+
+Moreover, we look to analyze the element-wise mean matrix of the combination of these blocks to determine the behavior of these on and off diagnol block elements. 
+Let $\hat{\mathbf{M}}^{(ij)}$ be the $i,j$-th $(d\times d)$ block of $\hat{\mathbf{H}}^T\hat{\mathbf{H}}$.
+From here define the estimated mean matrix
+\begin{align*}
+\hat{\mathbf{M}} = \frac{2}{m(m+1)}\sum_{i=1}^m\sum_{j\leq i} \hat{\mathbf{M}}^{(ij)}. 
+\end{align*}
+and the estimated standard deviation matrix $\hat{\mathbf{S}} \in\mathbb{R}^{d\times d}$ by 
+\begin{align*}
+\hat{\mathbf{S}}_{ij} = \sqrt{\frac{2}{m(m+1)}\sum_{k = 1}^m\sum_{\ell \leq k} (\hat{\mathbf{M}}_{ij}^{(k\ell)} - \hat{\mathbf{M}}_{ij})^2}. 
+\end{align*}
+Under the ESRDPG, 
+\begin{align*}
+\mathbf{M} = \mathbb{E}[\hat{\mathbf{M}}] = \frac{2}{m(m+1)}\sum_{i=1}^m\sum_{j\leq i}\mathbf{S}^{(i)}\mathbf{X}^T\mathbf{X}\mathbf{S}^{(j)}
+\end{align*}
+and $\mathbf{M}$ should be diagonal. 
+Moreover, in theory the elementwise standard deviation matrix $\mathbf{S} = \mathbb{E}[\hat{\mathbf{S}}]$ should be diagonal.
+Provided that $\mathbf{M}$ is diagonal, the off-diagonal elements of $\hat{\mathbf{S}}$ indicate the level of variation from the diagonal scaling setting. 
+
+```{r}
+#Elementwise mean and sd H^TH matrix 
+M <- matrix(NA, nrow = d, ncol = d)
+S <- matrix(NA, nrow = d, ncol = d)
+
+for(i in 1:d){
+  for(j in 1:d){# looping over entries
+    #fetch matrix
+    tmp <- crossprod(H)[seq(i, m*d, by = d),seq(j, m*d, by = d)]
+    
+    #all entries
+    M[i,j] <- mean(tmp[upper.tri(tmp, diag = TRUE)])
+    S[i,j] <- sd(tmp[upper.tri(tmp, diag = TRUE)])
+  }
+}
+
+p1 <- image(Matrix(M), sub = '', xlab = '', ylab = '',
+          useAbs = TRUE, 
+          col.regions = colorRampPalette(c('white', 'blue'))(30),
+          main = expression(paste('|',hat(bold(M)), '|')),
+          border.col = NA
+          )
+p2 <- image(Matrix(S), sub = '', xlab = '', ylab = '',
+          col.regions = colorRampPalette(c('white', 'red'))(30),
+          main = expression(paste('|',hat(bold(S)), '|')),
+          border.col = NA)
+
+grid.arrange(p1, p2, layout_matrix = matrix(1:2, nrow = 1))
+
+
+```
+
+### Eigenspokes
+
+```{r}
+#look at pairs plot of eigenvectors
+pairs(eigen(Atil)$vectors[, 1:d], cex = 0.1)
+
+```
+
+
+
+
+
+
+
+
+

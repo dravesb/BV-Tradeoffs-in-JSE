@@ -17,6 +17,9 @@ library(reshape2)
 #source nesseary functions
 source("~/Documents/Work/github/BJSE/second_moment/code/basic_functions.R")
 
+#set directory
+setwd('~/Documents/Work/github/BJSE/visualizing_network_changes/scripts/')
+
 #-----------------------------
 #     Set up Base Model
 #-----------------------------
@@ -60,7 +63,7 @@ X <- L[com,]
 P1 <- tcrossprod(X, X %*% C(0)) # t = 0 
 P2 <- tcrossprod(X, X %*% C(.2)) # t = 0.2
 P3 <- tcrossprod(X, X %*% C(.6)) # t = 0.6
-P3 <- tcrossprod(X, X %*% C(1)) # t = 1
+P4 <- tcrossprod(X, X %*% C(1)) # t = 1
 
 #-----------------------------
 #     Sample Adjmatrices
@@ -82,7 +85,7 @@ library(igraph)
 g1 <- graph_from_adjacency_matrix(A1, mode = "undirected")
 g2 <- graph_from_adjacency_matrix(A2, mode = "undirected")
 g3 <- graph_from_adjacency_matrix(A3, mode = "undirected")
-g4 <- graph_from_adjacency_matrix(A3, mode = "undirected")
+g4 <- graph_from_adjacency_matrix(A4, mode = "undirected")
 
 #change node color 
 #cols <- c("#ff000088","#0000ff88")
@@ -111,19 +114,19 @@ E(g3)$color <- "#55555555"
 E(g4)$color <- "#55555555"
 
 #plot networks
-jpeg("../figures/g1.jpeg")
+pdf("../figures/g1.pdf")
 plot(g1, vertex.size = 5)
 dev.off()
 
-jpeg("../figures/g2.jpeg")
+pdf("../figures/g2.pdf")
 plot(g2, vertex.size = 5)
 dev.off()
 
-jpeg("../figures/g3.jpeg")
+pdf("../figures/g3.pdf")
 plot(g3, vertex.size = 5)
 dev.off()
 
-jpeg("../figures/g4.jpeg")
+pdf("../figures/g4.pdf")
 plot(g4, vertex.size = 5)
 dev.off()
 
@@ -163,7 +166,7 @@ ggplot()+
         axis.title.y=element_blank(),
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
-ggsave("./figures/latent_position_0.jpeg",device = "jpeg", width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_0.pdf",device = "pdf", width = 2.8, height = 2.8, units = "in")
 
 set.seed(1)
 ggplot()+
@@ -180,7 +183,7 @@ ggplot()+
         axis.title.y=element_blank(),
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
-ggsave("./figures/latent_position_2.jpeg",device = "jpeg", width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_2.pdf",device = "pdf", width = 2.8, height = 2.8, units = "in")
 
 set.seed(1)
 ggplot()+
@@ -197,7 +200,7 @@ ggplot()+
         axis.title.y=element_blank(),
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
-ggsave("./figures/latent_position_6.jpeg",device = "jpeg",width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_6.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
 
 set.seed(1)
 ggplot()+
@@ -214,6 +217,6 @@ ggplot()+
         axis.title.y=element_blank(),
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
-ggsave("./figures/latent_position_1.jpeg",device = "jpeg",width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_1.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
 
 

@@ -1,33 +1,33 @@
-  #--------------------------------------
-  #
-  #       Power Analaysis Simulations
-  #           
-  #--------------------------------------
+#--------------------------------------
+#
+#       Power Analaysis Simulations
+#           
+#--------------------------------------
   
-  #load packages and source files
-  library(pacman,lib.loc = "/Library/Frameworks/R.framework/Versions/3.6/Resources/library")
-  p_load(MCMCpack, ggplot2, dplyr, reshape2, MASS, foreach, doParallel)
-  setwd('/Users/benjamindraves/Documents/Work/github/BJSE/power_analysis/code/')
-  source('basic_functions.R')
-  source('difference_variance_functions.R')
-  source('model_setup_ER_to_SBM.R')
-  source('omni_semi_par_threshold.R')
-  source('test_statistic_functions.R')
+#load packages and source files
+library(pacman,lib.loc = "/Library/Frameworks/R.framework/Versions/3.6/Resources/library")
+p_load(MCMCpack, ggplot2, dplyr, reshape2, MASS, foreach, doParallel)
+setwd('/Users/benjamindraves/Documents/Work/github/BJSE/power_analysis/code/')
+source('basic_functions.R')
+source('difference_variance_functions.R')
+source('model_setup_ER_to_SBM.R')
+source('omni_semi_par_threshold.R')
+source('test_statistic_functions.R')
   
-  #set up storage
-  here <- 1
-  df <- matrix(NA, nrow = length(net_size)*length(t)*mc_runs, ncol = 11)
-  colnames(df) <- c('iter_no','t', 'net_size',
+#set up storage
+here <- 1
+df <- matrix(NA, nrow = length(net_size)*length(t)*mc_runs, ncol = 11)
+colnames(df) <- c('iter_no','t', 'net_size',
                     'T', 'W', 'W_hat',
                     'T_Thres','W_Thres', 
                     'T_Rej',  'W_Rej', 'W_hat_Rej')
   
-  #set pointer
-  counter <- 1
+#set pointer
+counter <- 1
   
-  set.seed(1985)
-  #begin simulation
-  for(j in 1:length(t)){
+set.seed(1000)
+#begin simulation
+for(j in 1:length(t)){
     
     #set C list
     C_list <- list()
@@ -98,7 +98,7 @@
                            )
         #update counter and print update
         counter <- counter + 1
-        if(counter %% 100 == 0){
+        if(counter %% 1000 == 0){
           print(round(counter/nrow(df), 3))
         }
         
@@ -111,12 +111,4 @@
   
 #write out
 write.csv(df, "~/Documents/Work/github/BJSE/power_analysis/data/plotting_df.csv")
-
-
-
-
-
-
-
-
 

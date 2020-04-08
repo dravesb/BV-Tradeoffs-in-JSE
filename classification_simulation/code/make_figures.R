@@ -12,18 +12,17 @@ library(dplyr)
 #  Net Size increasing figures
 #-----------------------------
 
-ggplot(plotdf %>% filter(t == .5), aes(net_size, 1 - MC_Rate, col = Method))+
+ggplot(plotdf %>% filter(t == .5), aes(net_size, MC_Rate, col = Method))+
   geom_point(alpha = .5)+
   #geom_line(aes(linetype = Graph))+
   geom_line()+
   facet_grid(~Graph)+
   #geom_errorbar(aes(ymin=MC_Rate - mc_se,ymax=MC_Rate + mc_se), width = .1)+
-  geom_ribbon(aes(ymin=1 - MC_Rate - mc_se,ymax=1 - MC_Rate + mc_se), alpha = .1, linetype = 0)+
+  geom_ribbon(aes(ymin= MC_Rate - mc_se,ymax= MC_Rate + mc_se), alpha = .1, linetype = 0)+
   scale_x_log10()+
   labs(x = expression(paste('log'[10], "(Network Size)")),
-       y = "Accurary")+
+       y = "misclassification Rate")+
   theme_bw()
-
 
 #comments: 
 #

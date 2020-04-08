@@ -1,0 +1,982 @@
+(295 - 300)/(20/sqrt(20))
+(295 - 300)/(15/sqrt(20))
+qt(.01, 19)
+pt(.01/2, 19)
+2*pt(.01/2, 19)
+2*pt(1.491, 19)
+pt(1.491, 19)
+pt(-1.491, 19)
+2*pt(-1.491, 19)
+qchisq(.025, 24)
+qchisq(1-.025, 24)
+a <- c(791.2, 792.8, 792.3, 793.6, 792.3, 790.3)#
+b <- c(798.9, 790.9, 795.8, 792.9, 798.5, 790)
+d <- a - b
+d
+mean(d)
+dbar <- mean(d)
+d <- a - b
+d
+dbar
+sum(d)
+d^2
+var(d)
+sum(d^2)
+1/5 *(114.17 - (-14.5/6)^2)
+sd(d)
+sqrt(1/5 *(114.17 - (-14.5/6)^2))
+d
+sd(d)
+sqrt(1/5 *(114.17 - (mean(d))^2))
+sqrt(1/5 *(sum(d^2) - (mean(d))^2))
+sd(d)
+sum(d)^2
+sqrt(1/5 * (114.17 - 6*mean(d)^2))
+mean(d) /(sd(d)/sqrt(6))
+mu_x <- 80 #
+var_x <- 64 #
+sd_x <- 8#
+#
+mu_y <- 78 #
+var_y <- 100#
+sd_y <- 10#
+#
+r <- .6
+b1 <- r*sd_y/sd_x
+b0 <- mu_y - b1*mu_x
+b1
+b0 <- mu_y - b1*mu_x
+b0
+r^2
+.libPaths()
+dat <- read.csv('~/Desktop/gc_20sprgcasma583_a1_fullgc_2020-02-25-11-01-54.csv')
+head(dat)
+colnames(dat)
+exam <- dat[, 13]
+hist(exam)
+plot(density(exam))
+density(exam)
+plot(density(exam, na.rm = TRUE))
+main = 'Midterm 1', )
+main = 'Midterm 1')
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')
+abline(v = mean(exam, na.rm = TRUE))
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = mean(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)
+abline(v = mean(exam, na.rm = TRUE), col = 'blue')
+abline(v = median(exam, na.rm = TRUE), col = 'blue')
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = median(exam, na.rm = TRUE), col = 'blue')
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = median(exam, na.rm = TRUE), col = 'blue')#
+#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = mean(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+#
+abline(v = median(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = median(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = median(exam, na.rm = TRUE), col = 'blue')#
+#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = mean(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+#
+abline(v = median(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'blue', lty = 2)#
+abline(v = median(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'blue', lty = 2)
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = median(exam, na.rm = TRUE), col = 'blue')#
+#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = mean(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)
+mean(exam, na.rm = TRUE)
+summary(exam)
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')
+names <- c('Matrix Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')
+length(names)
+mat <- matrix(
+names <- c('Matrix Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),#
+nrow = 13, ncol = 13, byrow = TRUE)
+names <- c('Matrix Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),#
+nrow = 13, ncol = 13, byrow = TRUE)#
+#
+colnames(mat) <- rownames(mat) <- names
+mat
+G <- graph_from_adjacency_matrix(mat, mode = 'directed', add.colnames = TRUE, add.rownames = TRUE)
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed', add.colnames = TRUE, add.rownames = TRUE)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed', add.colnames = TRUE)
+plot(G)
+V(G)
+V(G)$names
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed', add.colnames = names)
+dim(mat)
+length(names)
+G %>% set_vertex_attr('label', value = names)
+G <- G %>% set_vertex_attr('label', value = names)
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+plot(G)
+G
+plot(G)
+G <- graph_from_adjacency_matrix(t(mat), mode = 'directed') %>% set_vertex_attr('label', value = names)
+plot(G)
+mat == t(mat)
+plot(G, vertex.color = 'lightblue', vertex.lable.size = 1)
+plot(G, vertex.color = 'lightblue', vertex.lable.size = 0.1)
+plot(G, vertex.color = 'lightblue', vertex.lable.cex = 0.1)
+plot(G, vertex.color = 'lightblue', vertex.lable.cex = 10)
+library('igraph')#
+G <- graph_from_adjacency_matrix(t(mat), mode = 'directed') %>% set_vertex_attr('label', value = names)#
+plot(G, vertex.color = 'lightblue', vertex.lable.cex = 10)
+V(G)$label.cex = .2
+plot(G, vertex.color = 'lightblue')
+names <- c('Matrix Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',
+'Commuter', 'Residual 2, infty', 'Power Method', 'Residual Rows', 'Residual Exchangeability', 'Concentration', 'CLT')
+mat <- matrix(
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),#
+nrow = 13, ncol = 13, byrow = TRUE)
+colnames(mat) <- rownames(mat) <- names
+library('igraph')
+G <- graph_from_adjacency_matrix(t(mat), mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .2
+plot(G, vertex.color = 'lightblue')
+V(G)$label.cex = .5
+plot(G, vertex.color = 'lightblue')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .5
+plot(G, vertex.color = 'lightblue')
+coords <- layout_(G, as_star())
+plot(G, vertex.color = 'lightblue', layout = coords)
+coords <- layout_(G, as_tree())
+plot(G, vertex.color = 'lightblue', layout = coords)
+coords
+plot(G, vertex.color = 'lightblue', layout = coords)
+coords <- layout_(G, on_grid())
+plot(G, vertex.color = 'lightblue', layout = coords)
+nrow = 13, ncol = 13, byrow = TRUE)
+colnames(mat) <- rownames(mat) <- names
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .5
+coords <- layout_(G, on_grid())
+plot(G, vertex.color = 'lightblue', layout = coords)
+mat
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+nrow = 13, ncol = 13, byrow = TRUE)
+mat
+nrow = 13, ncol = 13, byrow = FALSE)
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+nrow = 13, ncol = 13, byrow = TRUE)
+mat
+nrow = 13, ncol = 13, byrow = FALSE)
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+nrow = 13, ncol = 13, byrow = FALSE)
+mat
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+nrow = 13, ncol = 13, byrow = TRUE)
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+ncol = 13, nrow = 13, byrow = TRUE)
+mat
+length(c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)
+mat
+colnames(mat) <- rownames(mat) <- names
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .5
+coords <- layout_(G, on_grid())
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 2
+coords <- layout_(G, on_grid())
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 20
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 200
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 100
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 50
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 25
+plot(G, vertex.color = 'lightblue', layout = coords)
+names <- c('Matrix\n Berstein', 'Z form', 'Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',
+mat <- matrix(
+colnames(mat) <- rownames(mat) <- names
+# Proof DAG #
+names <- c('Matrix\n Berstein', 'Z form', 'Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+#
+lemma_names <- c('Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+colnames(mat) <- rownames(mat) <- names#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 25#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 30
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 40
+plot(G, vertex.color = 'lightblue', layout = coords)
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+colnames(mat) <- rownames(mat) <- names#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+#
+lemma_names <- c('Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+colnames(mat) <- rownames(mat) <- names#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')
+colnames(mat) <- rownames(mat) <- lemma_names
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+colnames(mat) <- rownames(mat) <- names#
+colnames(mat) <- rownames(mat) <- lemma_names#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+mat
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+coords
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,1,#
+1,1,#
+2,1,#
+0,2,#
+1,2,#
+2,2,#
+0,3,#
+1,3,#
+2,3,#
+0.5,4,#
+1.5, 4#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)
+coords
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)
+V(G)$label.cex = .5; V(G)$size = 40
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+nrow = 13, ncol  =2, byrow = TRUE)
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,2,#
+2,2,#
+0,4,#
+1,4,#
+2,4,#
+0,6,#
+1,6,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)
+V(G)$label.cex = .5; V(G)$size = 40
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .5; V(G)$size = 40#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+#G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- layout_(G, on_grid())#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1,#
+2,2,#
+0,4,#
+1,1,#
+2,4,#
+0,6,#
+1,1,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- layout_(G, on_grid())#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1,#
+2,2,#
+0,4,#
+1,3,#
+2,4,#
+0,6,#
+1,5,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- layout_(G, on_grid())#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1.5,#
+2,2,#
+0,4,#
+1,3.5,#
+2,4,#
+0,6,#
+1,5.5,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightred', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('red', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)
+?jpeg()
+jpeg('~/Documents/github/BJSE/proof_structure')#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+jpeg('~/Documents/github/BJSE/proof_structure/proof_names.jpeg')#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg')
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg')#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1.5,#
+2,2,#
+0,4,#
+1,3.5,#
+2,4,#
+0,6,#
+1,5.5,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg')#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg')#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- 1; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- 4; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+V(G)$label.cex <- 2; V(G)$size <- 40
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+E(G)$arrow.size <- 1
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1  #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg')#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1  #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Bernstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1.5,#
+2,2,#
+0,4,#
+1,3.5,#
+2,4,#
+0,6,#
+1,5.5,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1  #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+#load packages and source basic functions#
+pacman::p_load('igraph', 'RColorBrewer', 'car', 'ggplot2')#
+#
+#set directory#
+setwd('~/Documents/Work/github/BJSE/Aarhus_CS/')#
+source('./code/basic_functions.R')#
+#
+#read in data#
+layer_ids <- read.table('./CS-Aarhus_Multiplex_Social/Dataset/CS-Aarhus_layers.txt', header = TRUE)#
+node_ids <- read.table('./CS-Aarhus_Multiplex_Social/Dataset/CS-Aarhus_nodes.txt', header = TRUE)#
+#
+#captilize layer Ids#
+simpleCap <- function(x) {#
+  s <- strsplit(x, " ")[[1]]#
+  paste(toupper(substring(s, 1,1)), substring(s, 2),#
+        sep="", collapse=" ")#
+}#
+#
+layer_ids$layerLabel <- sapply(layer_ids$layerLabel, function(x) paste0(toupper(substring(x, 1, 1)), substring(x, 2)))#
+#
+#network colors#
+colors <- c('orange', 'blue', 'green', 'purple', 'red')#
+#
+#read in adjacency matrices#
+A1 <- as.matrix(read.table('./adj_mats/A1.txt'))#
+A2 <- as.matrix(read.table('./adj_mats/A2.txt'))#
+A3 <- as.matrix(read.table('./adj_mats/A3.txt'))#
+A4 <- as.matrix(read.table('./adj_mats/A4.txt'))#
+A5 <- as.matrix(read.table('./adj_mats/A5.txt'))
+A_list <- list(A1, A2, A3, A4, A5)
+Atil <- make_omni(A_list)
+evals <- eigen(Atil)$values #
+plot(evals)
+gs.dim.select(evals, plot = TRUE)
+#load packages and source basic functions#
+pacman::p_load('igraph', 'RColorBrewer', 'car', 'ggplot2')#
+#
+#set directory#
+setwd('~/Documents/Work/github/BJSE/Aarhus_CS/')#
+source('./code/basic_functions.R')
+layer_ids <- read.table('./CS-Aarhus_Multiplex_Social/Dataset/CS-Aarhus_layers.txt', header = TRUE)
+node_ids <- read.table('./CS-Aarhus_Multiplex_Social/Dataset/CS-Aarhus_nodes.txt', header = TRUE)
+#captilize layer Ids#
+simpleCap <- function(x) {#
+  s <- strsplit(x, " ")[[1]]#
+  paste(toupper(substring(s, 1,1)), substring(s, 2),#
+        sep="", collapse=" ")#
+}#
+#
+layer_ids$layerLabel <- sapply(layer_ids$layerLabel, function(x) paste0(toupper(substring(x, 1, 1)), substring(x, 2)))#
+#
+#network colors#
+colors <- c('orange', 'blue', 'green', 'purple', 'red')#
+#
+#read in adjacency matrices#
+A1 <- as.matrix(read.table('./adj_mats/A1.txt'))#
+A2 <- as.matrix(read.table('./adj_mats/A2.txt'))#
+A3 <- as.matrix(read.table('./adj_mats/A3.txt'))#
+A4 <- as.matrix(read.table('./adj_mats/A4.txt'))#
+A5 <- as.matrix(read.table('./adj_mats/A5.txt'))#
+#
+#make adjacency list#
+A_list <- list(A1, A2, A3, A4, A5)#
+Atil <- make_omni(A_list)#
+#
+#skree plot #
+evals <- eigen(Atil)$values #
+plot(evals)
+gs.dim.select(evals, plot = TRUE)
+gs.dim.select
+plot(Xbarhat[,1], Xbarhat[,2])
+plotdf <- data.frame(X1 = Lhat[,1], X2 = Lhat[,2], graph = as.factor(rep(1:length(A_list), each = nrow(A1))), node_id = rep(1:nrow(A1), length(A_list)))
+#determine d - naive#
+non_zero <- which(abs(evals) > 1e-5)#
+length(non_zero)#
+table(sign(evals[non_zero]))
+gs.dim.select(evals, plot = TRUE)
+d <- length(non_zero)/2
+Lhat <- ase(Atil, 2)
+plot(Lhat[,1], Lhat[,2], col = rep(colors, each = nrow(A1)))
+kmean(Lhat, K = 4)
+kmeans(Lhat, K = 4)
+kmeans(Lhat)
+kmeans(Lhat, center = 4)
+kmeans(Lhat, center = 5)
+kmeans(Lhat, center = 6)
+kmeans(Lhat, center = 7)
+kmeans(Lhat, center = 8)
+kmeans(Lhat, center = 9)
+kmeans(Lhat, center = 10)
+kmeans(Lhat, center = 11)
+kmeans(Lhat, center = 12)

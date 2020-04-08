@@ -1,0 +1,1494 @@
+b0
+r^2
+.libPaths()
+dat <- read.csv('~/Desktop/gc_20sprgcasma583_a1_fullgc_2020-02-25-11-01-54.csv')
+head(dat)
+colnames(dat)
+exam <- dat[, 13]
+hist(exam)
+plot(density(exam))
+density(exam)
+plot(density(exam, na.rm = TRUE))
+main = 'Midterm 1', )
+main = 'Midterm 1')
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')
+abline(v = mean(exam, na.rm = TRUE))
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = mean(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)
+abline(v = mean(exam, na.rm = TRUE), col = 'blue')
+abline(v = median(exam, na.rm = TRUE), col = 'blue')
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = median(exam, na.rm = TRUE), col = 'blue')
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = median(exam, na.rm = TRUE), col = 'blue')#
+#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = mean(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+#
+abline(v = median(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = median(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = median(exam, na.rm = TRUE), col = 'blue')#
+#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = mean(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+#
+abline(v = median(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'blue', lty = 2)#
+abline(v = median(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'blue', lty = 2)
+plot(density(exam, na.rm = TRUE),#
+main = 'Midterm 1')#
+abline(v = mean(exam, na.rm = TRUE), col = 'red')#
+abline(v = median(exam, na.rm = TRUE), col = 'blue')#
+#
+abline(v = mean(exam, na.rm = TRUE) - sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)#
+abline(v = mean(exam, na.rm = TRUE) + sd(exam, na.rm = TRUE), #
+col = 'red', lty = 2)
+mean(exam, na.rm = TRUE)
+summary(exam)
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')
+names <- c('Matrix Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')
+length(names)
+mat <- matrix(
+names <- c('Matrix Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),#
+nrow = 13, ncol = 13, byrow = TRUE)
+names <- c('Matrix Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),#
+nrow = 13, ncol = 13, byrow = TRUE)#
+#
+colnames(mat) <- rownames(mat) <- names
+mat
+G <- graph_from_adjacency_matrix(mat, mode = 'directed', add.colnames = TRUE, add.rownames = TRUE)
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed', add.colnames = TRUE, add.rownames = TRUE)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed', add.colnames = TRUE)
+plot(G)
+V(G)
+V(G)$names
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed', add.colnames = names)
+dim(mat)
+length(names)
+G %>% set_vertex_attr('label', value = names)
+G <- G %>% set_vertex_attr('label', value = names)
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+plot(G)
+G
+plot(G)
+G <- graph_from_adjacency_matrix(t(mat), mode = 'directed') %>% set_vertex_attr('label', value = names)
+plot(G)
+mat == t(mat)
+plot(G, vertex.color = 'lightblue', vertex.lable.size = 1)
+plot(G, vertex.color = 'lightblue', vertex.lable.size = 0.1)
+plot(G, vertex.color = 'lightblue', vertex.lable.cex = 0.1)
+plot(G, vertex.color = 'lightblue', vertex.lable.cex = 10)
+library('igraph')#
+G <- graph_from_adjacency_matrix(t(mat), mode = 'directed') %>% set_vertex_attr('label', value = names)#
+plot(G, vertex.color = 'lightblue', vertex.lable.cex = 10)
+V(G)$label.cex = .2
+plot(G, vertex.color = 'lightblue')
+names <- c('Matrix Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',
+'Commuter', 'Residual 2, infty', 'Power Method', 'Residual Rows', 'Residual Exchangeability', 'Concentration', 'CLT')
+mat <- matrix(
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1),#
+nrow = 13, ncol = 13, byrow = TRUE)
+colnames(mat) <- rownames(mat) <- names
+library('igraph')
+G <- graph_from_adjacency_matrix(t(mat), mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .2
+plot(G, vertex.color = 'lightblue')
+V(G)$label.cex = .5
+plot(G, vertex.color = 'lightblue')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .5
+plot(G, vertex.color = 'lightblue')
+coords <- layout_(G, as_star())
+plot(G, vertex.color = 'lightblue', layout = coords)
+coords <- layout_(G, as_tree())
+plot(G, vertex.color = 'lightblue', layout = coords)
+coords
+plot(G, vertex.color = 'lightblue', layout = coords)
+coords <- layout_(G, on_grid())
+plot(G, vertex.color = 'lightblue', layout = coords)
+nrow = 13, ncol = 13, byrow = TRUE)
+colnames(mat) <- rownames(mat) <- names
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .5
+coords <- layout_(G, on_grid())
+plot(G, vertex.color = 'lightblue', layout = coords)
+mat
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+nrow = 13, ncol = 13, byrow = TRUE)
+mat
+nrow = 13, ncol = 13, byrow = FALSE)
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+nrow = 13, ncol = 13, byrow = TRUE)
+mat
+nrow = 13, ncol = 13, byrow = FALSE)
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+nrow = 13, ncol = 13, byrow = FALSE)
+mat
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+nrow = 13, ncol = 13, byrow = TRUE)
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),#
+ncol = 13, nrow = 13, byrow = TRUE)
+mat
+length(c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)
+mat
+colnames(mat) <- rownames(mat) <- names
+library('igraph')
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .5
+coords <- layout_(G, on_grid())
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 2
+coords <- layout_(G, on_grid())
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 20
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 200
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 100
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 50
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 25
+plot(G, vertex.color = 'lightblue', layout = coords)
+names <- c('Matrix\n Berstein', 'Z form', 'Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',
+mat <- matrix(
+colnames(mat) <- rownames(mat) <- names
+# Proof DAG #
+names <- c('Matrix\n Berstein', 'Z form', 'Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+#
+lemma_names <- c('Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+colnames(mat) <- rownames(mat) <- names#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 25#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 30
+plot(G, vertex.color = 'lightblue', layout = coords)
+V(G)$label.cex = .5; V(G)$size = 40
+plot(G, vertex.color = 'lightblue', layout = coords)
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+colnames(mat) <- rownames(mat) <- names#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+#
+lemma_names <- c('Berstein', 'Lemma 1,2: Z form', 'Lemma 3: Spectral Bound', 'Lemma 4: Eigenvalue Bound', 'Lemma 5: Vtil', 'Lemma 6: Hoeffding',#
+'Lemma 7: Commuter', 'Lemma 8: Residual 2, infty', 'Lemma 9: Power Method', 'Lemma 10: Residual Rows', 'Lemma 11; Residual Exchangeability', 'Theorem 1B: Concentration', 'Theorem 2: CLT')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+colnames(mat) <- rownames(mat) <- names#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')
+colnames(mat) <- rownames(mat) <- lemma_names
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+colnames(mat) <- rownames(mat) <- names#
+colnames(mat) <- rownames(mat) <- lemma_names#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+mat
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+library('igraph')#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex = .5; V(G)$size = 40#
+coords <- layout_(G, on_grid())#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+coords
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,1,#
+1,1,#
+2,1,#
+0,2,#
+1,2,#
+2,2,#
+0,3,#
+1,3,#
+2,3,#
+0.5,4,#
+1.5, 4#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)
+coords
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)
+V(G)$label.cex = .5; V(G)$size = 40
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+nrow = 13, ncol  =2, byrow = TRUE)
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,2,#
+2,2,#
+0,4,#
+1,4,#
+2,4,#
+0,6,#
+1,6,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)
+V(G)$label.cex = .5; V(G)$size = 40
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)
+V(G)$label.cex = .5; V(G)$size = 40#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+#G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- layout_(G, on_grid())#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1,#
+2,2,#
+0,4,#
+1,1,#
+2,4,#
+0,6,#
+1,1,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- layout_(G, on_grid())#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1,#
+2,2,#
+0,4,#
+1,3,#
+2,4,#
+0,6,#
+1,5,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- layout_(G, on_grid())#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1.5,#
+2,2,#
+0,4,#
+1,3.5,#
+2,4,#
+0,6,#
+1,5.5,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('lightred', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('red', alpha.f = .5), layout = coords)
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)
+?jpeg()
+jpeg('~/Documents/github/BJSE/proof_structure')#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+jpeg('~/Documents/github/BJSE/proof_structure/proof_names.jpeg')#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg')
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg')#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Berstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1.5,#
+2,2,#
+0,4,#
+1,3.5,#
+2,4,#
+0,6,#
+1,5.5,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg')#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- .5; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg')#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- 1; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- 4; V(G)$size <- 40#
+E(G)$arrow.size <- .5 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+V(G)$label.cex <- 2; V(G)$size <- 40
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+E(G)$arrow.size <- 1
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1  #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg')#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1  #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+library('igraph')#
+#
+# Proof DAG #
+names <- c('Z form', 'Matrix\n Berstein','Spectral\n Bound', 'Eigenvalue\n Bound', 'Vtil', 'Hoeffding',#
+'Commuter', 'Residual\n 2, infty', 'Power\n Method', 'Residual\n Rows', 'Residual\n Exchangeability', 'Concentration', 'CLT')#
+lemma_names <- c('Lemma 1,2', 'Bernstein', 'Lemma 3', 'Lemma 4', 'Lemma 5', 'Lemma 6',#
+'Lemma 7', 'Lemma 8', 'Lemma 9', 'Lemma 10', 'Lemma 11', 'Theorem 1B', 'Theorem 2')#
+#
+mat <- matrix(#
+c(0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0,#
+0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,#
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0#
+),#
+ncol = 13, nrow = 13, byrow = TRUE)#
+#
+coords <- matrix(#
+c(#
+0.5,0,#
+1.5, 0,#
+0,2,#
+1,1.5,#
+2,2,#
+0,4,#
+1,3.5,#
+2,4,#
+0,6,#
+1,5.5,#
+2,6,#
+0.5,8,#
+1.5, 8#
+), #
+nrow = 13, ncol  =2, byrow = TRUE)#
+#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1 #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/proof_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('lightblue', alpha.f = .5), layout = coords)#
+dev.off()#
+G <- graph_from_adjacency_matrix(mat, mode = 'directed') %>% set_vertex_attr('label', value = lemma_names)#
+V(G)$label.cex <- 2; V(G)$size <- 40#
+E(G)$arrow.size <- 1  #
+#
+jpeg('~/Documents/work/github/BJSE/proof_structure/lemma_names.jpeg', height = 1080, width = 1080)#
+plot(G, vertex.color = adjustcolor('pink', alpha.f = .5), layout = coords)#
+dev.off()
+#-----------------------------#
+#     read in libraries#
+#-----------------------------#
+library(ggplot2)#
+library(dplyr)#
+library(reshape2)#
+#
+#-----------------------------#
+#     2 graph#
+#-----------------------------#
+#-----------------------------#
+#     format data#
+#-----------------------------#
+#
+df <- as.data.frame(read.csv("~/Documents/Work/github/BJSE/multiple_network_methods/data/data.csv")[,-1])#
+#
+#group by iteration & method#
+df <- df %>% melt(id.vars = 1:3) %>% #
+  group_by(network_size, t, variable) %>%  #
+  summarize(MC_Rate = mean(value, na.rm = TRUE), #
+            se_rate = 1.96*sd(value, na.rm = TRUE)/sqrt(n()))#
+#
+colnames(df)[3] <- "Method"#
+#
+#-----------------------------#
+#     make plots#
+#-----------------------------#
+#
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  #geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+#scale_y_log10()+
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+sdf
+df
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df,
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+df <- as.data.frame(read.csv("~/Documents/Work/github/BJSE/multiple_network_methods/data/data.csv")[,-1])#
+#
+#group by iteration & method#
+df <- df %>% melt(id.vars = 1:3) %>% #
+  group_by(network_size, t, variable) %>%  #
+  summarize(MC_Rate = mean(value, na.rm = TRUE), #
+            se_rate = 1.96*sd(value, na.rm = TRUE)/sqrt(n()))#
+#
+colnames(df)[3] <- "Method"#
+#
+#-----------------------------#
+#     make plots#
+#-----------------------------#
+#
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+head(df)
+df[,4] - df[,5]
+hist(df[,4] - df[,5])
+hist((df[,4] - df[,5])[,1])
+ggplot(df,
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  #geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  #geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  #geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  #geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  #geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = min(c(0, MC_Rate - se_rate)), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df,
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = min(c(0, MC_Rate - se_rate)), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = min(c(0, MC_Rate - se_rate)), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = min(c(0, MC_Rate - se_rate)), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = min(c(0, MC_Rate - se_rate)), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = min(c(0.01, MC_Rate - se_rate)), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = min(c(0.01, MC_Rate - se_rate)), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = max(c(0, MC_Rate - se_rate)), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = max(c(0, MC_Rate - se_rate)), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = ifelse(MC_Rate - se_rate < 0, 0, MC_Rate - se_rate), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  #scale_y_log10()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = ifelse(MC_Rate - se_rate < 0, 0.01, MC_Rate - se_rate), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  #scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = ifelse(MC_Rate - se_rate < 0, 0.01, MC_Rate - se_rate), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = ifelse(MC_Rate - se_rate < 0, 0, MC_Rate - se_rate), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_sqrt()+#
+  labs(x = "t", #
+       y = expression(paste('Sqrt', '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = ifelse(MC_Rate - se_rate < 0, 0.1, MC_Rate - se_rate), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = ifelse(MC_Rate - se_rate < 0, 0.1, MC_Rate - se_rate), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = ifelse(MC_Rate - se_rate < 0, MC_Rate - se_rate + 1, MC_Rate - se_rate), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+ggplot(df, #
+       aes(t, MC_Rate, col = Method)) + #
+  geom_point(size = 2, alpha = .3)+#
+  geom_line()+#
+  #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+#
+  geom_ribbon(aes(ymin = ifelse(MC_Rate - se_rate < 0, MC_Rate - se_rate + 1, MC_Rate - se_rate), ymax =  MC_Rate + se_rate),#
+  alpha = .1, linetype = 0)+#
+  theme_bw()+#
+  scale_y_log10()+#
+  labs(x = "t", #
+       y = expression(paste('log'[10], '(Misclassification Rate)')))
+df <- as.data.frame(read.csv("~/Documents/Work/github/BJSE/multiple_network_methods/data/data.csv")[,-1])
+df
+head(df)
+max(df[,2])
+max(df[,4])
+max(df[,2])
+max(df[,3])
+#--------------------------------------#
+  ##
+  #       Power Analaysis Simulations#
+  #           #
+  #--------------------------------------#
+  #load packages and source files#
+  library(pacman,lib.loc = "/Library/Frameworks/R.framework/Versions/3.6/Resources/library")#
+  p_load(MCMCpack, ggplot2, dplyr, reshape2, MASS, foreach, doParallel)#
+  setwd('/Users/benjamindraves/Documents/Work/github/BJSE/power_analysis/code/')#
+  source('basic_functions.R')#
+  source('difference_variance_functions.R')#
+  source('model_setup_ER_to_SBM.R')#
+  source('omni_semi_par_threshold.R')#
+  source('test_statistic_functions.R')#
+  #set up storage#
+  here <- 1#
+  df <- matrix(NA, nrow = length(net_size)*length(t)*mc_runs, ncol = 11)#
+  colnames(df) <- c('iter_no','t', 'net_size',#
+                    'T', 'W', 'W_hat',#
+                    'T_Thres','W_Thres', #
+                    'T_Rej',  'W_Rej', 'W_hat_Rej')#
+  #set pointer#
+  counter <- 1#
+  set.seed(1985)#
+  #begin simulation#
+  for(j in 1:length(t)){#
+    #set C list#
+    C_list <- list()#
+    C_list[[1]] <- diag(1, ncol = 2, nrow = 2)#
+    C_list[[2]] <- C(t[j])#
+    #get S list#
+    S_list <- get_Slist(C_list)#
+    for(i in 1:length(net_size)){   #
+      #sample rows of X#
+      comm_ids <- rep(1:2, each = net_size[i]/2)#
+      X <- L[comm_ids, ]#
+      Xc <- X %*% sqrt(C(t[j]))#
+      #set up scaled latent positions#
+      X.scaled <- rbind(X, Xc)#
+      #fetch T_threshold#
+      T.thres <- get_T_threshold_parallel(X, X.scaled)#
+      #set up P matrices#
+      P1 <- tcrossprod(X)#
+      P2 <- tcrossprod(Xc)#
+      for(k in 1:mc_runs){#
+        #sample A1 and A2 #
+        A1 <- sampP(P1)#
+        A2 <- sampP(P2)#
+        #construct Omni + embed#
+        Atil <- make_omni(list(A1, A2))#
+        L_hat.here <- ase(Atil, 2)#
+        #align matrix#
+        L_hat <- procrustes(L_hat.here, X.scaled)$X.new#
+        #get statistics#
+        T.here <- get_T_stat(L_hat)#
+        W.here <- get_W_stat(L_hat, X, S_list, C_list)#
+        W_hat.here <- get_W_hat_stat(L_hat)#
+        #T and W threshold #
+        #Xbar <- 0.5 *(L_hat[1:(net_size[i]),] + L_hat[(net_size[i]+1):(2*net_size[i]),])#
+        #T.thres <- get_T_threshold(Xbar, X.scaled)#
+        W.thres <- qchisq(1 - alpha, net_size[i]*ncol(X))#
+        #get reject/fail to reject#
+        T_rej <- ifelse(T.here > T.thres, 1, 0)#
+        W_rej <- ifelse(W.here > W.thres, 1, 0)#
+        W_hat_rej <- ifelse(W_hat.here > W.thres, 1, 0)#
+        #store #
+        df[counter, ] <- c(k, #iteration#
+                           t[j], #t value#
+                           net_size[i], #net_size#
+                           T.here, #T_stat#
+                           W.here, #W_stat#
+                           W_hat.here, #W_hat_stat#
+                           T.thres, #T_thresold#
+                           W.thres, #W_thresold#
+                           T_rej, #T Reject 0/1#
+                           W_rej, #W Reject 0/1#
+                           W_hat_rej #W_hat Reject 0/1#
+                           )#
+        #update counter and print update#
+        counter <- counter + 1#
+        if(counter %% 100 == 0){#
+          print(round(counter/nrow(df), 3))#
+        }#
+      }#
+    }#
+  }#
+#write out#
+write.csv(df, "~/Documents/Work/github/BJSE/power_analysis/data/plotting_df.csv")
+pacman::p_load('lattice', 'ggplot2', 'gridExtra', 'grid')
+df <- read.csv('~/Documents/Work/github/BJSE/power_analysis/data/plotting_df.csv')[,-1]
+df <- read.csv('~/Documents/Work/github/BJSE/power_analysis/data/plotting_df.csv')[,-1]
+#power figure#
+plotdf <- as.data.frame(df[,c(1:3,9:11)]) %>%#
+  melt(id.vars = c(1:3)) %>%#
+  group_by(t, net_size, variable) %>% #
+  summarize(power = mean(value), sd_power = 1.96*sd(value)/sqrt(n()))
+ggplot(plotdf, aes(t, power, col = variable))+#
+  geom_ribbon(aes(ymin = power - sd_power,#
+                  ymax = power + sd_power),#
+              fill = 'darkgrey', alpha = 0.8, linetype = 0)+#
+  geom_point(alpha = .5) + geom_line(alpha = 0.5)+#
+  geom_hline(yintercept = alpha, linetype = 'dashed', col = 'grey')+ #
+  scale_color_manual(labels = c('T', 'W', expression(hat('W'))), values = c('red', 'darkgreen', 'blue'))+#
+  facet_grid(cols = vars(net_size))+#
+  labs(x = 't', y = 'Empirical Power', color = 'Method')+#
+  theme_bw()
+df <- read.csv('~/Documents/Work/github/BJSE/power_analysis/data/plotting_df.csv')[,-1]
+head(df)
+as.data.frame(df[,c(1:3,9:11)]) %>%#
+  melt(id.vars = c(1:3))
+head(same_layout_)
+head(as.data.frame(df[,c(1:3,9:11)]) %>%#
+  melt(id.vars = c(1:3)) )
+plotdf <- as.data.frame(df[,c(1:3,9:11)]) %>%#
+  melt(id.vars = c(1:3)) %>%#
+  group_by(t, net_size, variable) %>% #
+  summarize(power = mean(value), sd_power = 1.96*sd(value)/sqrt(n()))
+ggplot(plotdf, aes(t, power, col = variable))+
+ggplot(plotdf, aes(t, power, col = variable))+#
+  #geom_ribbon(aes(ymin = power - sd_power,#
+  #                ymax = power + sd_power),#
+  #            fill = 'darkgrey', alpha = 0.8, linetype = 0)+#
+  geom_point(alpha = .5) + geom_line(alpha = 0.5)+#
+  geom_hline(yintercept = alpha, linetype = 'dashed', col = 'grey')+ #
+  scale_color_manual(labels = c('T', 'W', expression(hat('W'))), values = c('red', 'darkgreen', 'blue'))+#
+  facet_grid(cols = vars(net_size))+#
+  labs(x = 't', y = 'Empirical Power', color = 'Method')+#
+  theme_bw()
+Sigma_D_hat
+get_W_hat_stat
+#--------------------------------------#
+##
+#       Power Analaysis Simulations#
+#           #
+#--------------------------------------#
+#load packages and source files#
+library(pacman,lib.loc = "/Library/Frameworks/R.framework/Versions/3.6/Resources/library")#
+p_load(MCMCpack, ggplot2, dplyr, reshape2, MASS, foreach, doParallel)#
+setwd('/Users/benjamindraves/Documents/Work/github/BJSE/power_analysis/code/')#
+source('basic_functions.R')#
+source('difference_variance_functions.R')#
+source('model_setup_ER_to_SBM.R')#
+source('omni_semi_par_threshold.R')#
+source('test_statistic_functions.R')#
+#set up storage#
+here <- 1#
+df <- matrix(NA, nrow = length(net_size)*length(t)*mc_runs, ncol = 11)#
+colnames(df) <- c('iter_no','t', 'net_size',#
+                    'T', 'W', 'W_hat',#
+                    'T_Thres','W_Thres', #
+                    'T_Rej',  'W_Rej', 'W_hat_Rej')#
+#set pointer#
+counter <- 1#
+set.seed(1000)#
+#begin simulation#
+for(j in 1:length(t)){#
+    #set C list#
+    C_list <- list()#
+    C_list[[1]] <- diag(1, ncol = 2, nrow = 2)#
+    C_list[[2]] <- C(t[j])#
+    #get S list#
+    S_list <- get_Slist(C_list)#
+    for(i in 1:length(net_size)){   #
+      #sample rows of X#
+      comm_ids <- rep(1:2, each = net_size[i]/2)#
+      X <- L[comm_ids, ]#
+      Xc <- X %*% sqrt(C(t[j]))#
+      #set up scaled latent positions#
+      X.scaled <- rbind(X, Xc)#
+      #fetch T_threshold#
+      T.thres <- get_T_threshold_parallel(X, X.scaled)#
+      #set up P matrices#
+      P1 <- tcrossprod(X)#
+      P2 <- tcrossprod(Xc)#
+      for(k in 1:mc_runs){#
+        #sample A1 and A2 #
+        A1 <- sampP(P1)#
+        A2 <- sampP(P2)#
+        #construct Omni + embed#
+        Atil <- make_omni(list(A1, A2))#
+        L_hat.here <- ase(Atil, 2)#
+        #align matrix#
+        L_hat <- procrustes(L_hat.here, X.scaled)$X.new#
+        #get statistics#
+        T.here <- get_T_stat(L_hat)#
+        W.here <- get_W_stat(L_hat, X, S_list, C_list)#
+        W_hat.here <- get_W_hat_stat(L_hat)#
+        #T and W threshold #
+        #Xbar <- 0.5 *(L_hat[1:(net_size[i]),] + L_hat[(net_size[i]+1):(2*net_size[i]),])#
+        #T.thres <- get_T_threshold(Xbar, X.scaled)#
+        W.thres <- qchisq(1 - alpha, net_size[i]*ncol(X))#
+        #get reject/fail to reject#
+        T_rej <- ifelse(T.here > T.thres, 1, 0)#
+        W_rej <- ifelse(W.here > W.thres, 1, 0)#
+        W_hat_rej <- ifelse(W_hat.here > W.thres, 1, 0)#
+        #store #
+        df[counter, ] <- c(k, #iteration#
+                           t[j], #t value#
+                           net_size[i], #net_size#
+                           T.here, #T_stat#
+                           W.here, #W_stat#
+                           W_hat.here, #W_hat_stat#
+                           T.thres, #T_thresold#
+                           W.thres, #W_thresold#
+                           T_rej, #T Reject 0/1#
+                           W_rej, #W Reject 0/1#
+                           W_hat_rej #W_hat Reject 0/1#
+                           )#
+        #update counter and print update#
+        counter <- counter + 1#
+        if(counter %% 100 == 0){#
+          print(round(counter/nrow(df), 3))#
+        }#
+      }#
+    }#
+  }#
+#write out#
+write.csv(df, "~/Documents/Work/github/BJSE/power_analysis/data/plotting_df.csv")
