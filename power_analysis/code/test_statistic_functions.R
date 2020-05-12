@@ -46,7 +46,7 @@ get_W_stat <- function(L_hat, X, S_list, C_list){
   
 }
 
-#Known Variance Test statistic
+#Unknown Variance Test statistic
 get_W_hat_stat <- function(L_hat){
   #fetch n, m ,d
   d <- ncol(L_hat)

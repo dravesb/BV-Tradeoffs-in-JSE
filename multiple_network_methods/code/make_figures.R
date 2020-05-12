@@ -34,16 +34,16 @@ colnames(df)[3] <- "Method"
 #-----------------------------
 #     make plots
 #-----------------------------
-
-ggplot(df, aes(t, MC_Rate, col = Method)) + 
+a <- 0.0008
+ggplot(df, aes(t, MC_Rate + a, col = Method)) + 
   geom_point(size = 2, alpha = .3)+
   geom_line()+
   #geom_errorbar(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate),alpha = .5,width = .05)+
-  geom_ribbon(aes(ymin = MC_Rate - se_rate, ymax =  MC_Rate + se_rate), alpha = .1, linetype = 0)+
+  geom_ribbon(aes(ymin = MC_Rate + a - se_rate, ymax =  MC_Rate + a + se_rate), alpha = .1, linetype = 0)+
   theme_bw()+
   scale_y_log10()+
   labs(x = "t", 
-       y = expression(paste('log'[10], '(Misclassification Rate)')))
+       y = expression(paste('log'[10], '(Misclassification Rate + ', epsilon, ')')))
 
 
 #-----------------------------

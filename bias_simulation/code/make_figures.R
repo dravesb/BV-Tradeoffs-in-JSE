@@ -200,6 +200,11 @@ ggsave("observed_bias.pdf",
        device = "pdf", 
        path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
+ggsave("observed_bias.jpeg", 
+       width = 6, height = 6, units = "in", 
+       device = "jpeg", 
+       path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
+
 #-------------------------------------------------
 #
 #        Residual Bounds
@@ -243,4 +248,8 @@ ggsave("residuals.pdf",
        device = "pdf", 
        path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 
+ggsave("residuals.jpeg", 
+       width = 6, height = 6, units = "in", 
+       device = "jpeg",
+       path = "~/Documents/Work/github/BJSE/bias_simulation/figures/")
 

@@ -50,9 +50,16 @@ L <- rbind(t(x1_til), t(x2_til))
 #-----------------------------
 
 #converges to ER with p = .3 (1,1) --> (2,0)
+#C <- function(t){
+#  diag(c(t + 1, -t + 1))
+#}
+
+#converges to ER with p = .1 (1,1) --> (2/3,0)
 C <- function(t){
-  diag(c(t + 1, -t + 1))
+  diag(c(1-t/3, -t + 1))
 }
+
+
 
 #set up latent positions
 n <- 50
@@ -69,7 +76,7 @@ P4 <- tcrossprod(X, X %*% C(1)) # t = 1
 #     Sample Adjmatrices
 #-----------------------------
 
-set.seed(1985)
+set.seed(1995)
 #sample adjacency matrices
 A1 <- sampP(P1)
 A2 <- sampP(P2)
@@ -102,32 +109,29 @@ V(g3)$label <- ""
 V(g4)$label <- ""
 
 #change edge width
-E(g1)$width <- 1
-E(g2)$width <- 1
-E(g3)$width <- 1
-E(g4)$width <- 1
+E(g1)$width <- E(g2)$width <- E(g3)$width <- E(g4)$width <- .1
 
 #change edge color
-E(g1)$color <- "#55555555"
-E(g2)$color <- "#55555555"
-E(g3)$color <- "#55555555"
-E(g4)$color <- "#55555555"
+E(g1)$color <- E(g2)$color <- E(g3)$color <- E(g4)$color <- "grey80"
+
+#change vertex size
+vs <- 5
 
 #plot networks
 pdf("../figures/g1.pdf")
-plot(g1, vertex.size = 5)
+plot(g1, vertex.size = vs)
 dev.off()
 
 pdf("../figures/g2.pdf")
-plot(g2, vertex.size = 5)
+plot(g2, vertex.size = vs)
 dev.off()
 
 pdf("../figures/g3.pdf")
-plot(g3, vertex.size = 5)
+plot(g3, vertex.size = vs)
 dev.off()
 
 pdf("../figures/g4.pdf")
-plot(g4, vertex.size = 5)
+plot(g4, vertex.size = vs)
 dev.off()
 
 

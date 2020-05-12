@@ -97,22 +97,25 @@ V(g2)$label <- ""
 V(g3)$label <- ""
 
 #change edge width
-E(g1)$width <- E(g2)$width <- E(g3)$width <- .1
+E(g1)$width <- E(g2)$width <- E(g3)$width <- E(g4)$width <- .1
 
 #change edge color
-E(g1)$color <- E(g2)$color <- E(g3)$color <- "#DCDCDC"
+E(g1)$color <- E(g2)$color <- E(g3)$color <- E(g4)$color <- "grey80"
+
+#change vertex size
+vs <- 5
 
 #plot networks
-pdf("../figures/g1.pdf")
-plot(g1, vertex.size = 5)
+pdf("../figures/g1_three_vals.pdf")
+plot(g1, vertex.size = vs)
 dev.off()
 
-pdf("../figures/g2.pdf")
-plot(g2, vertex.size = 5)
+pdf("../figures/g2_three_vals.pdf")
+plot(g2, vertex.size = vs)
 dev.off()
 
-pdf("../figures/g3.pdf")
-plot(g3, vertex.size = 5)
+pdf("../figures/g3_three_vals.pdf")
+plot(g3, vertex.size = vs)
 dev.off()
 
 #-----------------------------
@@ -149,7 +152,7 @@ ggplot()+
         axis.title.y=element_blank(),
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
-ggsave("./figures/latent_position_0.pdf",device = "pdf", width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_0_three_vals.pdf",device = "pdf", width = 2.8, height = 2.8, units = "in")
 
 set.seed(1)
 ggplot()+
@@ -166,7 +169,7 @@ ggplot()+
         axis.title.y=element_blank(),
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
-ggsave("./figures/latent_position_2.pdf",device = "pdf", width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_2_three_vals.pdf",device = "pdf", width = 2.8, height = 2.8, units = "in")
 
 
 set.seed(1)
@@ -184,6 +187,6 @@ ggplot()+
         axis.title.y=element_blank(),
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
-ggsave("./figures/latent_position_1.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_1_three_vals.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
 
 

@@ -23,7 +23,10 @@ $77\%$ of the participants had a Facebook account and at least one paper in whic
 ```{r, echo = FALSE}
 #load packages
 pacman::p_load('igraph', 'Matrix', 'grDevices', 'gridExtra', 'ggplot2',
-               'multinets')
+               'multinets', 'MASS', 'knitr')
+
+#formatting options
+opts_chunk$set(tidy.opts=list(width.cutoff=45),tidy=TRUE)
 
 #helpful functions
 simpleCap <- function(x) {
@@ -158,15 +161,15 @@ layer_names <- as.vector(sapply(aarhus_mplex$layerNames, function(x) paste0(toup
 colors <- c('purple','blue','red', 'green', 'black')
 
 #plot adjacencies in a 3 x 2 Layout
-p1 <- image(A_list[[1]], xlab = '', ylab = '', sub = layer_names[1], 
+p1 <- image(A_list[[1]], xlab = '', ylab = '', sub = layer_names[1], border.col = NA, 
             col.regions = adjustcolor(colors[1], alpha.f = 0.6), axes = FALSE)
-p2 <- image(A_list[[2]], xlab = '', ylab = '', sub = layer_names[2], 
+p2 <- image(A_list[[2]], xlab = '', ylab = '', sub = layer_names[2], border.col = NA,
             col.regions = adjustcolor(colors[2], alpha.f = 0.6))
-p3 <- image(A_list[[3]], xlab = '', ylab = '', sub = layer_names[3], 
+p3 <- image(A_list[[3]], xlab = '', ylab = '', sub = layer_names[3], border.col = NA,
             col.regions = adjustcolor(colors[3], alpha.f = 0.6))
-p4 <- image(A_list[[4]], xlab = '', ylab = '', sub = layer_names[4], 
+p4 <- image(A_list[[4]], xlab = '', ylab = '', sub = layer_names[4], border.col = NA,
             col.regions = adjustcolor(colors[4], alpha.f = 0.6))
-p5 <- image(A_list[[5]], xlab = '', ylab = '', sub = layer_names[5], 
+p5 <- image(A_list[[5]], xlab = '', ylab = '', sub = layer_names[5], border.col = NA,
             col.regions = adjustcolor(colors[5], alpha.f = 0.6))
 
 layout <- rbind(c(1, 1, 2, 2, 3, 3), c(NA, 4, 4, 5, 5, NA))
@@ -321,6 +324,60 @@ grid.arrange(p1, p2, layout_matrix = matrix(1:2, nrow = 1))
 
 
 ```
+
+### Multivariable ANOVA
+
+```{r}
+#get omnibar matrix
+X_sum <- matrix(0, nrow = n, ncol = d)
+for(i in 1:m){
+  X_sum <-  X_sum + Lhat[(n*(i-1) + 1):(n*i) ,]
+}
+X_omnibar <- X_sum / m 
+
+#regularize
+anova_mat <- ginv(X_omnibar) %*% H
+
+#Estimate Regualrized S values
+image(Matrix(anova_mat), sub = '', xlab = '', ylab = '',
+          col.regions = colorRampPalette(c('white', 'blue'))(30),
+          main = expression(paste(hat(bold(S)), ' = ', bar(bold(X))^{-1}, hat(bold(H)))),
+          border.col = NA
+          )
+
+```
+
+```{r}
+#Residual Matrix 
+anova_center <- anova_mat - kronecker(matrix(1, ncol = m), diag(d))
+image(Matrix(anova_center), sub = '', xlab = '', ylab = '',
+          col.regions = colorRampPalette(c('white', 'blue'))(30),
+          #main = expression(paste(bar(bold(X))^{-1}, hat(bold(H))), '-', bold(I),..., bold(I)),
+          main = expression(paste(hat(bold(R)), ' = ', bar(bold(X))^{-1}, hat(bold(H)) - bold(I),..., bold(I))),
+          #main = 'Noise Matrix', 
+          border.col = NA
+          )
+#Residual on diagonals
+mask <- ifelse(kronecker(matrix(TRUE, ncol = m), diag(d)) == 1, TRUE, FALSE)
+
+p1 <-image(Matrix(matrix(anova_center[mask], ncol = m, nrow = d)),
+           sub = '', xlab = '', ylab = '',
+           col.regions = colorRampPalette(c('white', 'blue'))(30),
+           main = expression(paste('diag(',hat(bold(R)), ')')),
+           border.col = NA)
+
+p2 <-image(Matrix(matrix(anova_center[mask], ncol = m, nrow = d)),
+           sub = '', xlab = '', ylab = '',
+           useAbs = TRUE, 
+           col.regions = colorRampPalette(c('white', 'red'))(30),
+           main = expression(paste('diag(|',hat(bold(R)), '|)')),
+           border.col = NA)
+
+grid.arrange(p1, p2, layout_matrix = matrix(1:2, nrow = 1))
+
+```
+
+
 
 ### Eigenspokes
 
