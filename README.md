@@ -1,4 +1,4 @@
-# Bias-in-Joint-Spectral-Embeddings
+# Bias-Varince-Tradeoffs-in-Joint-Spectral-Embeddings
 
 Latent position models and their corresponding estimation procedures offer a statistically principled
 paradigm for multiple network inference by translating multiple network analysis problems to familiar
