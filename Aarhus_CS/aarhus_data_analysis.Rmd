@@ -186,6 +186,7 @@ g5 <- graph_from_adjacency_matrix(A_list[[5]], mode = 'undirected')
 
 #Plot graphs
 layout(rbind(c(1, 1, 2, 2, 3, 3), c(0, 4, 4, 5, 5, 0)))
+layout(matrix(1:5, nrow = 1))
 par(mar = rep(1, 4))
 
 lay <- layout.fruchterman.reingold(g5)

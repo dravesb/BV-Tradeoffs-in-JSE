@@ -190,3 +190,165 @@ ggplot()+
 ggsave("./figures/latent_position_1_three_vals.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
 
 
+#-----------------------------
+#     Visualize Omnibus  
+#     Embeddings
+#-----------------------------
+make_omni <- function(mats){
+  #H(x) = (1x^T + x1^T)/2
+  H <- function(g,m){
+    ones <- rep(1, m)
+    e <- diag(m)[,g]
+    .5 * (tcrossprod(ones,e) + tcrossprod(e,ones))
+  }
+  
+  #sum up each kronecker 
+  m <- length(mats)
+  Reduce("+", lapply(1:m, function(x) kronecker(H(x,m), mats[[x]])))
+}
+ase <- function(A,d){
+  #function to normalize columns of A
+  norm2 <- function(u){
+    sqrt(sum(u^2))
+  } 
+  normalize.cols<- function(A){
+    norm.vec <- function(u) u/norm2(u) #define vector normalization func.
+    if(ncol(A) == 1) return(norm.vec(A[,1]))
+    apply(A, 2, norm.vec) # vectorize 
+  } 
+  
+  #construct ASE 
+  E <- eigen(A)
+  U <- normalize.cols(as.matrix(E$vectors[,1:d], ncol = d))
+  S_sqrt <- diag(x = sign(E$values[1:d]), ncol = d, nrow = d)*diag(sqrt(abs(E$values[1:d])), nrow = d, ncol = d)
+  U %*% S_sqrt
+}
+
+#make omni and embedd
+A_list <- list()
+A_list[[1]] <- A1; A_list[[2]] <- A2; A_list[[3]] <- A3
+Atil <- make_omni(A_list)
+Z <- ase(Atil, d = 2)
+
+#making plotting data frame
+plot_df <- data.frame(X = Z[,1], Y = Z[,2], 
+                      network = as.factor(rep(1:3, each = n)),
+                      community = as.factor(rep(com, 3)))
+
+#plot Embedded points network 1 
+ggplot(plot_df %>% filter(network == 1), aes(X, Y, col = community))+
+  geom_point(alpha = 0.5)+
+  scale_color_manual(values = c('red', 'blue'))+
+  theme_bw()+
+  theme(legend.position = 'none')
+ggsave("./figures/embedded_points_0_three_vals.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
+
+#plot Embedded points network 2
+ggplot(plot_df %>% filter(network == 2), aes(X, Y, col = community))+
+  geom_point(alpha = 0.5)+
+  scale_color_manual(values = c('red', 'blue'))+
+  theme_bw()+
+  theme(legend.position = 'none')
+ggsave("./figures/embedded_points_5_three_vals.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
+
+#plot Embedded points network 3
+ggplot(plot_df %>% filter(network == 3), aes(X, Y, col = community))+
+  geom_point(alpha = 0.5)+
+  scale_color_manual(values = c('red', 'blue'))+
+  theme_bw()+
+  theme(legend.position = 'none')
+ggsave("./figures/embedded_points_1_three_vals.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
+
+#individual embeddings
+library(MCMCpack)
+Xhat <- lapply(A_list, function(x) ase(x, 2))
+Xhat.rot <- lapply(Xhat, function(x) procrustes(x, X)$X.new)
+
+plot_df <- data.frame(X = Xhat.rot[[1]][,1],
+                      Y = Xhat.rot[[1]][,2],
+                      community = as.factor(com))
+ggplot(plot_df, aes(X, Y, col = community))+
+  geom_point(alpha = 0.5)+
+  scale_color_manual(values = c('red', 'blue'))+
+  theme_bw()+
+  theme(legend.position = 'none')
+ggsave("./figures/ase_0_three_vals.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
+
+plot_df <- data.frame(X = Xhat.rot[[2]][,1],
+                      Y = Xhat.rot[[2]][,2],
+                      community = as.factor(com))
+ggplot(plot_df, aes(X, Y, col = community))+
+  geom_point(alpha = 0.5)+
+  scale_color_manual(values = c('red', 'blue'))+
+  theme_bw()+
+  theme(legend.position = 'none')
+ggsave("./figures/ase_5_three_vals.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
+
+plot_df <- data.frame(X = Xhat.rot[[3]][,1],
+                      Y = Xhat.rot[[3]][,2],
+                      community = as.factor(com))
+ggplot(plot_df, aes(X, Y, col = community))+
+  geom_point(alpha = 0.5)+
+  scale_color_manual(values = c('red', 'blue'))+
+  theme_bw()+
+  theme(legend.position = 'none')
+ggsave("./figures/ase_1_three_vals.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
+
+#-----------------------------
+#     Visualize Networks 
+#     for Beamer
+#-----------------------------
+
+#change node color 
+#cols <- c("#ff000088","#0000ff88")
+cols <- c("red","blue")
+V(g1)$color <- cols[com]
+V(g2)$color <- cols[com]
+V(g3)$color <- cols[com]
+
+#take off labels
+V(g1)$label <- ""
+V(g2)$label <- ""
+V(g3)$label <- ""
+
+#change edge width
+E(g1)$width <- E(g2)$width <- E(g3)$width <- E(g4)$width <- .1
+
+#change edge color
+E(g1)$color <- E(g2)$color <- E(g3)$color <- E(g4)$color <- "grey40"
+
+#change vertex size
+vs <- 8
+set.seed(1)
+#plot networks
+pdf("./figures/g1_beamer.pdf")
+plot(g1, vertex.size = vs)
+dev.off()
+
+pdf("./figures/g2_beamer.pdf")
+plot(g2, vertex.size = vs)
+dev.off()
+
+pdf("./figures/g3_beamer.pdf")
+plot(g3, vertex.size = vs)
+dev.off()
+
+
+#adjacency matrix visualization
+library(Matrix)
+perm <- c(which(com == 1), which(com == 2))
+
+pdf("./figures/A1_beamer.pdf")
+image(Matrix(A1[perm, perm]), xlab = '', ylab = '', sub = '',
+      border.col = NA, col.regions = colorRampPalette(c('white', 'blue'))(30))
+dev.off()
+
+pdf("./figures/A2_beamer.pdf")
+image(Matrix(A2[perm, perm]), xlab = '', ylab = '', sub = '',
+      border.col = NA, col.regions = colorRampPalette(c('white', 'blue'))(30))
+dev.off()
+
+pdf("./figures/A3_beamer.pdf")
+image(Matrix(A3[perm, perm]), xlab = '', ylab = '', sub = '',
+      border.col = NA, col.regions = colorRampPalette(c('white', 'blue'))(30))
+dev.off()
