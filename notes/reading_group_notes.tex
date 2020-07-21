@@ -1,0 +1,210 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amssymb, amsmath, amsthm}
+\usepackage{bbm}
+\usepackage{enumitem}   
+\usepackage{tikz}
+\usepackage{verbatim}
+\usepackage{chngpage}
+\usepackage{color,soul}
+
+\linespread{1}
+
+\usepackage[draft]{changes}
+\setdeletedmarkup{{\color{red}\sout{#1}}}
+\setlength {\marginparwidth }{3.5cm}
+\usepackage{todonotes}
+\newcommand{\dls}[2][]{\todo[color=green!40,#1]{DLS: #2}}
+\newcommand{\bd}[2][]{\todo[color=yellow!40,#1]{BD: #2}}
+
+
+\linespread{1}
+\usepackage[backend=biber,style=authoryear]{biblatex}
+\bibliography{ref}
+\usepackage[margin=1.0in]{geometry}
+\parskip = 0.1in
+
+
+%%%%%%%%%%new commands%%%%%%%%%%%%
+\newcommand{\N}{{\mathbb{N}}}
+\newcommand{\Z}{{\mathbb{Z}}}
+\newcommand{\R}{{\mathbb{R}}}
+\newcommand{\Q}{{\mathbb{Q}}}
+\newcommand{\E}{{\mathbb{E}}}
+\newcommand{\V}{{\text{Var}}}
+\newcommand{\prob}{{\mathbb{P}}}
+\newcommand{\bvar}[1]{\mathbf{#1}} 
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{Lemma}{Lemma}
+\newtheorem{Def}{Definition}
+\numberwithin{Def}{section}
+\newtheorem{ex}{Example}
+\newtheorem{Prop}{Proposition}
+\newtheorem{Cor}[theorem]{Corollary}
+\newtheorem{Remark}{Remark}
+
+%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Reading Group Notes}
+\author{Benjamin Draves}
+\date{\today}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Eigen-Scaling Random Dot Product Graph}
+
+In \textcite{Draves2020} we analyze the joint embedding of multiple networks over a common vertex set, $\mathcal{V}$. 
+Suppose $n := |\mathcal{V}|$ and we observe $m$ networks over this vertex set. 
+We adopt a Random Dot Product Graph (RDPG) framework for the analysis of these embedding techniques. 
+
+To \textit{jointly} model these networks, we propose a joint latent position model we entitled the \textit{Eigen-Scaling Random Dot Product Graph} (ESRDPG). 
+Under the ESRDPG, we assume that each vertex $v\in\mathcal{V}$ is associated with a latent vector $\bvar{X}_v\in\R^{d}$ drawn i.i.d. from an inner product distribution $F$ over an appropriate subset of $\R^d$. 
+To capture network level heterogeneity, we associate each network with a \textit{diagonal} matrix $\bvar{C}^{(g)}$ for each $g\in[m]$.
+From here, we assume the probability that vertex $i$ and $j$ share an edge in graph $g\in[m]$ is given by $\bvar{P}_{ij}^{(g)} = \bvar{x}_i^T\bvar{C}^{(g)}\bvar{x}_i$. 
+In essence, the weighting matrices alter the kernel for each graph. 
+Finally, conditional on the latent position $\bvar{X}$, the entries of random adjacency matrices are Bernoulli random variables specified by $\bvar{A}_{ij}^{(g)}|\bvar{X}_i , \bvar{X}_j \sim \text{Bern}(\bvar{X}_i^T\bvar{C}^{(g)}\bvar{X}_j)$. 
+
+Assumptions on this joint graph distribution are made to simplify analysis. 
+Some assumptions are more restrictive than others, which I'll comment on below. 
+\begin{enumerate}
+\item $\min_{i\in[d]}\max_{g\in[m]}\bvar{C}_{ii}^{(g)} > 0$ : This ensures that the weighting matrices aren't fully `removing' a dimension of the latent space. If for some $i\in[d]$, $\bvar{C}_{ii}^{(g)} = 0$ for all $g\in[m]$, then the following analysis would hold just with results written in $\R^{d-1}$. 
+\item $\bvar{C}^{(g)}\geq 0$: This allows us to focus on the embedding of the \textit{positive-definite} part of the adjacency matrices. We've recently extended these into embeddings that utilize both the high and low end of the spectrum, but the analysis becomes more complex: see \textcite{rubindelanchy2017}. 
+\item $\Delta = \E[\bvar{yy}^T]$ for $\bvar{y}\sim F$ is diagonal: This enables an analytic computation of the bias.  
+\end{enumerate}
+
+\section{Joint Embedding Techniques}
+
+In this work, we focus on the estimation of the \textit{scaled latent positions}, $\bvar{L} \in\R^{nm\times d}$ given by 
+\begin{align*}
+    \bvar{L} = \begin{bmatrix}
+    \bvar{X}\sqrt{\bvar{C}^{(1)}}\\
+    \bvar{X}\sqrt{\bvar{C}^{(2)}}\\
+    \vdots \\
+    \bvar{X}\sqrt{\bvar{C}^{(m)}}
+    \end{bmatrix}.
+\end{align*}
+For ease of notation, let $\bvar{L}^{(g)} = \bvar{X}\sqrt{\bvar{C}^{(g)}}$
+We analyze estimators by their ability to recover row-wise estimates of $\bvar{L}$ of the form $\sqrt{\bvar{C}^{(g)}}\bvar{X}_i$. 
+We consider the following four estimators. 
+\begin{enumerate}
+    \item Adjacency Spectral Embedding (ASE): Ignore the \text{shared} structure between graphs. 
+    Estimate $\bvar{L}^{(g)}$ with $\text{ASE}(\bvar{A}^{(g)}, d) = \bvar{U}_{\bvar{A}^{(g)}}\bvar{S}^{1/2}_{\bvar{A}^{(g)}}$. 
+    Analyzed in \textcite{ASE} and \textcite{EigenCLT}. 
+    \item Mean Embedding (Abar): Ignore the \text{differences} between graphs and estimate all $\bvar{L}^{(g)}$ with $\text{ASE}(\bar{\bvar{A}}, d) = \bvar{U}_{\bar{\bvar{A}}}\bvar{S}^{1/2}_{\bar{\bvar{A}}}$ where $\bar{\bvar{A}} = m^{-1}\sum_{g=1}^m\bvar{A}^{(g)}$. 
+    Analyzed in \textcite{Connectome-Smooth}. 
+    \item Omnibus Embedding (Omni): Leverage joint structure by \textit{simultaneously} embedding the adjacency matrices to arrive at a joint estimate matrix $\hat{\bvar{L}} = \text{ASE}(\tilde{\bvar{A}}, d)\in\R^{nm\times d}$ where $\tilde{\bvar{A}}\in\R^{nm\times nm}$ is the omnibus matrix of the adjacency matrix.   
+    The i.i.d. case (i.e. $\bvar{C}^{(g)} = \bvar{I}$ for all $g\in[m]$) was analyzed in \textcite{OmniCLT}.
+    We provide the analysis of these estimates under the ESRDPG below.  
+    \item Mean Omnibus Embedding (Omnibar): Since the omnibus embedding provides $m$ different estimates, we can combine these estimates to produce a global estimate of the latent position. 
+    Let $\hat{\bvar{X}}^{(g)}$ be $g$-th $n\times d$ block of $\hat{\bvar{L}}$ and define $\bar{\bvar{X}} = m^{-1}\sum_{g=1}^m \hat{\bvar{X}}^{(g)}$. 
+    Then $\bar{\bvar{X}}$ is the Omnibar estimator for each $\bvar{L}^{(g)}$. 
+\end{enumerate}
+
+A stated goal of this work is to understand the (dis)advantages of each embedding technique stated above. 
+We choose to first compare these estimators with respect to mean square error when estimating the rows of $\bvar{L}$. 
+Several numerical studies showed that Omni was often the most robust estimator in finite samples (see Figures 2, 4). 
+In order to complete the comparison rigorously, we needed to establish the asymptotic properties of the Omni and Omnibar estimators under the ESRDPG. 
+This is the content of our Main Results.
+
+\section{Main Results}
+
+\subsection{Takeaways}
+
+There are two theorems that establish the fist and second moment properties of the omnibus embedding estimate under the ESRDPG. 
+Theorem 1 reveals that the omnibus embedding is a \textit{biased} estimator of $\bvar{L}$ and the corresponding residual term concentrates at a rate of $O(m^{3/2}n^{-1/2}\log nm)$. 
+Theorem 2 reveals that the rows of $\hat{\bvar{L}}$ behave normally around this biased term when scaled by $\sqrt{n}$. 
+This bias and variance term is also a function of \text{each} latent position. 
+Figure 3 further highlights this point. 
+
+
+Together these results suggests there is a bias-variance tradeoff inherent in the omnibus embedding.
+The numerical examples throughout further support that the bias is offset by a sizable variance reduction in finite samples. 
+This tradeoff typically makes the omnibus embedding the most robust estimator with respect to MSE in experimental settings. 
+
+These results, as well as identifying the asymptotic covariance between rows of $\hat{\bvar{L}}$ (Corollary 1), allow for a formal comparison of the MSE of the four embedding estimators (Table 1). 
+The ASE estimator is the only unbiased estimator while the other three estimators exhibit coordinate-scaling type biases. 
+The variance terms are much more difficult to interpret but can be loosely interpreted as weighted - linear combinations of individual graph variances.  
+For simple models, these explicit expressions can enable determination of the best MSE estimator of the estimators considered. 
+
+
+\subsection{Asymptotic Expansion \& Comments on Proof}
+
+Let $\tilde{\bvar{A}}$ and $\tilde{\bvar{P}}$ be the omnibus matrix of $\{\bvar{A}^{(g)}\}_{g=1}^m$ and $\{\bvar{P}^{(g)}\}_{g=1}^m$, respectively.
+\textcite{OmniCLT} show that $\hat{\bvar{Z}} = \text{ASE}(\tilde{\bvar{A}}, d)$ concentrates around $\bvar{Z} = \text{ASE}(\tilde{\bvar{P}}, d)$ and the rows of $\sqrt{n}(\hat{\bvar{Z}} - \bvar{Z})$ behave normally (after appropriate rotation).
+In the i.i.d. case of \textcite{OmniCLT}, $\bvar{Z}$ can be written directly in terms of the latent positions as there exists $\bvar{W}\in \mathcal{O}_d$ such that $\bvar{ZW} = \bvar{1}_m\otimes \bvar{X}$. 
+
+Under the ESRDPG, we needed to do more work to relate $\bvar{Z}$ back to the latent positions $\bvar{X}$. 
+To that end, consider the following expansion of $\tilde{\bvar{P}}$
+\begin{align*}
+    \tilde{\bvar{P}} = (\bvar{I}_{m\times m}\otimes\bvar{X})\tilde{\bvar{C}}(\bvar{I}_{m\times m}\otimes \bvar{X})^T
+\end{align*}
+where $\tilde{\bvar{C}}$ is the omnibus matrix of $\{\bvar{C}^{(g)}\}_{g=1}^m$.
+We show that $\tilde{\bvar{C}}$, and by extension $\tilde{\bvar{P}}$, is rank $2d$ with d positive and d negative eigenvalues. 
+Let $\bvar{S} = \text{ASE}(\tilde{\bvar{C}}, d)$ and let it's $g$-th $d\times d$ block be written as $\bvar{S}^{(g)}$ (See Definition 3.1). 
+Then, by letting $\bvar{L}_S = (\bvar{I}_{m\times m}\otimes \bvar{X})\bvar{S}$ we have 
+\begin{align*}
+\tilde{\bvar{P}} &= [(\bvar{I}_{m\times m}\otimes \bvar{X})\bvar{S}][(\bvar{I}_{m\times m}\otimes \bvar{X})\bvar{S}]^T + \bvar{\tilde{P}}^-= \bvar{L}_S\bvar{L}_S^T + \tilde{\bvar{P}}^-
+\end{align*}
+where $\tilde{\bvar{P}}^-$ is the negative definite part of $\tilde{\bvar{P}}$.
+From here we can directly relate $\bvar{Z}$ to $\bvar{L}_S$ (see Lemma 2).  
+These results suggest that we can extend the results of \textcite{OmniCLT} by considering the asymopitic expansion (See Appendix A) 
+\begin{align*}
+\hat{\bvar{L}} - \bvar{L} = \underbrace{(\hat{\bvar{L}} - \bvar{L}_S)}_{2\to\infty, \text{ CLT}} + \underbrace{(\bvar{L}_S - \bvar{L})}_{\text{Bias}}.
+\end{align*}
+The development of the residual bounds and the central limit theorem follow closely with that of \textcite{OmniCLT}. 
+The only slight difference is the eigenvalue rate of growth of $\tilde{\bvar{P}}$ (see Lemma 4).
+In most work on RDPG CLTs, $\lambda_d(\bvar{P}) = \Theta(n)$. 
+Under i.i.d. latent positions, $\lambda_d(\tilde{\bvar{P}}) = \Theta(nm)$. 
+Under the ESRDPG, however, it is only guaranteed that $\lambda_d(\tilde{\bvar{P}}) = \omega(\sqrt{m}n)$. 
+This slower rate occurs in very few models (which are discussed in the Section 5), but results in the additional factor of $m$ in the residual bound given in Theorem 1. 
+
+
+\section{Statistical Consequences}
+
+Having established this Bias-Variance Tradeoff, we then turned to analyzing its ramifications in subsequent inference procedures. 
+We chose to analyze the following inference problems. 
+\begin{enumerate}
+    \item Comm. Detection: Recover community labels within each graph using GMM applied to the latent position estimates provided by methods (1-4). 
+    \item Multiplex Comm. Detection: Regarding the networks as describing a multiplex network, recover community labels shared across layers using the omnibus embedding estimates. 
+    \item Two Graph Hypothesis Testing: Test if two graphs share the same set of latent positions. 
+\end{enumerate}
+
+Through several numerical studies, we show that GMM applied to the omnibus and omnibar estimates are competitive with the GMM 
+applied to the ASE and Abar estimates with respect to missclassification rate under the Comm. Detection. 
+We then show that the GMM applied to the Omnibar estimates is competitive with other Multiplex Comm. Detection methods that utilize different joint embedding techniques \parencite{wang2017,arroyo2019,nielsen2018}. 
+These results suggest that the bias does not directly harm, and may even aid, in consequent inference tasks. 
+See Section 4.2 for a full discussion of these problems. 
+
+In Section 4.3 we develop a pivotal test statistic $W$ that tests the hypothesis $\bvar{H}_0: \bvar{C}^{(1)} = \bvar{C}^{(2)}$. 
+The statistic is reminiscent of a Hotelling's $T^2$ statistic and utilizes the distributional results established in the Central Limit Theorem. 
+Under $H_0$, this statistic is approximately distributed $W\overset{\cdot}{\sim}\chi^2_{nd}$. 
+We compare this new proposed statistic to the semi-parameteric statistic, $T$, proposed in \textcite{OmniCLT}.
+As $W$ incorporates covariance corrections (i.e. Mahalanobis distances) and $T$ does not (i.e. Euclidean distance) we anticipate $W$ will achieve higher power. 
+In a simulation study, we find $W$ does achieve higher power. 
+However, its estimate in practice $\hat{W}$ is over-powered under $H_0$.
+Its level-corrected version $\tilde{W}$ achieves lower power than $T$ for small networks sizes but achieves higher power for moderate network sizes ($n\geq 100$). 
+
+
+
+\newpage{}
+\printbibliography
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+

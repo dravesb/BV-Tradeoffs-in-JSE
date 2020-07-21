@@ -1,0 +1,17 @@
+[0] Config.pm:354> INFO - This is Biber 2.7
+[1] Config.pm:357> INFO - Logfile is 'reading_group_notes.blg'
+[56] biber-darwin:303> INFO - === Tue Jul 21, 2020, 13:44:28
+[86] Biber.pm:359> INFO - Reading 'reading_group_notes.bcf'
+[207] Biber.pm:835> INFO - Found 9 citekeys in bib section 0
+[227] Biber.pm:3670> INFO - Processing section 0
+[248] Biber.pm:3840> INFO - Looking for bibtex format file 'ref.bib' for section 0
+[252] bibtex.pm:1435> INFO - Decoding LaTeX character macros into UTF-8
+[263] bibtex.pm:1292> INFO - Found BibTeX data source 'ref.bib'
+[297] Utils.pm:164> WARN - BibTeX subsystem: /var/folders/s5/cj7q3zk51f79f0yhfc2t3tf00000gn/T/ilbmR3r_pV/ref.bib_13153.utf8, line 49, warning: 1 characters of junk seen at toplevel
+[372] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[372] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[373] Biber.pm:3499> INFO - Sorting list 'nyt/global/' of type 'entry' with scheme 'nyt' and locale 'en-US'
+[373] Biber.pm:3505> INFO - No sort tailoring available for locale 'en-US'
+[387] bbl.pm:608> INFO - Writing 'reading_group_notes.bbl' with encoding 'UTF-8'
+[390] bbl.pm:712> INFO - Output to reading_group_notes.bbl
+[391] Biber.pm:109> INFO - WARNINGS: 1
