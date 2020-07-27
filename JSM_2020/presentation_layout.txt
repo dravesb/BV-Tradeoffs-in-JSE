@@ -9,12 +9,12 @@ Part I [Motivate Joint Network Embeddings]
 
 
 Part II [Omnibus Embedding and Bias Variance Tradeoffs]
-[] Discuss ASE, Abar, Omnibus Embedding 
-[] Introduction of ESRDPG and Estimation Task
-[] Bias Variance Figure 
-[] Bias and Variance Theorem Statement
+[X] Discuss ASE, Abar, Omnibus Embedding 
+[Z] Introduction of ESRDPG and Estimation Task
+[Z] Bias Variance Figure 
+[Z] Bias and Variance Theorem Statement
 
-Part III [Hypothesis Testing Ramifications]
+Part III [Statistical Ramifications]
 [] Introduction of Test Statistic and approximate asymptotic distribution 
 [] Power Analysis Simulation 
 [] Questions / arXiv link 
