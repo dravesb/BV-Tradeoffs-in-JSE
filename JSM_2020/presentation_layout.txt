@@ -1,0 +1,20 @@
+JSM 2020 Slide Deck 
+
+Part I [Motivate Joint Network Embeddings]
+- Introduction Slide 
+- Multiplex Networks 
+- Individual Network Embeddings 
+- Joint Network Embeddings 
+	- Leading Question: How / when is the joint embedding helpful? 
+
+
+Part II [Omnibus Embedding and Bias Variance Tradeoffs]
+- Discuss ASE, Abar, Omnibus Embedding 
+- Bias Variance Figure 
+- Introduction of ESRDPG and Estimation Task
+- Bias and Variance Theorem Statement
+
+Part III [Hypothesis Testing Ramifications]
+- Introduction of Test Statistic and approximate asymptotic distribution 
+- Power Analysis Simulation 
+- Questions 
