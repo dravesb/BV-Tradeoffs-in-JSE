@@ -1,0 +1,18 @@
+[0] Config.pm:354> INFO - This is Biber 2.7
+[0] Config.pm:357> INFO - Logfile is 'main.blg'
+[47] biber-darwin:303> INFO - === Mon Jul 27, 2020, 11:56:54
+[76] Biber.pm:359> INFO - Reading 'main.bcf'
+[185] Biber.pm:832> INFO - Using all citekeys in bib section 0
+[204] Biber.pm:3670> INFO - Processing section 0
+[227] Biber.pm:3840> INFO - Looking for bibtex format file 'ref.bib' for section 0
+[229] bibtex.pm:1435> INFO - Decoding LaTeX character macros into UTF-8
+[236] bibtex.pm:1292> INFO - Found BibTeX data source 'ref.bib'
+[250] Utils.pm:164> WARN - month field 'Feb' in entry 'EigenCLT' is not an integer - this will probably not sort properly.
+[317] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[318] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[318] Biber.pm:3499> INFO - Sorting list 'nty/global/' of type 'entry' with scheme 'nty' and locale 'en-US'
+[318] Biber.pm:3505> INFO - No sort tailoring available for locale 'en-US'
+[330] bbl.pm:608> INFO - Writing 'main.bbl' with encoding 'ascii'
+[335] Utils.pm:164> WARN - The entry 'Kivela2014' has characters which cannot be encoded in 'ascii'. Recoding problematic characters into macros.
+[337] bbl.pm:712> INFO - Output to main.bbl
+[338] Biber.pm:109> INFO - WARNINGS: 2
