@@ -2143,10 +2143,10 @@
     <bcf:datasource type="file" datatype="bibtex">ref.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1">Kivela2014</bcf:citekey>
-    <bcf:citekey order="2">ASE</bcf:citekey>
-    <bcf:citekey order="3">OmniCLT</bcf:citekey>
-    <bcf:citekey order="0">*</bcf:citekey>
+    <bcf:citekey order="1">magnani2013combinatorial</bcf:citekey>
+    <bcf:citekey order="2">Kivela2014</bcf:citekey>
+    <bcf:citekey order="3">ASE</bcf:citekey>
+    <bcf:citekey order="4">OmniCLT</bcf:citekey>
   </bcf:section>
   <bcf:sortlist section="0" name="nty/global/" type="entry" sortscheme="nty" sortnamekeyscheme="global" labelprefix="">
   <bcf:sorting>

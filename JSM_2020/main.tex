@@ -72,7 +72,7 @@
 
 \begin{frame}{Multiplex Networks}
 \begin{itemize}
-    \item Multiplex networks encode multiple relationships between entities as a collection of networks. 
+    \item Multiplex networks encode multiple relationships between entities as a collection of networks \parencite{magnani2013combinatorial}.
     \begin{center}
         \includegraphics[width=0.6\textwidth]{aarhus_multiplex.jpg}
     \end{center}\pause
@@ -213,13 +213,13 @@ Statistical Inference};
         where $\bvar{U}_{\bvar{A}^{(g)}}\in\mathbb{R}^{n\times d}$ and $\bvar{S}_{\bvar{A}^{(g)}}\in\mathbb{R}^{d\times d}$ contains the top $d$ eigenvalues of $\bvar{A}^{(g)}$. Then the ASE of $\bvar{A}^{(g)}$ is defined by $\text{ASE}(\bvar{A}^{(g)},d) = \bvar{U}_{\bvar{A}^{(g)}}\bvar{S}_{\bvar{A}^{(g)}}^{1/2}$.
         \end{block}
     \begin{itemize}
-    \item Second approach: assume identical structure and embedd the sample mean matrix $\bar{\bvar{A}} =  m^{-1}\sum_{g=1}^m \bvar{A}^{(g)}$ by $\text{ASE}(\bar{\bvar{A}}, d)$. 
+    \item Second approach: assume identical structure and embed the sample mean matrix $\bar{\bvar{A}} =  m^{-1}\sum_{g=1}^m \bvar{A}^{(g)}$ by $\text{ASE}(\bar{\bvar{A}}, d)$. 
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Joint Network Embedding Techniques}
 \begin{itemize}
-        \item Thrid approach: \textit{jointly} embedd the networks $\{\bvar{A}^{(g)}\}_{g=1}^m$.
+        \item Third approach: \textit{jointly} embed the networks $\{\bvar{A}^{(g)}\}_{g=1}^m$.
 \end{itemize}
 \begin{block}{Omnibus Embedding (\cite{OmniCLT})}
 Let the \textit{omnibus matrix} be defined as
@@ -276,29 +276,39 @@ Then the \textit{omnibus embedding} of $\{\bvar{A}^{(g)}\}_{g=1}^m$ is given by 
 
     \begin{block}{Simulation Design}
         \begin{enumerate}
-            \item Draw $\bvar{X}_1, \ldots \bvar{X}_n \overset{i.i.d}{\sim} F$ where $F$ corresponds to a two-group SBM with paramters $(a = 0.25, b = 0.05)$. 
+            \item Draw $\bvar{X}_1, \ldots \bvar{X}_n \overset{i.i.d}{\sim} F$ where $F$ corresponds to a two-group SBM with parameters $(a = 0.25, b = 0.05)$. 
             \item For $t\in[0,1]$, draw $(\{\bvar{A}^{(g)}\}_{g=1}^2, \bvar{X})\sim \text{ESRDPG}(F, n, \{\bvar{C}^{(g)}\}_{g=1}^m)$ with 
                \begin{align*}
                     \bvar{C}^{(1)} = \bvar{I} \quad \quad \bvar{C}^{(2)} := \bvar{C}(t) = \begin{bmatrix} 1 + t & 0\\ 0 & 1 - t \end{bmatrix}
                 \end{align*}
-            \item Jointly embedd $\hat{\bvar{L}} = \text{ASE}(\tilde{\bvar{A}}, d)$
+            \item Jointly embed $\hat{\bvar{L}} = \text{ASE}(\tilde{\bvar{A}}, d)$
         \end{enumerate}
     \end{block}
  \begin{itemize}
-    \item At $t = 0$, $\bvar{A}^{(2)}$ is a SBM and at $t = 1$, $\bvar{A}^{(2)}$ is an Erd\"{o}s-R\'{e}yni graph with paramter $p = 0.3$.\pause
+    \item At $t = 0$, $\bvar{A}^{(2)}$ is a SBM and at $t = 1$, $\bvar{A}^{(2)}$ is an Erd\"{o}s-R\'{e}yni graph with parameter $p = 0.3$.\pause
     \item Goal: Analyze techniques that utilize $\hat{\bvar{L}}$ for statistical inference. 
  \end{itemize}   
 \end{frame}
 
 \begin{frame}{Community Detection}
+    \begin{itemize}
+        \item Task: Recover community labels using $\hat{\bvar{L}} = [\hat{\bvar{X}}^{(1)T}\hat{\bvar{X}}^{(2)T}]^T$. 
+        \item Apply Gaussian Mixture Models to the rows of $\bar{\bvar{X}} = 2^{-1}(\hat{\bvar{X}}^{(1)} + \hat{\bvar{X}}^{(2)})$\pause
+    \end{itemize}
+
     \begin{center}
-        \includegraphics[width = 3in, height = 2in]{multiple_methods_mc_comp.jpeg}
+        \includegraphics[width = 3.25in, height = 2in]{multiple_methods_mc_comp.jpeg}
     \end{center}
 \end{frame}
 
 \begin{frame}{Two Graph Hypothesis Testing}
+    \begin{itemize}
+        \item Task: Test the hypothesis $H_0: \bvar{C}^{(1)} = \bvar{C}^{(2)}$. 
+        \item Construct pivotal test statistic based on the Mahalanobis distance between rows of $\hat{\bvar{X}}^{(1)}$ and $\hat{\bvar{X}}^{(2)}$. \pause
+    \end{itemize}
+
     \begin{center}
-        \includegraphics[width = 3in, height = 2in]{empirical_power_oracle_correction_variable_t.pdf}
+        \includegraphics[width = 3.5in, height = 2in]{empirical_power_oracle_correction_variable_t.pdf}
     \end{center}
 \end{frame}
 
@@ -307,23 +317,23 @@ Then the \textit{omnibus embedding} of $\{\bvar{A}^{(g)}\}_{g=1}^m$ is given by 
 \section{Conclusion}
 
 \begin{frame}{Conclusion \& Future Work}
+    \begin{center}
+    Preprint available: \url{https://arxiv.org/abs/2005.02511}\pause
+    \end{center}
     \begin{itemize}
-        \item Preprint available: \url{https://arxiv.org/abs/2005.02511}
+        \item Extend this analysis to more general graph models
+        \item Power Analysis for proposed test statistic 
+        \item Refine finite sample testing procedures 
     \end{itemize}
 \end{frame}
 
 
-\nocite{*}
+%\nocite{*}
 \begin{frame}[t,allowframebreaks]
   \frametitle{References}
   \printbibliography
  \end{frame}
 %--------------------------------------------------------------
-
-
-
-
-
 
 
 \end{document}

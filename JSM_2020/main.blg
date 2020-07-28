@@ -1,18 +1,17 @@
 [0] Config.pm:354> INFO - This is Biber 2.7
-[1] Config.pm:357> INFO - Logfile is 'main.blg'
-[52] biber-darwin:303> INFO - === Mon Jul 27, 2020, 19:28:35
-[79] Biber.pm:359> INFO - Reading 'main.bcf'
-[200] Biber.pm:832> INFO - Using all citekeys in bib section 0
-[230] Biber.pm:3670> INFO - Processing section 0
-[254] Biber.pm:3840> INFO - Looking for bibtex format file 'ref.bib' for section 0
-[257] bibtex.pm:1435> INFO - Decoding LaTeX character macros into UTF-8
-[265] bibtex.pm:1292> INFO - Found BibTeX data source 'ref.bib'
-[295] Utils.pm:164> WARN - month field 'Feb' in entry 'EigenCLT' is not an integer - this will probably not sort properly.
-[370] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[370] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[371] Biber.pm:3499> INFO - Sorting list 'nty/global/' of type 'entry' with scheme 'nty' and locale 'en-US'
-[371] Biber.pm:3505> INFO - No sort tailoring available for locale 'en-US'
-[386] bbl.pm:608> INFO - Writing 'main.bbl' with encoding 'ascii'
-[390] Utils.pm:164> WARN - The entry 'Kivela2014' has characters which cannot be encoded in 'ascii'. Recoding problematic characters into macros.
-[392] bbl.pm:712> INFO - Output to main.bbl
-[393] Biber.pm:109> INFO - WARNINGS: 2
+[0] Config.pm:357> INFO - Logfile is 'main.blg'
+[60] biber-darwin:303> INFO - === Tue Jul 28, 2020, 13:56:02
+[89] Biber.pm:359> INFO - Reading 'main.bcf'
+[203] Biber.pm:835> INFO - Found 4 citekeys in bib section 0
+[222] Biber.pm:3670> INFO - Processing section 0
+[243] Biber.pm:3840> INFO - Looking for bibtex format file 'ref.bib' for section 0
+[244] bibtex.pm:1435> INFO - Decoding LaTeX character macros into UTF-8
+[251] bibtex.pm:1292> INFO - Found BibTeX data source 'ref.bib'
+[303] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[303] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[303] Biber.pm:3499> INFO - Sorting list 'nty/global/' of type 'entry' with scheme 'nty' and locale 'en-US'
+[303] Biber.pm:3505> INFO - No sort tailoring available for locale 'en-US'
+[310] bbl.pm:608> INFO - Writing 'main.bbl' with encoding 'ascii'
+[314] Utils.pm:164> WARN - The entry 'Kivela2014' has characters which cannot be encoded in 'ascii'. Recoding problematic characters into macros.
+[315] bbl.pm:712> INFO - Output to main.bbl
+[315] Biber.pm:109> INFO - WARNINGS: 1

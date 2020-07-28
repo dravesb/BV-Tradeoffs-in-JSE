@@ -1,11 +1,11 @@
 # Fdb version 3
-["biber main"] 1595892513 "main.bcf" "main.bbl" "main" 1595893030
-  "main.bcf" 1595893030 95875 06e6a7b278e122ce08265d7d24c4a264 ""
-  "ref.bib" 1595864905 3338 8cf4a7eaca322e5b5b19741761f7ad63 ""
+["biber main"] 1595958961 "main.bcf" "main.bbl" "main" 1595958967
+  "main.bcf" 1595958966 95898 834959a2f85df2db8b772ab6cac82e52 ""
+  "ref.bib" 1595958832 3131 bf1a2a267267043bc27fc4633fe4df8c ""
   (generated)
   "main.blg"
   "main.bbl"
-["pdflatex"] 1595893028 "main.tex" "main.pdf" "main" 1595893030
+["pdflatex"] 1595958964 "main.tex" "main.pdf" "main" 1595958967
   "/usr/local/texlive/2017/texmf-dist/fonts/map/fontname/texfonts.map" 1480098670 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2017/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1480098698 1004 54797486969f23fa377b128694d548df ""
   "/usr/local/texlive/2017/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1480098698 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -247,19 +247,19 @@
   "figures/g2_beamer.pdf" 1595876760 6653 8782cc66cff391d6be9c96442b29a548 ""
   "figures/g3_beamer.pdf" 1595876760 6283 f5185a6ef155793c982f789c2b14e5bc ""
   "figures/multiple_methods_mc_comp.jpeg" 1595892614 283548 41baad07a13440dcffd5d3c3e2722bbb ""
-  "main.aux" 1595893030 8177 148b4ba15d4464bf341d5f968aedcc7d ""
-  "main.bbl" 1595892515 16691 9347214233bbdbf3e014f6a552592b93 "biber main"
-  "main.nav" 1595893030 4163 3c8b24ed95f7b8e7bc8ef8bec4a11469 ""
-  "main.out" 1595893030 222 18c7fc2c05c141249101eabb427eca48 ""
-  "main.run.xml" 1595893030 2301 a77126b9b150d3478d3f5b15d944ac50 ""
-  "main.tex" 1595893029 14838 0d0f8669596e504091548bed18fc63a4 ""
+  "main.aux" 1595958966 7842 d8f29ff0466fa4a90b656df440607303 ""
+  "main.bbl" 1595958962 7492 43b05c87c6881a684539c173284b673e "biber main"
+  "main.nav" 1595958966 4001 a93ee9cb43935f7eff87d62905122bec ""
+  "main.out" 1595958966 222 18c7fc2c05c141249101eabb427eca48 ""
+  "main.run.xml" 1595958966 2301 a77126b9b150d3478d3f5b15d944ac50 ""
+  "main.tex" 1595958959 15652 6c6a8141e2eba1d61f9db5f2b8667591 ""
   (generated)
+  "main.out"
+  "main.nav"
   "main.snm"
   "main.aux"
-  "main.out"
-  "main.log"
-  "main.run.xml"
-  "main.bcf"
-  "main.nav"
-  "main.toc"
   "main.pdf"
+  "main.run.xml"
+  "main.log"
+  "main.bcf"
+  "main.toc"

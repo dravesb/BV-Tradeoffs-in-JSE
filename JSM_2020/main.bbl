@@ -19,163 +19,6 @@
 
 \refsection{0}
   \sortlist[entry]{nty/global/}
-    \entry{RDPGSurvey}{article}{}
-      \name{author}{10}{}{%
-        {{uniquename=2,hash=d8dabfd2a6effdd8ecba5e09b04bfb1b}{%
-           family={Athreya},
-           familyi={A\bibinitperiod},
-           given={Avanti},
-           giveni={A\bibinitperiod}}}%
-        {{uniquename=0,hash=e71845059b1809013a478fb4b8a5d29e}{%
-           family={E.\bibnamedelimi Fishkind},
-           familyi={E\bibinitperiod\bibinitdelim F\bibinitperiod},
-           given={Donniell},
-           giveni={D\bibinitperiod}}}%
-        {{uniquename=0,hash=c3fb45c8301446892a46d9507dce21a5}{%
-           family={Levin},
-           familyi={L\bibinitperiod},
-           given={Keith},
-           giveni={K\bibinitperiod}}}%
-        {{uniquename=0,hash=5df169d0de1ee96761d0ba8df7094398}{%
-           family={Lyzinski},
-           familyi={L\bibinitperiod},
-           given={Vince},
-           giveni={V\bibinitperiod}}}%
-        {{uniquename=0,hash=cc0dca3c1c23b7f98e7c7f8f9d945823}{%
-           family={Park},
-           familyi={P\bibinitperiod},
-           given={Youngser},
-           giveni={Y\bibinitperiod}}}%
-        {{uniquename=0,hash=edd49812f8591c844a052e55f0106a10}{%
-           family={Qin},
-           familyi={Q\bibinitperiod},
-           given={Yichen},
-           giveni={Y\bibinitperiod}}}%
-        {{uniquename=0,hash=ed155c327c282e28affe8060016dcdc5}{%
-           family={L.\bibnamedelimi Sussman},
-           familyi={L\bibinitperiod\bibinitdelim S\bibinitperiod},
-           given={Daniel},
-           giveni={D\bibinitperiod}}}%
-        {{uniquename=0,hash=3dabe378f3c72dc260ada5bfad194ccc}{%
-           family={Tang},
-           familyi={T\bibinitperiod},
-           given={Minh},
-           giveni={M\bibinitperiod}}}%
-        {{uniquename=0,hash=2f7dfe2d25aae6ec6f26963e98a12274}{%
-           family={T.\bibnamedelimi Vogelstein},
-           familyi={T\bibinitperiod\bibinitdelim V\bibinitperiod},
-           given={Joshua},
-           giveni={J\bibinitperiod}}}%
-        {{uniquename=0,hash=5772edd81a134ee00354b1f2104cd848}{%
-           family={E.\bibnamedelimi Priebe},
-           familyi={E\bibinitperiod\bibinitdelim P\bibinitperiod},
-           given={Carey},
-           giveni={C\bibinitperiod}}}%
-      }
-      \strng{namehash}{789ff769625b921561ea0c2cc54ce065}
-      \strng{fullhash}{b73ecf8118ad09387df3f47f3c148f7f}
-      \strng{authornamehash}{789ff769625b921561ea0c2cc54ce065}
-      \strng{authorfullhash}{b73ecf8118ad09387df3f47f3c148f7f}
-      \field{sortinit}{A}
-      \field{sortinithash}{3248043b5fe8d0a34dab5ab6b8d4309b}
-      \field{labeldatesource}{year}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{Journal of Machine Learning Research}
-      \field{month}{09}
-      \field{title}{Statistical inference on random dot product graphs: A survey}
-      \field{volume}{18}
-      \field{year}{2017}
-    \endentry
-    \entry{EigenCLT}{article}{}
-      \name{author}{6}{}{%
-        {{uniquename=2,hash=3c8dab900858ed2bb30c5c3bbb0a7e9d}{%
-           family={Athreya},
-           familyi={A\bibinitperiod},
-           given={A.},
-           giveni={A\bibinitperiod}}}%
-        {{uniquename=0,hash=b8fe9d4b1b7ad1f3c53cadac5158875d}{%
-           family={Priebe},
-           familyi={P\bibinitperiod},
-           given={C.\bibnamedelimi E.},
-           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
-        {{uniquename=0,hash=530dd6a0dd33f61a5f249abcaf920e4f}{%
-           family={Tang},
-           familyi={T\bibinitperiod},
-           given={M.},
-           giveni={M\bibinitperiod}}}%
-        {{uniquename=0,hash=930783818b713c748572fb11a10f5925}{%
-           family={Lyzinski},
-           familyi={L\bibinitperiod},
-           given={V.},
-           giveni={V\bibinitperiod}}}%
-        {{uniquename=0,hash=d45b407810532b6ff456e34122904091}{%
-           family={Marchette},
-           familyi={M\bibinitperiod},
-           given={D.\bibnamedelimi J.},
-           giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
-        {{uniquename=0,hash=4f0493b645c1a764d8751caeccddcbd2}{%
-           family={Sussman},
-           familyi={S\bibinitperiod},
-           given={D.\bibnamedelimi L.},
-           giveni={D\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
-      }
-      \strng{namehash}{681be3d9739725768151f164543c8e78}
-      \strng{fullhash}{d0e69ee83b1d27acf8d3350fd19528ac}
-      \strng{authornamehash}{681be3d9739725768151f164543c8e78}
-      \strng{authorfullhash}{d0e69ee83b1d27acf8d3350fd19528ac}
-      \field{sortinit}{A}
-      \field{sortinithash}{3248043b5fe8d0a34dab5ab6b8d4309b}
-      \field{labeldatesource}{year}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{Sankhya A}
-      \field{month}{2}
-      \field{number}{1}
-      \field{title}{A Limit Theorem for Scaled Eigenvectors of Random Dot Product Graphs}
-      \field{volume}{78}
-      \field{year}{2016}
-      \field{pages}{1\bibrangedash 18}
-      \range{pages}{18}
-    \endentry
-    \entry{HoffLPM}{article}{}
-      \name{author}{3}{}{%
-        {{uniquename=0,hash=cc873c9caa29e095edbcd7ce899be8a7}{%
-           family={Hoff},
-           familyi={H\bibinitperiod},
-           given={Peter\bibnamedelima D},
-           giveni={P\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
-        {{uniquename=0,hash=0451cbcfdf7af3838441abe600b2a495}{%
-           family={Raftery},
-           familyi={R\bibinitperiod},
-           given={Adrian\bibnamedelima E},
-           giveni={A\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
-        {{uniquename=0,hash=072cbb79eed48e657d7dae2de236eb00}{%
-           family={Handcock},
-           familyi={H\bibinitperiod},
-           given={Mark\bibnamedelima S},
-           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {Taylor & Francis}%
-      }
-      \strng{namehash}{7ba705c6b689b0d2b55c5211e54c6cc8}
-      \strng{fullhash}{7ba705c6b689b0d2b55c5211e54c6cc8}
-      \strng{authornamehash}{7ba705c6b689b0d2b55c5211e54c6cc8}
-      \strng{authorfullhash}{7ba705c6b689b0d2b55c5211e54c6cc8}
-      \field{sortinit}{H}
-      \field{sortinithash}{2f664b453ec75da1fe3804ca92633405}
-      \field{labeldatesource}{year}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{Journal of the American Statistical Association}
-      \field{number}{460}
-      \field{title}{Latent Space Approaches to Social Network Analysis}
-      \field{volume}{97}
-      \field{year}{2002}
-      \field{pages}{1090\bibrangedash 1098}
-      \range{pages}{9}
-    \endentry
     \entry{Kivela2014}{article}{}
       \name{author}{6}{}{%
         {{uniquename=0,hash=fe73b144805636058df0aec5e27fbe4e}{%
@@ -269,6 +112,41 @@
       \field{pages}{964\bibrangedash 967}
       \range{pages}{4}
     \endentry
+    \entry{magnani2013combinatorial}{misc}{}
+      \name{author}{3}{}{%
+        {{uniquename=0,hash=515e2eb0c45d461898a35546269464c1}{%
+           family={Magnani},
+           familyi={M\bibinitperiod},
+           given={Matteo},
+           giveni={M\bibinitperiod}}}%
+        {{uniquename=0,hash=eb741db0f32b13b9f7bd6b1845fc3fe1}{%
+           family={Micenkova},
+           familyi={M\bibinitperiod},
+           given={Barbora},
+           giveni={B\bibinitperiod}}}%
+        {{uniquename=0,hash=d1c3d318e9e1f80f90b5f52bfe7c2186}{%
+           family={Rossi},
+           familyi={R\bibinitperiod},
+           given={Luca},
+           giveni={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{b636a9359bcf0cdbd2539f594bbd0bae}
+      \strng{fullhash}{b636a9359bcf0cdbd2539f594bbd0bae}
+      \strng{authornamehash}{b636a9359bcf0cdbd2539f594bbd0bae}
+      \strng{authorfullhash}{b636a9359bcf0cdbd2539f594bbd0bae}
+      \field{sortinit}{M}
+      \field{sortinithash}{c26a05ef03e4429073ed5c825140fac3}
+      \field{labeldatesource}{year}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.SI}
+      \field{eprinttype}{arXiv}
+      \field{title}{Combinatorial Analysis of Multiple Networks}
+      \field{year}{2013}
+      \verb{eprint}
+      \verb 1303.4986
+      \endverb
+    \endentry
     \entry{ASE}{article}{}
       \name{author}{4}{}{%
         {{uniquename=0,hash=6331ad51c58e19b59cd2254da89689d0}{%
@@ -311,90 +189,6 @@
       \field{year}{2012}
       \field{pages}{1119\bibrangedash 1128}
       \range{pages}{10}
-    \endentry
-    \entry{JERG}{misc}{}
-      \name{author}{4}{}{%
-        {{uniquename=0,hash=7040f2903ac36436eddaa5c45c25d6fb}{%
-           family={Wang},
-           familyi={W\bibinitperiod},
-           given={Shangsi},
-           giveni={S\bibinitperiod}}}%
-        {{uniquename=0,hash=22a0746cc05c9bcaddc7549d5e4ebbb3}{%
-           family={Arroyo},
-           familyi={A\bibinitperiod},
-           given={Jesus},
-           giveni={J\bibinitperiod}}}%
-        {{uniquename=0,hash=de1e6a1c324fb27230d6d9a0166d865b}{%
-           family={Vogelstein},
-           familyi={V\bibinitperiod},
-           given={Joshua\bibnamedelima T.},
-           giveni={J\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
-        {{uniquename=0,hash=d73cf8bfbc1c1d8646809e4e4c103776}{%
-           family={Priebe},
-           familyi={P\bibinitperiod},
-           given={Carey\bibnamedelima E.},
-           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
-      }
-      \strng{namehash}{202ef243d587af0016b4e0f0dc8eac10}
-      \strng{fullhash}{254f8bfcbe499257765c9ab61bd045d5}
-      \strng{authornamehash}{202ef243d587af0016b4e0f0dc8eac10}
-      \strng{authorfullhash}{254f8bfcbe499257765c9ab61bd045d5}
-      \field{sortinit}{W}
-      \field{sortinithash}{6d25b3eefe5aa2147d1f339686808918}
-      \field{labeldatesource}{year}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{Joint Embedding of Graphs}
-      \field{year}{2017}
-    \endentry
-    \entry{RDPG}{inproceedings}{}
-      \name{author}{2}{}{%
-        {{uniquename=0,hash=da8338552619d793f9a135902eb2b25c}{%
-           family={Young},
-           familyi={Y\bibinitperiod},
-           given={Stephen\bibnamedelima J.},
-           giveni={S\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
-        {{uniquename=0,hash=660fd8b3934e42033d782fd5610d8198}{%
-           family={Scheinerman},
-           familyi={S\bibinitperiod},
-           given={Edward\bibnamedelima R.},
-           giveni={E\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
-      }
-      \name{editor}{2}{}{%
-        {{hash=4e2250d9d4868e57d543ab53e43599ef}{%
-           family={Bonato},
-           familyi={B\bibinitperiod},
-           given={Anthony},
-           giveni={A\bibinitperiod}}}%
-        {{hash=85340a21e39a9ffe7f852a8fdd0251f6}{%
-           family={Chung},
-           familyi={C\bibinitperiod},
-           given={Fan\bibnamedelimb R.\bibnamedelimi K.},
-           giveni={F\bibinitperiod\bibinitdelim R\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
-      }
-      \list{location}{1}{%
-        {Berlin, Heidelberg}%
-      }
-      \list{publisher}{1}{%
-        {Springer Berlin Heidelberg}%
-      }
-      \strng{namehash}{33656326998fbe0ac2e00e80b64bb2a9}
-      \strng{fullhash}{33656326998fbe0ac2e00e80b64bb2a9}
-      \strng{authornamehash}{33656326998fbe0ac2e00e80b64bb2a9}
-      \strng{authorfullhash}{33656326998fbe0ac2e00e80b64bb2a9}
-      \strng{editornamehash}{88a6c091771149ac563e974f4b9b526c}
-      \strng{editorfullhash}{88a6c091771149ac563e974f4b9b526c}
-      \field{sortinit}{Y}
-      \field{sortinithash}{f86c10978eb0c0879609ce6a4f43da7b}
-      \field{labeldatesource}{year}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{abstract}{Inspired by the recent interest in combining geometry with random graph models, we explore in this paper two generalizations of the random dot product graph model proposed by Kraetzl, Nickel and Scheinerman, and Tucker [1,2]. In particular we consider the properties of clustering, diameter and degree distribution with respect to these models. Additionally we explore the conductance of these models and show that in a geometric sense, the conductance is constant.}
-      \field{booktitle}{Algorithms and Models for the Web-Graph}
-      \field{title}{Random Dot Product Graph Models for Social Networks}
-      \field{year}{2007}
-      \field{pages}{138\bibrangedash 149}
-      \range{pages}{12}
     \endentry
   \endsortlist
 \endrefsection
