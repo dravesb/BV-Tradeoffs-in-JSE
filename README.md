@@ -18,4 +18,4 @@ competitive, and oftentimes preferable, to unbiased latent position estimates.
 
 Check out the paper pre-print here: <https://arxiv.org/abs/2005.02511>
 
-![msefig](one_dim_BV_tradeoff/figures/1d_mse.pdf)
+![msefig](one_dim_BV_tradeoff/figures/1d_mse.png)
