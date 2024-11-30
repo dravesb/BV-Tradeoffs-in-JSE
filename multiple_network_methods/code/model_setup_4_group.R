@@ -11,7 +11,7 @@
 
 mc_runs <- 500
 net_size <- 100
-t <- seq(0, 1, length.out = 25)
+t <- seq(0, 1, length.out = 5)
 
 #-----------------------
 #set up latent positions

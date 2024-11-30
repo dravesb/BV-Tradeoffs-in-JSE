@@ -77,12 +77,20 @@ mrdpg_classes <- function(adj_matrices, d, K){
   #get commom eigen space
   U <- mrdpg_U(adj_matrices, d)
   
-  #kmeans on the rows of U
-  #classes <- kmeans(U, centers = K)
-  classes <- Mclust(U, G = K, modelNames = "VVV")$classification
+  #kmeans on the rows of U 
+  clusters <- Mclust(U, G = K, modelNames = "VVV")$classification
+  if(is.null(clusters)){
+    clusters <-  kmeans(U, centers = K)$cluster 
+  }
   
-  #return classes
-  return(classes)
+  
+  # get distance between clusters
+  d12 <- get_mahalanobis(U[clusters == 1, ], U[clusters == 2, ])
+  d13 <- get_mahalanobis(U[clusters == 1, ], U[clusters == 3, ])
+  d23 <- get_mahalanobis(U[clusters == 2, ], U[clusters == 3, ])
+  
+  #return clusters
+  return(list(clusters = clusters, distances = c(d12, d13, d23)))
 }
 
 

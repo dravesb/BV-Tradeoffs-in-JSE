@@ -47,7 +47,7 @@ Delta <- pi * tcrossprod(x1) + (1 - pi)*tcrossprod(x2)
 R <- eigen(Delta)$vectors
 
 #Apply rotation to x1 and x2
-x1_til <- t(R) %*% x1 
+x1_til <- t(R) %*% x1
 x2_til <- t(R) %*% x2
 
 #set base latent positions

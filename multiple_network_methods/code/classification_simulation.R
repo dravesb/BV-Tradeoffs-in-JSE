@@ -18,21 +18,23 @@ library(irlba)
 library(mclust)
 
 #source nesseary functions
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/ase_classification.R")
 source("~/Documents/Work/github/BJSE/multiple_network_methods/code/je_classification.R")
 source("~/Documents/Work/github/BJSE/multiple_network_methods/code/mase_classification.R")
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/abar_classification.R")
 source("~/Documents/Work/github/BJSE/multiple_network_methods/code/omni_classification.R")
 source("~/Documents/Work/github/BJSE/multiple_network_methods/code/mrdpg_classification.R")
-source("~/Documents/Work/github/BJSE/multiple_network_methods/code/omnicat_classification.R")
+source("~/Documents/Work/github/BJSE/multiple_network_methods/code/rase_classification.R")
 source("~/Documents/Work/github/BJSE/multiple_network_methods/code/model_setup_4_group.R")
 
 
 #define storage
-names <- c("network_size", "t","iter.no", 
-           "Omnibar",'Omnicat', "MASE", "JE", "MRDPG",
-           'ASE1', 'ASE2', 'ASE3', 'ASE4')
-df <- matrix(NA, ncol = length(names), nrow = length(t) * mc_runs * length(net_size))
-colnames(df) <- names
-here <- 1 
+df_list <- list()
+count <- 1
+
+names <- c("network_size", "t","iter.no",
+           'Method', 'MC_rate', 'Distance'
+           )
 
 #set seed
 set.seed(1985)
@@ -50,75 +52,78 @@ for(l in 1:length(net_size)){#loop over n
       X <- L[samp,]
       
       #get different P matrices
-      P1 <- tcrossprod(X)
-      P2 <- X %*% tcrossprod(C1(t[i]), X)
-      P3 <- X %*% tcrossprod(C2(t[i]), X)
-      P4 <- X %*% tcrossprod(C3(t[i]), X)
+      P_list <- list(tcrossprod(X), 
+                     X %*% tcrossprod(C1(t[i]), X), 
+                     X %*% tcrossprod(C2(t[i]), X), 
+                     X %*% tcrossprod(C3(t[i]), X)
+      )
+      
       
       #sample adjaceny matrices
-      A1 <- sampP(P1)
-      A2 <- sampP(P2)
-      A3 <- sampP(P3)
-      A4 <- sampP(P4)
-  
-      #make adjaceny lists
-      adj_mats <- list()
-      adj_mats[[1]] <- A1
-      adj_mats[[2]] <- A2
-      adj_mats[[3]] <- A3
-      adj_mats[[4]] <- A4
+      adj_mats <- lapply(P_list, sampP)
       
       #get classifications from each methods
+      invisible(capture.output(ase1_estimates <- ase_classes(adj_mats[[1]], 3, 3)))
+      invisible(capture.output(abar_estimates <- abar_classes(adj_mats, 3, 3)))
       invisible(capture.output(omni_estimates <- omni_classes(adj_mats, 3, 3)))
-      invisible(capture.output(omnicat_estimates <- omnicat_classes(adj_mats, 3, 3)))
+      #invisible(capture.output(omnicat_estimates <- omnicat_classes(adj_mats, 3, 3)))
+      invisible(capture.output(rase_estimates <- rase_classes(adj_mats, 3, 3)))
       invisible(capture.output(mrdpg_estimates <- mrdpg_classes(adj_mats, 3, 3)))
       invisible(capture.output(je_estimates <- je_classes(adj_mats, 3, 3)))
       invisible(capture.output(mase_estimates <- mase_classes(adj_mats, 3, 3)))
       
-      #get classifications from individual ASEs
-      X1 <- ase(A1, 3); X2 <- ase(A2, 3)
-      X3 <- ase(A3, 3); X4 <- ase(A4, 3)
-      
-      invisible(capture.output(ase1_estimates <- Mclust(X1, G = 3, modelNames = "VVV")$classification))
-      invisible(capture.output(ase2_estimates <- Mclust(X2, G = 3, modelNames = "VVV")$classification))
-      invisible(capture.output(ase3_estimates <- Mclust(X3, G = 3, modelNames = "VVV")$classification))
-      invisible(capture.output(ase4_estimates <- Mclust(X4, G = 3, modelNames = "VVV")$classification))
-      
-      
       #get MC rates
-      omni_mc <- get_mc3(omni_estimates, samp)
-      omnicat_mc <- get_mc3(omnicat_estimates, samp)
-      mrdpg_mc <- get_mc3(mrdpg_estimates, samp)
-      je_mc <- get_mc3(je_estimates, samp)
-      mase_mc <- get_mc3(mase_estimates, samp)    
-      ase1_mc <- get_mc3(ase1_estimates, samp)    
-      ase2_mc <- get_mc3(ase2_estimates, samp)
-      ase3_mc <- get_mc3(ase3_estimates, samp)    
-      ase4_mc <- get_mc3(ase4_estimates, samp)
+      abar_mc <- get_mc3(abar_estimates$clusters, samp)
+      omni_mc <- get_mc3(omni_estimates$clusters, samp)
+      #omnicat_mc <- get_mc3(omnicat_estimates$clusters, samp)
+      mrdpg_mc <- get_mc3(mrdpg_estimates$clusters, samp)
+      je_mc <- get_mc3(je_estimates$clusters, samp)
+      mase_mc <- get_mc3(mase_estimates$clusters, samp)    
+      ase1_mc <- get_mc3(ase1_estimates$clusters, samp)    
+      rase_mc <- get_mc3(rase_estimates$clusters, samp)    
+      #ase2_mc <- get_mc3(ase2_estimates, samp)
+      #ase3_mc <- get_mc3(ase3_estimates, samp)    
+      #ase4_mc <- get_mc3(ase4_estimates, samp)
+      
+      
       
       #store data
-      df[here, ] <- c(net_size[l], t[i], j, omni_mc, omnicat_mc, mase_mc, je_mc, mrdpg_mc,
-                      ase1_mc, ase2_mc, ase3_mc,ase4_mc)
+      df_list[[count]] <- rbind(c(net_size[l], t[i], j, 'AASE', abar_mc, abar_estimates$distances),
+                                c(net_size[l], t[i], j, 'OMNI', omni_mc, omni_estimates$distances),
+                                #c(net_size[l], t[i], j, 'Omnicat', omnicat_mc, omnicat_estimates$distances),
+                                c(net_size[l], t[i], j, 'ALS', mrdpg_mc, mrdpg_estimates$distances),
+                                c(net_size[l], t[i], j, 'JE', je_mc, je_estimates$distances),
+                                c(net_size[l], t[i], j, 'RASE', rase_mc, rase_estimates$distances),
+                                c(net_size[l], t[i], j, 'MASE', mase_mc, mase_estimates$distances),
+                                c(net_size[l], t[i], j, 'ASE1', ase1_mc, ase1_estimates$distances)
+                                )
+                      
       
       #update counter 
-      here <- here + 1
+      count <- count + 1
       
-      #print update
-      if(here %% 100 == 0){
-        print(round(here/nrow(df), 2))
       }
-      
-    }
+    #print update
+    print(round(i/length(t), 2))
+    
   }
 }
 
 #-----------------------------
 #     write out simulation
 #-----------------------------
+df <- Reduce('rbind', df_list)
+colnames(df) <- c('network_size','t', 'iter.no', 'Method', 'MC_Rate', 'D12', 'D13', 'D23')
 
-write.csv(df, "~/Documents/Work/github/BJSE/multiple_network_methods/data/data_4_group.csv")
+write.csv(df, "~/Documents/Work/github/BJSE/multiple_network_methods/data/data_3_group_w_rase.csv")
+#write.csv(df, "~/Documents/Work/github/BJSE/multiple_network_methods/data/data_3_group.csv")
 
-
+as.data.frame(df) %>% 
+  group_by(t, Method) %>% 
+  summarize(MC_Rate_mean = mean(as.numeric(as.character(MC_Rate)))) %>% 
+  ggplot(aes(t, MC_Rate_mean, col = Method, group = Method)) + 
+  geom_point() + geom_line() + 
+  theme_bw()
 
 
 

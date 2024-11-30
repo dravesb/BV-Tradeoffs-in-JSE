@@ -47,28 +47,22 @@ L <- rbind(t(x1_til), t(x2_til))
 
 #converges to ER with p = .3 (1,1) --> (2,0)
 C <- function(t){
-  diag(c(t + 1, -t + 1))
+  #diag(c(t + 1, -t + 1))
+  diag(c(1, 1-t))
 }
 
 #-----------------------------
 #    Set up Bias matrices 
 #-----------------------------
-S <- function(C){
-  #bias matrices
-  v1 <- c(1, C[1,1])
-  v2 <- c(1, C[2,2])
-  
-  #get embeddings
-  a1 <- ase(H1(v1), 1)[,1]
-  a2 <- ase(H1(v2), 1)[,1]  
-  
-  #define scaling matrices
-  S1 <- abs(diag(c(a1[1], a2[1])))
-  S2 <- abs(diag(c(a1[2], a2[2])))
-  
-  #return results
-  return(list(S1, S2))
+S <- function(C_list){
+  m <- length(C_list)
+  Cm <- 1/m * Reduce('+', lapply(C_list, function(C) C^2))
+  Cm_forth <- diag(diag(Cm)^(1/4))
+  Cm_forth_inv <- diag(diag(Cm)^(-1/4))
+  S_plus_list <- lapply(C_list, function(C) 0.5 * (C %*% Cm_forth_inv + Cm_forth))
+  return(S_plus_list, S_minus_list)              
 }
+
 
 #--------------------------------------
 #    Set up helpful matrix functions
@@ -146,7 +140,7 @@ Sigma_sum_omnibar <- function(S_list, C_list, comm, L.here = L){
   
 }
 
-#set up SigmaD unknown
+#set up SigmaD - known and unknown
 Sigma_D_unknown <- function(Lhat,n,i){
   #set m 
   m <- nrow(Lhat)/n
@@ -164,7 +158,8 @@ Sigma_D_unknown <- function(Lhat,n,i){
   }
   
   #calculate Sigma
-  Sigma <- 1/2 * S2D_hat_inv %*% (1/(n-1) * inner) %*% S2D_hat_inv
+  #Sigma <- 1/2 * S2D_hat_inv %*% (1/(n-1) * inner) %*% S2D_hat_inv
+  Sigma <- 2 * S2D_hat_inv %*% (1/(n-1) * inner) %*% S2D_hat_inv
   
   #project onto psd cone
   Sigma_proj <- psd_proj(Sigma)
@@ -183,9 +178,10 @@ Sigma_D_known <- function(n, samp, L, S_list, C_list){
   SigmaD_list <- list()
   for(i in 1:n){
     if(samp[i] == 1){
-      SigmaD_list[[i]] <- Del.inv %*% S_sum %*% (Sigma_tilde(L[1,], 1, C_list) + Sigma_tilde(L[1,], 2, C_list) ) %*% S_sum %*% Del.inv / 4 
+      #SigmaD_list[[i]] <- Del.inv %*% S_sum %*% (Sigma_tilde(L[1,], 1, C_list) + Sigma_tilde(L[1,], 2, C_list) ) %*% S_sum %*% Del.inv / 4 
+      SigmaD_list[[i]] <- 2 * Del.inv %*% S_sum %*% (Sigma_tilde(L[1,], 1, C_list) + Sigma_tilde(L[1,], 2, C_list) ) %*% S_sum %*% Del.inv  
     }else{
-      SigmaD_list[[i]] <- Del.inv %*% S_sum %*% (Sigma_tilde(L[2,], 1, C_list) +  Sigma_tilde(L[2,], 2, C_list) ) %*% S_sum %*% Del.inv / 4 
+      SigmaD_list[[i]] <- 2 * Del.inv %*% S_sum %*% (Sigma_tilde(L[2,], 1, C_list) +  Sigma_tilde(L[2,], 2, C_list) ) %*% S_sum %*% Del.inv / 4 
     }
   }
   
@@ -288,7 +284,8 @@ get_T_threshold <- function(X_known){
 #-----------------------------
 
 #set up base parameters 
-net_size <- 500#c(100, 250)
+net_size <- c(50, 100, 200)
+t_max <- c(0.5, 0.3, .2)
 t <- seq(0, .2,length.out = 5) #c(0, .25, .5, .75, 1)
 mc_runs <- 100 #number of iterations
 
@@ -308,13 +305,20 @@ for(i in 1:length(net_size)){#iterate over network size
   X_known <- L[c(rep(1, net_size[i]/2), rep(2, net_size[i]/2)),]
   thres <- get_T_threshold(X_known)
   
-  for(j in 1:length(t)){#iterate over t values
+  #set up t sequence
+  t_seq <- seq(0, t_max[i], length.out = 5)
+  
+  for(j in 1:length(t_seq)){#iterate over t values
     
     #set S_list and C_list
     S_list <- S(C(t[j]))
     C_list <- list(diag(2), C(t[j]))
     
     for(k in 1:mc_runs){#number of MC simulations
+      
+      #---------------------
+      #Sample and Embedd
+      #---------------------
       
       #sample group assignments
       samp <- sample(1:2, size = net_size[i], replace = TRUE)
@@ -334,7 +338,7 @@ for(i in 1:length(net_size)){#iterate over network size
       #make Omni and embedd for Lhat and Z
       Lhat <- ase(make_omni(list(A1, A2)), 2)
       
-      #procrustes!
+      #procrustes! for covariance stuff
       Lhat <- procrustes(Lhat, Xtil)$X.new
       
       #make X1 and X2
@@ -346,18 +350,18 @@ for(i in 1:length(net_size)){#iterate over network size
       #---------------------
       
       #known variance
-      #T_star0 <- sum(get_test_stats_known_variance(samp, L, X1, X2, S_list, C_list)) #statistic
-      #test_rej_known <- ifelse(T_star0 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
+      T_star0 <- sum(get_test_stats_known_variance(samp, L, X1, X2, S_list, C_list)) #statistic
+      test_rej_known <- ifelse(T_star0 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
       
-      T_star0 <- (sum(get_test_stats_known_variance(samp, L, X1, X2, S_list, C_list)) - 2*net_size[i]) / 4*net_size[i] #statistic
-      test_rej_known <- ifelse(T_star0 > qnorm(.95), 1, 0) #get rejections yes/no
+      #T_star0 <- (sum(get_test_stats_known_variance(samp, L, X1, X2, S_list, C_list)) - 2*net_size[i]) / 4*net_size[i] #statistic
+      #test_rej_known <- ifelse(T_star0 > qnorm(.95), 1, 0) #get rejections yes/no
       
       #unknown variance
-      #T_star1 <- sum(get_test_stats(Lhat, net_size[i], X1, X2)) #statistic
-      #test_rej <- ifelse(T_star1 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
+      T_star1 <- sum(get_test_stats(Lhat, net_size[i], X1, X2)) #statistic
+      test_rej <- ifelse(T_star1 > qchisq(.95, 2 * net_size[i]), 1, 0) #get rejections yes/no
       
-      T_star1 <- (sum(get_test_stats(Lhat, net_size[i], X1, X2)) - 2*net_size[i]) / 4*net_size[i] #statistic
-      test_rej <- ifelse(T_star1 > qnorm(.95), 1, 0) #get rejections yes/no
+      #T_star1 <- (sum(get_test_stats(Lhat, net_size[i], X1, X2)) - 2*net_size[i]) / 4*net_size[i] #statistic
+      #test_rej <- ifelse(T_star1 > qnorm(.95), 1, 0) #get rejections yes/no
       
       #get omni test statistic & threshold
       T_star2 <- sum(apply(X1 - X2, 1, norm2)) #get statistic

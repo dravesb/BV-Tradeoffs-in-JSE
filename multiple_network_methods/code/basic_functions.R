@@ -108,26 +108,34 @@ get_mahalanobis <- function(X, Y){
   #get sample sizes
   nx <- nrow(X)
   ny <- nrow(Y)
-  
+
   #get covariances
   CX <- cov(X)
   CY <- cov(Y)
-  
+
   #pool covariances
   Cpool <- ((nx - 1)*CX + (ny - 1)*CY)/(nx + ny -2)
-  
+
   #get column means
   xbar <- colMeans(X)
   ybar <- colMeans(Y)
-  
+
   #calcualte R^{-T}(x - y)
   Rc <- chol(Cpool)
   fact <- forwardsolve(t(Rc), xbar - ybar)
-  
+
   #return distance
   norm2(fact)
-  
+
 }
+# 
+# get_mahalanobis <- function(X, Y){
+#   # get col means and covariances
+#   mu_x <- colMeans(X); Sigma_X <- cov(X)
+#   mu_y <- colMeans(Y); Sigma_Y <- cov(Y)
+#   mahalanobis(mu_x - mu_y , center = FALSE, cov = 0.5 *(Sigma_X + Sigma_Y))
+# }
+
 
 #vector mse functions (assumed x centered)
 get_mse <- function(x){

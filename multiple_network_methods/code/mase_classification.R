@@ -16,11 +16,19 @@ mase_classes <- function(adj_matrices, d, K){
     V <- svd(U, nu = d, nv = 0)$u
     
     #cluster
-    #clusters <- kmeans(V, centers = K)
     clusters <- Mclust(V, G = K, modelNames = "VVV")$classification
+    if(is.null(clusters)){
+      clusters <- kmeans(V, centers = K)$cluster
+    }
+    
+    
+    # get distance between clusters
+    d12 <- get_mahalanobis(V[clusters == 1, ], V[clusters == 2, ])
+    d13 <- get_mahalanobis(V[clusters == 1, ], V[clusters == 3, ])
+    d23 <- get_mahalanobis(V[clusters == 2, ], V[clusters == 3, ])
     
     #return clusters
-    return(clusters)
+    return(list(clusters = clusters, distances = c(d12, d13, d23)))
   
 }
 

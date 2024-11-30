@@ -16,9 +16,18 @@ je_classes <-  function(adj_matrices, d, K){
   H <- multidembed(A = adj_matrices, d, Innitialize = 1, maxiter = 100, large.and.sparse = F)$h
   
   #Cluster based on the rows of H
-  classes <- Mclust(H, G = K, modelNames = "VVV")$classification
+  clusters <- Mclust(H, G = K, modelNames = "VVV")$classification
+  if(is.null(clusters)){
+    clusters <- kmeans(H, centers = K)$cluster 
+  }
+  
+  
+  # get distance between clusters
+  d12 <- get_mahalanobis(H[clusters == 1, ], H[clusters == 2, ])
+  d13 <- get_mahalanobis(H[clusters == 1, ], H[clusters == 3, ])
+  d23 <- get_mahalanobis(H[clusters == 2, ], H[clusters == 3, ])
   
   #return clusters
-  return(classes)
+  return(list(clusters = clusters, distances = c(d12, d13, d23)))
    
 }

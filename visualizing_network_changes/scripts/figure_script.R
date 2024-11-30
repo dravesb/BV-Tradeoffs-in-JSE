@@ -25,7 +25,7 @@ setwd('~/Documents/Work/github/BJSE/visualizing_network_changes/scripts/')
 #-----------------------------
 
 #set up blocks
-B <- matrix(c(.25, .05, .05, .25), byrow = T, nrow = 2)
+B <- matrix(c(.25, .03, .03, .25), byrow = T, nrow = 2)
 b_ase <- ase(B, 2)
 
 #get latent positions
@@ -39,11 +39,12 @@ Delta <- pi * tcrossprod(x1) + (1 - pi)*tcrossprod(x2)
 R <- eigen(Delta)$vectors
 
 #Apply rotation to x1 and x2
-x1_til <- t(R) %*% x1 
-x2_til <- t(R) %*% x2
+x1_til <- x1 
+x2_til <- x2
 
 #set base latent positions
 L <- rbind(t(x1_til), t(x2_til))
+L <- rbind(x1, x2)
 
 #-----------------------------
 #     Set up Prob matrices
@@ -67,8 +68,10 @@ com <- sample(c(1, 2), size = n, prob = c(pi, 1-pi), replace = TRUE)
 X <- L[com,]
 
 #set up P matrices
+alpha_n <- log(n) / n^(0.25)
+
 P1 <- tcrossprod(X, X %*% C(0)) # t = 0 
-P2 <- tcrossprod(X, X %*% C(.2)) # t = 0.2
+P2 <- tcrossprod(X, X %*% C(.3)) # t = 0.3
 P3 <- tcrossprod(X, X %*% C(.6)) # t = 0.6
 P4 <- tcrossprod(X, X %*% C(1)) # t = 1
 
@@ -121,16 +124,28 @@ vs <- 5
 pdf("../figures/g1.pdf")
 plot(g1, vertex.size = vs)
 dev.off()
+jpeg("../figures/g1.jpeg")
+plot(g1, vertex.size = vs)
+dev.off()
 
 pdf("../figures/g2.pdf")
+plot(g2, vertex.size = vs)
+dev.off()
+jpeg("../figures/g2.jpeg")
 plot(g2, vertex.size = vs)
 dev.off()
 
 pdf("../figures/g3.pdf")
 plot(g3, vertex.size = vs)
 dev.off()
+jpeg("../figures/g3.jpeg")
+plot(g3, vertex.size = vs)
+dev.off()
 
 pdf("../figures/g4.pdf")
+plot(g4, vertex.size = vs)
+dev.off()
+jpeg("../figures/g4.jpeg")
 plot(g4, vertex.size = vs)
 dev.off()
 
@@ -143,10 +158,10 @@ dev.off()
 setwd("~/Documents/Work/github/BJSE/visualizing_network_changes/")
 
 #set latent positions
-X0 <- L %*% C(0) #t = 0
-X1 <- L %*% C(.2) #t = 0.2
-X2 <- L %*% C(.6) #t = 0.6
-X3 <- L %*% C(1) #t = 0
+X0 <- L %*% sqrt(C(0)) #t = 0
+X1 <- L %*% sqrt(C(.3)) #t = 0.6
+X2 <- L %*% sqrt(C(.6)) #t = 0.6
+X3 <- L %*% sqrt(C(1)) #t = 0
 
 #combine
 X_move <- as.data.frame(rbind(X0, X1, X2, X3))
@@ -160,7 +175,7 @@ ggplot()+
   geom_point(data = X_move[1:2,], aes(x, y), col = c("red", "blue"))+
   geom_point(data = X_move[3:6,], aes(x, y), col = rep(c("red", "blue"), 2), alpha = .2, size = 2)+
   geom_jitter(data = X_move[7:8,], aes(x, y), col = c("red", "blue"),
-              alpha = .2, size = 2, width = .005, height = 0)+
+              alpha = .2, size = 2, width = .0008, height = 0)+
   labs(x = "", y = "",
        title = )+
   theme_bw()+
@@ -171,6 +186,7 @@ ggplot()+
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 ggsave("./figures/latent_position_0.pdf",device = "pdf", width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_0.jpeg",device = "jpeg", width = 2.8, height = 2.8, units = "in")
 
 set.seed(1)
 ggplot()+
@@ -178,7 +194,7 @@ ggplot()+
   geom_point(data = X_move[3:4,], aes(x, y), col = c("red", "blue"))+
   geom_point(data = X_move[c(1:2, 5:6),], aes(x, y), col = rep(c("red", "blue"), 2), alpha = .2, size = 2)+
   geom_jitter(data = X_move[7:8,], aes(x, y), col = c("red", "blue"),
-              alpha = .2, size = 2, width = .005, height = 0)+
+              alpha = .2, size = 2, width = .0008, height = 0)+
   labs(x = "", y = "")+
   theme_bw()+
   theme(axis.title.x=element_blank(),
@@ -188,6 +204,7 @@ ggplot()+
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 ggsave("./figures/latent_position_2.pdf",device = "pdf", width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_2.jpeg",device = "jpeg", width = 2.8, height = 2.8, units = "in")
 
 set.seed(1)
 ggplot()+
@@ -195,7 +212,7 @@ ggplot()+
   geom_point(data = X_move[5:6,], aes(x, y), col = c("red", "blue"))+
   geom_point(data = X_move[1:4,], aes(x, y), col = rep(c("red", "blue"), 2), alpha = .2, size = 2)+
   geom_jitter(data = X_move[7:8,], aes(x, y), col = c("red", "blue"),
-              alpha = .2, size = 2, width = .005, height = 0)+
+              alpha = .2, size = 2, width = .0008, height = 0)+
   labs(x = "", y = "")+
   theme_bw()+
   theme(axis.title.x=element_blank(),
@@ -205,6 +222,7 @@ ggplot()+
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 ggsave("./figures/latent_position_6.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_6.jpeg",device = "jpeg",width = 2.8, height = 2.8, units = "in")
 
 set.seed(1)
 ggplot()+
@@ -212,7 +230,7 @@ ggplot()+
   #geom_point(data = X_move[7:8,], aes(x, y), col = c("red", "blue"))+
   geom_point(data = X_move[1:6,], aes(x, y), col = rep(c("red", "blue"), 3), alpha = .2, size = 2)+
   geom_jitter(data = X_move[7:8,], aes(x, y), col = c("red", "blue"),
-              alpha = 1, size = 2, width = .005, height = 0)+
+              alpha = 1, size = 2, width = .0008, height = 0)+
   labs(x = "", y = "")+
   theme_bw()+ 
   theme(axis.title.x=element_blank(),
@@ -222,5 +240,6 @@ ggplot()+
         #axis.text.y=element_blank(),
         axis.ticks.y=element_blank())
 ggsave("./figures/latent_position_1.pdf",device = "pdf",width = 2.8, height = 2.8, units = "in")
+ggsave("./figures/latent_position_1.jpeg",device = "jpeg",width = 2.8, height = 2.8, units = "in")
 
 
